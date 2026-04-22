@@ -1,0 +1,22 @@
+# Node modules
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Local config (contains secrets)
+*.local.json
+llm_config.json
+
+# Build outputs
+dist/
+build/
+
+# Temp files
+*.tmp
+*.temp
