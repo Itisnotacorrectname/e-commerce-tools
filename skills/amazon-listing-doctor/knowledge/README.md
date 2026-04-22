@@ -50,8 +50,4 @@ knowledge/
 2. 文件名格式建议：`序号_来源_主题.md`
 3. 更新 `references/kb_retrieval_rules.md` 中的调取路径（如有变更）
 
-## 私人知识库（Kane Original）
-
-Kane的原始资料位于：`C:/Users/csbd/.openclaw/workspace/亚马逊分析知识库/knowledge/`
-
 此目录为私人备份，不随skill分发。
