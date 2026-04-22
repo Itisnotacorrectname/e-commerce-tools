@@ -849,7 +849,7 @@ async function callLLM(prompt) {
       max_tokens: 1500
     });
 
-    var authToken = '22d8696422d2e5bd4cd688452dd363c6dd7900cb974ca4b3';
+    var authToken = process.env.OPENCLAW_GATEWAY_TOKEN || '22d8696422d2e5bd4cd688452dd363c6dd7900cb974ca4b3';
     return new Promise(function(resolve, reject) {
       var req = http.request({ hostname: '127.0.0.1', port: 18789, path: '/v1/chat/completions', method: 'POST', headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body), 'Authorization': 'Bearer ' + authToken } }, function(res) {
         var data = '';

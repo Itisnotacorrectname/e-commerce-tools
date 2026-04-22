@@ -132,38 +132,4 @@ node diagnose.js [ASIN] --force    # Force re-run all steps
 | `lib/amazon_price.js` | Universal Amazon price fetcher (14 marketplaces) |
 | `references/rufus_test.md` | Step 10 Rufus intent simulation prompt |
 | `references/cosmo_evaluation.md` | Step 11 Cosmo scoring rubric |
-| `references/kb_retrieval_rules.md` | Dynamic knowledge base retrieval rules |
 
-## Private Knowledge Base (Kane Original — Not for Distribution)
-
-> ⚠️ This directory is Kane's private research backup. Not distributed with skill.
-
-**Path:** `C:/Users/csbd/.openclaw/workspace/亚马逊分析知识库/knowledge/`
-
-| File | Content | Size |
-|------|---------|------|
-| `rufus_links/` | 11 Rufus/Cosmo/PPC articles | ~150KB |
-| `2511.20867v1.kb.txt` | E-GEO paper distillation | 57KB |
-| `p15.kb.txt` | Q&A recommendation system rules | 29KB |
-| `listing显性违规识别知识库.txt` | V1–V8 complete rules | 6KB |
-| `listing隐性违规识别知识库.txt` | V9–V16 complete rules | 6KB |
-| `2505.18897v1.pdf.txt` | Amazon Ads strategy | 28KB |
-| `2508.08325v2.pdf.txt` | Amazon Ads deep content | 97KB |
-
-**Citation format:** In diagnostic reports, cite as "参考: knowledge/research/2511.20867v1.kb.txt §3"
-
-## Knowledge Base Retrieval Rules
-
-The knowledge base is not loaded all at once — it is dynamically retrieved per step based on rules in `references/kb_retrieval_rules.md`.
-
-Retrieval is determined by two dimensions:
-1. **Step** — different steps need different expertise
-2. **Product Category** — different categories trigger different supplementary knowledge
-
-**Dynamic retrieval principles:**
-- Steps 10/11 (Rufus/Cosmo): must read `references/rufus_test.md` + `cosmo_evaluation.md`, supplement with Rufus official technical docs
-- Steps 12/13 (violation detection): must read explicit/implicit violation KB files
-- High education attribute categories (Books, Electronics, Educational): additionally call academic research articles
-- Health/safety sensitive categories (Mattress, Baby): strengthen V3 health claims and V12 authority checks
-
-**Current status:** Dynamic KB retrieval is partially implemented in `diagnose.js`. Knowledge base content is currently manually referenced per `kb_retrieval_rules.md` at each relevant step.

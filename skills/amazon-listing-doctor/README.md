@@ -93,7 +93,7 @@ The skill automatically creates the `workspace/amazon-listing-doctor/` directory
 
 If you need to create it manually:
 ```
-C:/Users/<you>/.openclaw/workspace/amazon-listing-doctor/
+~/.openclaw/workspace/amazon-listing-doctor/
 ├── reports/
 ├── checkpoints/
 └── knowledge/

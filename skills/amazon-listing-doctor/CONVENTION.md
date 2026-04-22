@@ -26,9 +26,9 @@ diagnose.js (orchestrator)
     step4_worker.js  — Playwright step4
 ```
 
-### 路径常量（禁止修改）
+### 路径常量（动态路径）
 ```
-WORKSPACE        = 'C:/Users/csbd/.openclaw/workspace'
+WORKSPACE        = process.env.OPENCLAW_WORKSPACE || path.join(os.homedir(), '.openclaw', 'workspace')
 CHECKPOINT_DIR   = path.join(WORKSPACE, 'amazon-listing-doctor', 'checkpoints')
 REPORT_DIR       = path.join(WORKSPACE, 'amazon-listing-doctor', 'reports')
 SKILL_DIR        = path.join(WORKSPACE, 'skills', 'amazon-listing-doctor')

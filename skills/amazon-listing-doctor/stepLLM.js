@@ -40,7 +40,7 @@ async function llmRequest(prompt, systemPrompt, timeoutMs) {
       max_tokens: 300
     });
 
-    var authToken = '22d8696422d2e5bd4cd688452dd363c6dd7900cb974ca4b3';
+    var authToken = process.env.OPENCLAW_GATEWAY_TOKEN || '22d8696422d2e5bd4cd688452dd363c6dd7900cb974ca4b3';
     var req = http.request({
       hostname: '127.0.0.1',
       port: 18789,
