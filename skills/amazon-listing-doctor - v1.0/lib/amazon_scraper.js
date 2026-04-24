@@ -410,7 +410,17 @@ async function scrapeCompetitorSearch(keyword, cc, opts) {
           if (!title || title.length < 5) return;
           if (seenAsin.has(asin)) return;
           seenAsin.add(asin);
-          allCompetitors.push({ asin, title });
+
+          // Extract price & rating from container text
+          const itemText = el.text();
+          const priceMatch = itemText.match(/\$([\d,]+\.\d{2})/);
+          const ratingMatch = itemText.match(/(\d\.\d)\s*(?:out of 5|颗星|\/5)/);
+          const reviewMatch = itemText.match(/\(([\d,]+)\)/);
+          const price = priceMatch ? '$' + priceMatch[1] : '';
+          const rating = ratingMatch ? ratingMatch[1] : '';
+          const reviews = reviewMatch ? reviewMatch[1] : '';
+
+          allCompetitors.push({ asin, title, price, rating, reviews });
           found++;
           if (found >= maxPerRound) return false;
           if (allCompetitors.length >= maxCompetitors) return false;
@@ -450,7 +460,17 @@ async function scrapeCompetitorSearch(keyword, cc, opts) {
           title = title.replace(/\s*Sponsored.*$/i, '').trim();
 
           seenAsin.add(asin);
-          allCompetitors.push({ asin, title });
+
+          // Extract price & rating from container text
+          const itemText = el.text();
+          const priceMatch = itemText.match(/\$([\d,]+\.\d{2})/);
+          const ratingMatch = itemText.match(/(\d\.\d)\s*(?:out of 5|颗星|\/5)/);
+          const reviewMatch = itemText.match(/\(([\d,]+)\)/);
+          const price = priceMatch ? '$' + priceMatch[1] : '';
+          const rating = ratingMatch ? ratingMatch[1] : '';
+          const reviews = reviewMatch ? reviewMatch[1] : '';
+
+          allCompetitors.push({ asin, title, price, rating, reviews });
           found++;
           if (found >= maxPerRound) return false;
           if (allCompetitors.length >= maxCompetitors) return false;
