@@ -149,18 +149,27 @@ async function step3(s2) {
     'new','use','best','top','more','most','only','easy','free','fast','safe',
     'large','small','mini','max','plus','pro','prime','extra','ultra','super'
   ]);
+  // 品牌词集合（含多词品牌）
+  var brandWords = new Set(brand.split(/\s+/).filter(function(w) { return w.length > 1; }));
   var words = title.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(function(w) {
-    return w.length > 1 && !/^\d+$/.test(w) && !STOPWORDS.has(w) && w !== brand;
+    return w.length > 1 && !/^\d+$/.test(w) && !STOPWORDS.has(w) && !brandWords.has(w);
   });
   var bigrams = [];
   for (var i = 0; i < words.length - 1; i++) {
-    if (!STOPWORDS.has(words[i]) && !STOPWORDS.has(words[i+1])) {
+    if (!STOPWORDS.has(words[i]) && !STOPWORDS.has(words[i+1]) &&
+        !brandWords.has(words[i]) && !brandWords.has(words[i+1])) {
       bigrams.push(words[i] + ' ' + words[i + 1]);
     }
   }
 
-  // 优先用2词短语，其次用 category 末段
-  var coreProduct = bigrams[0] || catLast || words[0] || '';
+  // 优先用 category 末段（产品类型），其次用2词短语（已排除品牌），最后用 title word
+  var coreProduct = catLast || bigrams[0] || words[0] || '';
+  
+  // 如果 coreProduct 是通用词（如 sets, pieces），尝试用更具体的 bigram
+  var GENERIC_PRODUCTS = new Set(['sets','pieces','set','piece','outdoor','patio','garden']);
+  if (GENERIC_PRODUCTS.has(coreProduct) && bigrams.length > 0) {
+    coreProduct = bigrams[0];
+  }
 
   // 提取规格信号（容量、尺寸等）
   var sizeSignals = (title.match(/\d+\s*(oz|qt|quart|gal|gallon|lb|lbs|kg|inch|inches|cm|mm|ft|l|liter|ml|w|v|pack|piece|pcs)/gi) || []).slice(0, 3);

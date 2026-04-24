@@ -429,6 +429,190 @@ node report_gen.js [ASIN]
 report_gen.js 读取 checkpoints 目录下的所有 JSON 文件生成完整 HTML 报告，路径：
 `workspace/amazon-listing-doctor/reports/[ASIN]/[ASIN].html`
 
+### Checkpoint JSON Schema（step5-14）
+
+⚠️ **report_gen.js 依赖以下字段名，必须严格匹配。**
+
+#### step5.json — 关键词分级
+```json
+{
+  "primary": [
+    { "keyword": "dining table set", "freq": "31/31 (100%)", "note": "core category term" }
+  ],
+  "secondary": [
+    { "keyword": "modern", "freq": "14/31 (45%)", "note": "style positioning" }
+  ],
+  "backend": [
+    "modern dining table set",
+    "kitchen table chairs set of 6"
+  ]
+}
+```
+- `primary` / `secondary`: 数组，对象含 `keyword`, `freq`, `note`
+- `backend`: **字符串数组**（不是逗号分隔字符串）
+
+#### step6.json — 标题审计
+```json
+{
+  "issues": [
+    { "severity": "medium", "issue": "Metal Steel redundancy", "detail": "Steel IS metal — wastes 6 chars" }
+  ],
+  "spellErrors": [
+    { "word": "outdoorgrade", "suggestion": "outdoor-grade", "context": "Bullet 3" }
+  ],
+  "charCount": 159,
+  "charLimit": 200,
+  "brandAtStart": true
+}
+```
+- `issues[].issue`: 问题标题（表格第一列）
+- `issues[].detail`: 详细说明（表格第三列）
+- `issues[].severity`: `critical` / `high` / `medium` / `low`
+- `spellErrors`: 拼写错误数组，可为空
+
+#### step7.json — 三版优化标题
+```json
+{
+  "versionA": "PHI VILLA 7 Piece Outdoor Dining Set for 6...",
+  "versionAChars": 162,
+  "versionANote": "Maximum keyword coverage",
+  "versionB": "PHI VILLA 7-Piece Metal Outdoor Dining Set...",
+  "versionBChars": 148,
+  "versionBNote": "High CTR",
+  "versionC": "PHI VILLA 7-Piece Metal Outdoor Dining Set...",
+  "versionCChars": 75,
+  "versionCNote": "Mobile-first"
+}
+```
+- `versionA` / `versionB` / `versionC`: **纯字符串**（不是对象）
+- `versionAChars` / `versionBChars` / `versionCChars`: 数字
+- `versionANote` / `versionBNote` / `versionCNote`: 说明文字
+
+#### step8.json — Backend Keywords
+```json
+{
+  "backend": "modern dining table set kitchen table chairs set of 6 ...",
+  "charCount": 240,
+  "charLimit": 250
+}
+```
+- `backend`: **单个字符串**，空格分隔，全小写
+- `charCount`: 字节数
+
+#### step9.json — Bullet 改写
+```json
+{
+  "bullets": [
+    {
+      "original": "Large Metal Dining Table: ...",
+      "rewrite": "Large Metal Dining Table: 60\"L x 38\"W ...",
+      "explain": "Added exact dimensions upfront"
+    }
+  ]
+}
+```
+- `bullets[].original`: 原文
+- `bullets[].rewrite`: 改写版本
+- `bullets[].explain`: 改写说明
+
+#### step10.json — Rufus 意图问题
+```json
+{
+  "questions": [
+    "I need a dining set that can stay outside year-round...",
+    "We have a family of 6 and host outdoor dinners often..."
+  ]
+}
+```
+- `questions`: **字符串数组**（3 个问题）
+
+#### step11.json — Cosmo 评分
+```json
+{
+  "scores": [
+    {
+      "question": "I need a dining set that can stay outside...",
+      "score": 5,
+      "label": "Directly Addresses",
+      "evidence": "Bullet 1: 'ecoating processed strong steel...'"
+    },
+    {
+      "question": "We have a family of 6...",
+      "score": 3,
+      "label": "Implicitly Addresses",
+      "evidence": "Bullet 2: 'support 300 lbs'...",
+      "enhancement": "Stackable Metal Chairs (Set of 6): 25.2\"D..."
+    }
+  ],
+  "averageScore": 4.3
+}
+```
+- `scores[].question`: Rufus 问题原文
+- `scores[].score`: 5 / 3 / 0
+- `scores[].label`: `Directly Addresses` / `Implicitly Addresses` / `Missing`
+- `scores[].evidence`: 引用 bullet 文本
+- `scores[].enhancement`: 仅 score ≤ 3 时需要，否则为 null 或省略
+- `averageScore`: 数字（所有 score 的平均值）
+
+#### step12.json — 违规检测
+```json
+{
+  "violations": [
+    { "id": "V1", "severity": "high", "type": "无依据最高级", "description": "...", "fix": "..." }
+  ],
+  "implicit": [
+    { "id": "V10", "severity": "medium", "type": "User Intent Coverage", "description": "...", "fix": "..." }
+  ]
+}
+```
+- `violations`: 显性违规数组（V1-V8），可为空
+- `implicit`: 隐性违规数组（V9-V18），可为空
+
+#### step13.json — Listing Weight
+```json
+{
+  "issues": [
+    { "factor": "Reviews", "current": "24", "status": "low", "note": "Far below typical 200+" },
+    { "factor": "Rating", "current": "3.9", "status": "below_4", "note": "Below 4.0 threshold" },
+    { "factor": "Main Image", "current": "N/A", "status": "needs_check", "note": "Cannot scrape" }
+  ],
+  "summary": "24 reviews (low), 3.9 rating (below 4.0)"
+}
+```
+- `issues[].factor`: 评估因素名
+- `issues[].current`: 当前值
+- `issues[].status`: `ok` / `low` / `below_4` / `above_avg` / `needs_check`
+- `issues[].note`: 说明
+
+#### step14.json — 行动计划
+```json
+{
+  "qualityScore": 82,
+  "qualityGrade": "B+",
+  "plan": [
+    { "priority": "P1", "action": "Fix Bullet 2: add seat dimensions", "location": "Bullet 2", "impact": "Cosmo Q2 3→5" },
+    { "priority": "P2", "action": "Remove 'Steel' from title", "location": "Title", "impact": "Save 6 chars" }
+  ]
+}
+```
+- `qualityScore`: 数字（0-100）
+- `qualityGrade`: 字母等级（A+ / A / B+ / B / C / D / F）
+- `plan[]`: 行动项数组，每项含 `priority`（P0/P1/P2/P3）、`action`、`location`、`impact`
+
+#### 评分公式
+```
+qualityScore = title(20) + bullets(25) + cosmo(15) + backend(10) + violations(10) + weight(15) + usp(5)
+```
+| 维度 | 满分 | 评分依据 |
+|------|------|----------|
+| Title | 20 | 关键词覆盖 + 字符数 + 无拼写错误 |
+| Bullets | 25 | Feature+Benefit+Specificity 完整度 |
+| Cosmo | 15 | 3题平均分 × 3 |
+| Backend | 10 | 250 bytes 填充率 + 去重 |
+| Violations | 10 | 0 显性 = 满分，每命中 -3 |
+| Weight | 15 | 评论数/评分/价格定位 |
+| USP | 5 | 差异化卖点明确度 |
+
 ---
 
 ## 核心知识框架（内置，不依赖外部 kb 文件）
