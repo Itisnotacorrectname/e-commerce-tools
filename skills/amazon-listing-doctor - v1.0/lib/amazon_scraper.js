@@ -387,94 +387,60 @@ async function scrapeCompetitorSearch(keyword, cc, opts) {
           await zipAndReload(page, config, timeout);
         }
 
-        const html = await page.content();
-        const $ = cheerio.load(html);
-        let found = 0;
+        // Extract results using page.evaluate (same approach as amazon-universal-scraper)
+        // This runs in browser DOM context, more reliable than cheerio HTML parsing
+        const comps = await page.evaluate(function(opts) {
+          var results = document.querySelectorAll("div[data-component-type='s-search-result']");
+          var compData = [];
+          results.forEach(function(el, i) {
+            if (i >= opts.maxPerRound) return;
+            var casin = el.getAttribute('data-asin');
+            if (!casin || casin.length < 8) return;
 
-        // Strategy 1: Legacy Amazon UI — data-asin attribute
-        $('[data-asin]').each(function() {
-          const el = $(this);
-          const asin = el.attr('data-asin');
-          if (!asin || asin === 'SEARCH_SIZE_AD' || asin.length < 8) return;
-          const isAd = el.attr('data-ad') || el.attr('data-sponsored') ||
-                       el.find('[data-ad], [data-sponsored]').length > 0;
-          if (isAd) return;
+            // Skip ads
+            var isAd = el.getAttribute('data-ad') || el.getAttribute('data-sponsored') ||
+                        el.querySelector('[data-ad], [data-sponsored]');
+            if (isAd) return;
 
-          let title = trimText(el.find('h2 > span').first().text()) ||
-                      trimText(el.find('h2 span').first().text()) ||
-                      trimText(el.find('.a-link-normal span').first().text()) || '';
-          title = title.replace(/\s*[\d.]+\s+out\s+of\s+\d+\s+stars.*$/i, '').trim();
-          title = title.replace(/\s*#\d+\s+in\s+[^|]*\|.*$/i, '').trim();
-          title = title.replace(/\s*Sponsored.*$/i, '').trim();
+            // Title
+            var titleEl = el.querySelector('h2 .a-text-normal') || el.querySelector('h2 span') || el.querySelector('h2');
+            var title = titleEl ? titleEl.textContent.trim() : '';
 
-          if (!title || title.length < 5) return;
-          if (seenAsin.has(asin)) return;
-          seenAsin.add(asin);
+            // Price
+            var priceEl = el.querySelector('.a-price .a-offscreen');
+            var price = priceEl ? priceEl.textContent.trim() : '';
 
-          // Extract price & rating from container text
-          const itemText = el.text();
-          const priceMatch = itemText.match(/\$([\d,]+\.\d{2})/);
-          const ratingMatch = itemText.match(/(\d\.\d)\s*(?:out of 5|颗星|\/5)/);
-          const reviewMatch = itemText.match(/\(([\d,]+)\)/);
-          const price = priceMatch ? '$' + priceMatch[1] : '';
-          const rating = ratingMatch ? ratingMatch[1] : '';
-          const reviews = reviewMatch ? reviewMatch[1] : '';
+            // Rating
+            var ratingEl = el.querySelector('.a-icon-alt');
+            var rating = ratingEl ? ratingEl.textContent.trim() : '';
 
-          allCompetitors.push({ asin, title, price, rating, reviews });
-          found++;
-          if (found >= maxPerRound) return false;
-          if (allCompetitors.length >= maxCompetitors) return false;
-        });
+            // Reviews — try multiple selectors (Amazon uses different classes)
+            var reviews = '';
+            var reviewEls = el.querySelectorAll('span.a-size-base, span.a-size-mini.puis-normal-weight-text');
+            reviewEls.forEach(function(r) {
+              var t = r.textContent.trim();
+              if (t.match(/^\(\d/) && !reviews) { reviews = t; }
+            });
 
-        // Strategy 2: New Amazon AUI (2024+) — data-csa-c-type="item" + data-cel-widget*="MAIN-SEARCH_RESULTS"
-        // ASIN is in data-csa-c-item-id as "amzn1.asin.1.B0FD9QXPB5" (with sequence prefix)
-        // Title is directly in h2 > span (no anchor wrapper in new AUI)
-        $('[data-csa-c-type="item"][data-cel-widget*="MAIN-SEARCH_RESULTS"]').each(function() {
-          const el = $(this);
-          const asinRaw = el.attr('data-csa-c-item-id') || '';
-          // Support both "amzn1.asin.1.B0FD9QXPB5" and "amzn1.asin.B0FD9QXPB5"
-          const asinMatch = asinRaw.match(/amzn1\.asin\.?(\d+\.)?([A-Z0-9]{10})/i);
-          if (!asinMatch) return;
-          const asin = (asinMatch[2] || '').toUpperCase();
-          if (asin.length !== 10) return;
-          if (seenAsin.has(asin)) return;
-
-          // New AUI: title directly in h2 > span (no anchor)
-          const titleEl = el.find('h2 > span').first();
-          let title = titleEl.length ? trimText(titleEl.text()) : '';
-
-          // Fallback for brand-only h2 titles (e.g., "VEVOR" when searching brand name)
-          // In this case, extract the real product name from the URL slug
-          if (isBrandOnlyTitle(title)) {
-            const linkEl = el.find('a[href*="/dp/"]').first();
-            const url = linkEl.length ? linkEl.attr('href') || '' : '';
-            const urlTitle = titleFromUrl(url);
-            if (urlTitle && urlTitle.length > title.length) {
-              title = urlTitle;
+            if (title.length > 5) {
+              compData.push({ asin: casin, title: title, price: price, rating: rating, reviews: reviews });
             }
-          }
+          });
+          return compData;
+        }, { maxPerRound: maxPerRound });
 
-          if (!title || title.length < 5 || title.match(/^\d/)) return;
-          title = title.replace(/\s*[\d.]+\s+out\s+of\s+\d+\s+stars.*$/i, '').trim();
-          title = title.replace(/\s*#\d+\s+in\s+[^|]*\|.*$/i, '').trim();
-          title = title.replace(/\s*Sponsored.*$/i, '').trim();
-
-          seenAsin.add(asin);
-
-          // Extract price & rating from container text
-          const itemText = el.text();
-          const priceMatch = itemText.match(/\$([\d,]+\.\d{2})/);
-          const ratingMatch = itemText.match(/(\d\.\d)\s*(?:out of 5|颗星|\/5)/);
-          const reviewMatch = itemText.match(/\(([\d,]+)\)/);
-          const price = priceMatch ? '$' + priceMatch[1] : '';
-          const rating = ratingMatch ? ratingMatch[1] : '';
-          const reviews = reviewMatch ? reviewMatch[1] : '';
-
-          allCompetitors.push({ asin, title, price, rating, reviews });
+        // Process results from page.evaluate
+        comps.forEach(function(c) {
+          if (seenAsin.has(c.asin)) return;
+          seenAsin.add(c.asin);
+          // Clean title
+          c.title = c.title.replace(/\s*[\d.]+\s+out\s+of\s+\d+\s+stars.*$/i, '').trim();
+          c.title = c.title.replace(/\s*#\d+\s+in\s+[^|]*\|.*$/i, '').trim();
+          c.title = c.title.replace(/\s*Sponsored.*$/i, '').trim();
+          allCompetitors.push(c);
           found++;
-          if (found >= maxPerRound) return false;
-          if (allCompetitors.length >= maxCompetitors) return false;
         });
+        var found = comps.length;
 
         cascadeRounds.push({ round: round.num, keyword: round.keyword, found });
         console.error('  Round ' + round.num + ': "' + round.keyword + '" found=' + found + ' total=' + allCompetitors.length);
