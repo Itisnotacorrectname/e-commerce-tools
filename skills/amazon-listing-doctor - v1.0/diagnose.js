@@ -135,12 +135,29 @@ async function step3(s2) {
   var category = s2.category || '';
   var brand    = (s2.brand || '').toLowerCase();
 
-  // 从 category 路径的最后一段提取产品类型
+  // 从 category 路径的倒数两段组合提取产品类型
+  // 策略：最后一段作为核心品类词，倒数第二段提供修饰词
+  // 例：...> Patio Furniture Sets > Dining Sets → "patio dining set"
   var catParts = category.split('>').map(function(p) { return p.trim(); });
-  var catLast  = (catParts[catParts.length - 1] || '').toLowerCase()
-                   .replace(/\s+/g, ' ').replace(/s$/, '').trim();
-  var CAT_IGNORE = new Set(['products','items','sale','deals','sets','collections','accessories']);
-  if (CAT_IGNORE.has(catLast)) catLast = '';
+  var CAT_IGNORE = new Set(['products','items','sale','deals','collections','accessories','supplies','furniture']);
+  
+  var catLast = (catParts[catParts.length - 1] || '').toLowerCase().replace(/\s+/g, ' ').replace(/s$/, '').trim();
+  var catPrev = catParts.length >= 2
+    ? (catParts[catParts.length - 2] || '').toLowerCase().replace(/\s+/g, ' ').replace(/s$/, '').trim()
+    : '';
+  
+  // 从倒数第二段提取修饰词（去掉通用词和与最后一段重复的词）
+  var lastWords = new Set(catLast.split(' ').filter(function(w) { return w.length > 2; }));
+  var prevModifiers = catPrev.split(' ').filter(function(w) {
+    return w.length > 2 && !CAT_IGNORE.has(w) && !lastWords.has(w);
+  });
+  
+  // 组合：修饰词 + 核心品类词（限制最多3词）
+  var catCombined = prevModifiers.concat([catLast]).join(' ').replace(/\s+/g, ' ').trim();
+  if (catCombined.split(' ').length > 3) {
+    // 太长了，只取最后一个修饰词 + 核心品类词
+    catCombined = (prevModifiers[prevModifiers.length - 1] || '') + ' ' + catLast;
+  }
 
   // 从 title 提取2词短语，排除品牌词和 stopwords
   var STOPWORDS = new Set([
@@ -162,13 +179,13 @@ async function step3(s2) {
     }
   }
 
-  // 优先用 category 末段（产品类型），其次用2词短语（已排除品牌），最后用 title word
-  var coreProduct = catLast || bigrams[0] || words[0] || '';
+  // 优先级：category 组合 > 2词短语 > title word
+  // category 组合（如 "patio dining set"）比 bigram（如 "dining set"）更精确
+  var coreProduct = catCombined || bigrams[0] || words[0] || '';
   
-  // 如果 coreProduct 是通用词（如 sets, pieces），尝试用更具体的 bigram
-  var GENERIC_PRODUCTS = new Set(['sets','pieces','set','piece','outdoor','patio','garden']);
-  if (GENERIC_PRODUCTS.has(coreProduct) && bigrams.length > 0) {
-    coreProduct = bigrams[0];
+  // 如果组合词太长（>3词），降级用 bigram
+  if (coreProduct.split(' ').length > 3) {
+    coreProduct = bigrams[0] || catLast || words[0] || '';
   }
 
   // 提取规格信号（容量、尺寸等）

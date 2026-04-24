@@ -51,9 +51,9 @@ const STOPWORDS = new Set([
 
 // ── Browser Launcher ─────────────────────────────────────────
 function createBrowser(cc) {
-  const isDE = (cc === 'DE');
+  // 所有市场都用 headless: false — Amazon 搜索页反爬会拦截 headless Playwright
   return chromium.launch({
-    headless: isDE ? false : true,
+    headless: false,
     args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-blink-features=AutomationControlled']
   });
 }
