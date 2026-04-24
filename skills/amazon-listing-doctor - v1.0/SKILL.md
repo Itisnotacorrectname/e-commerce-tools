@@ -585,17 +585,17 @@ report_gen.js 读取 checkpoints 目录下的所有 JSON 文件生成完整 HTML
 ```json
 {
   "issues": [
-    { "factor": "Reviews", "current": "24", "status": "low", "note": "Far below typical 200+" },
-    { "factor": "Rating", "current": "3.9", "status": "below_4", "note": "Below 4.0 threshold" },
-    { "factor": "Main Image", "current": "N/A", "status": "needs_check", "note": "Cannot scrape" }
+    { "factor": "Reviews", "current": "24", "action": "Vine 项目 + 售后邮件促评", "impact": "low" },
+    { "factor": "Rating", "current": "3.9", "action": "检查差评原因，针对性优化", "impact": "medium" },
+    { "factor": "Main Image", "current": "N/A", "action": "人工检查：白底主图 + 功能标注", "impact": "info" }
   ],
   "summary": "24 reviews (low), 3.9 rating (below 4.0)"
 }
 ```
 - `issues[].factor`: 评估因素名
 - `issues[].current`: 当前值
-- `issues[].status`: `ok` / `low` / `below_4` / `above_avg` / `needs_check`
-- `issues[].note`: 说明
+- `issues[].action`: 建议（**不是 note**）
+- `issues[].impact`: 影响级别 `ok` / `low` / `medium` / `high` / `info`
 
 #### step14.json — 行动计划
 ```json
