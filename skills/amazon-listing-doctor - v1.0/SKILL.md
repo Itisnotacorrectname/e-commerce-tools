@@ -558,15 +558,28 @@ report_gen.js 读取 checkpoints 目录下的所有 JSON 文件生成完整 HTML
 ```json
 {
   "violations": [
-    { "id": "V1", "severity": "high", "type": "无依据最高级", "description": "...", "fix": "..." }
+    {
+      "id": "V1",
+      "severity": "high",
+      "rule": "无依据最高级",
+      "matched": "#1 Rated",
+      "explanation": "未经独立验证的最高级表述，有下架风险"
+    }
   ],
   "implicit": [
-    { "id": "V10", "severity": "medium", "type": "User Intent Coverage", "description": "...", "fix": "..." }
+    {
+      "id": "V10",
+      "severity": "medium",
+      "rule": "User Intent Coverage",
+      "matched": "Bullet 2: 'any size people'",
+      "explanation": "Q2 回答不直接，Cosmo 3/5。需加具体座椅尺寸。"
+    }
   ]
 }
 ```
 - `violations`: 显性违规数组（V1-V8），可为空
 - `implicit`: 隐性违规数组（V9-V18），可为空
+- **字段名必须是 `rule`（不是 type）、`matched`、`explanation`（不是 description）**
 
 #### step13.json — Listing Weight
 ```json
