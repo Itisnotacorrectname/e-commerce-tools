@@ -72,7 +72,17 @@ scrapeCompetitorSearch(coreProduct, marketplace, {
   var fallbackTermsUsed = [];
 
   // ── Fallback：主搜索结果不足时用备选词补充 ────────────────
-  if (allCompetitors.length < 10 && (foundPhrases.length > 0 || categoryFallback)) {
+  // 同时：当 cascade 返回了结果但质量极差时，也强制走 category fallback
+  var needsQualityFallback = (allCompetitors.length >= 10) &&
+    (allCompetitors.filter(function(c) {
+      if (!c.title) return false;
+      var t = c.title.toLowerCase();
+      // 如果竞品标题不含任何 coreProduct 的核心词，认为是脏数据
+      var coreWords = (coreProduct || '').split(/\s+/).filter(function(w) { return w.length > 3; });
+      return !coreWords.some(function(w) { return t.includes(w); });
+    }).length / allCompetitors.length > 0.6);
+
+  if ((allCompetitors.length < 10 || needsQualityFallback) && (foundPhrases.length > 0 || categoryFallback)) {
     // Extract category-based fallback term first (most reliable: Amazon's own taxonomy)
     var catTerm = '';
     if (categoryFallback) {
@@ -91,6 +101,17 @@ scrapeCompetitorSearch(coreProduct, marketplace, {
     // Prepend category term (higher priority than title-derived terms)
     if (catTerm && fallbackTerms.indexOf(catTerm) === -1) {
       fallbackTerms.unshift(catTerm);
+    }
+
+    if (needsQualityFallback) {
+      console.error('Quality check: ' +
+        Math.round((allCompetitors.filter(function(c) {
+          if (!c.title) return false;
+          var t = c.title.toLowerCase();
+          var coreWords = (coreProduct || '').split(/\s+/).filter(function(w) { return w.length > 3; });
+          return !coreWords.some(function(w) { return t.includes(w); });
+        }).length / allCompetitors.length) * 100) +
+        '% competitors missing coreProduct keywords — forcing category fallback');
     }
 
     console.error('Fallback triggered: main search found ' + allCompetitors.length +
