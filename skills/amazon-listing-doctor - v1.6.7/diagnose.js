@@ -170,62 +170,33 @@ async function step3(s2) {
     catCombined = (prevModifiers[prevModifiers.length - 1] || '') + ' ' + catLast;
   }
 
-  // 从 title 提取2词短语和3词短语，排除品牌词和 stopwords
+  // 从 title 提取2词短语，排除品牌词和 stopwords
   var STOPWORDS = new Set([
     'the','and','for','with','from','this','that','is','are',
     'to','in','on','of','a','an','by','or','as','at',
     'new','use','best','top','more','most','only','easy','free','fast','safe',
-    'large','small','mini','max','plus','pro','prime','extra','ultra','super',
-    'black','white','grey','gray','brown','beige','pink','blue','green','red'
-  ]);
-  // 产品类型词：最常见的家具/家居产品后缀
-  var PRODUCT_TYPE_WORDS = new Set([
-    'bag','tote','box','case','carrier','container','cooler',
-    'chair','recliner','sofa','couch','sectional','loveseat','ottoman','bench','stool','seat',
-    'table','desk','shelf','cabinet','console','stand','rack',
-    'bed','mattress','pillow','cushion','cover','pad',
-    'lamp','light','chandelier','sconce',
-    'mirror','frame','canvas','poster','art','clock',
-    'basket','bin','bucket','jar','pot','vase','planter',
-    'bag','backpack','purse','wallet','pouch','tote','clutch','briefcase','laptop'
+    'large','small','mini','max','plus','pro','prime','extra','ultra','super'
   ]);
   // 品牌词集合（含多词品牌）
   var brandWords = new Set(brand.split(/\s+/).filter(function(w) { return w.length > 1; }));
   var words = title.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(function(w) {
     return w.length > 1 && !/^\d+$/.test(w) && !STOPWORDS.has(w) && !brandWords.has(w);
   });
-
-  // 提取 trigrams（3词产品类型短语）
-  var trigrams = [];
-  for (var j = 0; j < words.length - 2; j++) {
-    var tri = words[j] + ' ' + words[j + 1] + ' ' + words[j + 2];
-    var triWords = tri.split(' ');
-    if (!brandWords.has(triWords[0]) && !brandWords.has(triWords[1]) && !brandWords.has(triWords[2])) {
-      // 必须包含至少一个 product-type 词
-      if (PRODUCT_TYPE_WORDS.has(triWords[0]) || PRODUCT_TYPE_WORDS.has(triWords[1]) || PRODUCT_TYPE_WORDS.has(triWords[2])) {
-        trigrams.push(tri);
-      }
-    }
-  }
-
-  // 提取 bigrams（2词产品类型短语）
   var bigrams = [];
   for (var i = 0; i < words.length - 1; i++) {
-    if (!STOPWORDS.has(words[i]) && !STOPWORDS.has(words[i + 1]) &&
-        !brandWords.has(words[i]) && !brandWords.has(words[i + 1])) {
-      // 必须包含 product-type 词
-      if (PRODUCT_TYPE_WORDS.has(words[i]) || PRODUCT_TYPE_WORDS.has(words[i + 1])) {
-        bigrams.push(words[i] + ' ' + words[i + 1]);
-      }
+    if (!STOPWORDS.has(words[i]) && !STOPWORDS.has(words[i+1]) &&
+        !brandWords.has(words[i]) && !brandWords.has(words[i+1])) {
+      bigrams.push(words[i] + ' ' + words[i + 1]);
     }
   }
 
-  // 优先级：3词产品类型短语 > 2词产品类型短语 > category 组合 > 其他 bigrams
-  var coreProduct = trigrams[0] || bigrams[0] || catCombined || words[0] || '';
-
-  // 如果组合词太长（>3词），降级
+  // 优先级：category 组合 > 2词短语 > title word
+  // category 组合（如 "patio dining set"）比 bigram（如 "dining set"）更精确
+  var coreProduct = catCombined || bigrams[0] || words[0] || '';
+  
+  // 如果组合词太长（>3词），降级用 bigram
   if (coreProduct.split(' ').length > 3) {
-    coreProduct = trigrams[0] || bigrams[0] || catLast || words[0] || '';
+    coreProduct = bigrams[0] || catLast || words[0] || '';
   }
 
   // ── category 词与 title 交叉验证 ──────────────────────────
@@ -353,47 +324,13 @@ async function step4(s1, s2, s3) {
                   'Original quality score: ' + (quality * 100).toFixed(0) + '%');
 
               if (quality >= 0.4) {
-                // ── v1.6.6: 原始竞品质量OK：回退到宽松过滤（基于cascade搜索词）──
-                var searchTerms = [];
-                if (result.cascadeRounds) {
-                  result.cascadeRounds.forEach(function(r) {
-                    if (r.keyword) searchTerms.push(r.keyword.toLowerCase());
-                  });
-                }
-                if (result.fallbackTermsUsed) {
-                  result.fallbackTermsUsed.forEach(function(t) {
-                    if (t && searchTerms.indexOf(t.toLowerCase()) === -1) searchTerms.push(t.toLowerCase());
-                  });
-                }
-                if (searchTerms.length > 0) {
-                  var SEARCH_STOPWORDS = new Set(['for','and','the','with','from','this','that','is','are','to','in','on','of','a','an','by']);
-                  var searchWords = [];
-                  searchTerms.forEach(function(term) {
-                    term.split(/\s+/).forEach(function(w) {
-                      if (w.length > 2 && !SEARCH_STOPWORDS.has(w)) searchWords.push(w);
-                    });
-                  });
-                  searchWords = searchWords.filter(function(w, i, arr) { return arr.indexOf(w) === i; });
-                  var looseFiltered = result.competitors.filter(function(c) {
-                    if (!c.title) return false;
-                    var t = c.title.toLowerCase();
-                    return searchWords.some(function(w) { return t.indexOf(w) !== -1; });
-                  });
-                  var kept = looseFiltered.length;
-                  log('  [step4] Reverting filter with loose mode: kept ' + kept + '/' + result.competitors.length + ' (matched: ' + searchTerms.slice(0, 4).join(', ') + ')');
-                  result.filteredCompetitors = looseFiltered;
-                  result.filteredCompetitorCount = kept;
-                  result.filterApplied = true;
-                  result.filterReverted = true;
-                  result.filterDecision = 'reverted-loose: ' + kept + ' competitors (quality ' + (quality * 100).toFixed(0) + '%)';
-                } else {
-                  log('  [step4] Original competitors look relevant — reverting filter');
-                  result.filteredCompetitors = result.competitors;
-                  result.filteredCompetitorCount = result.competitors.length;
-                  result.filterApplied = false;
-                  result.filterReverted = true;
-                  result.filterDecision = 'reverted: original quality ' + (quality * 100).toFixed(0) + '%';
-                }
+                // ── 原始竞品质量OK：直接回退 ──────────────────────
+                log('  [step4] Original competitors look relevant — reverting filter');
+                result.filteredCompetitors    = result.competitors;
+                result.filteredCompetitorCount = result.competitors.length;
+                result.filterApplied  = false;
+                result.filterReverted = true;
+                result.filterDecision = 'reverted: original quality ' + (quality * 100).toFixed(0) + '%';
 
               } else {
                 // ── 原始竞品质量差：搜索词本身是脏的，尝试重搜 ──────
@@ -560,25 +497,61 @@ async function main() {
   var pkgPath = path.join(CHECKPOINT_DIR, asin, 'data_package.json');
   fs.writeFileSync(pkgPath, JSON.stringify(dataPackage, null, 2), 'utf8');
 
-  // ── v1.6.7: 触发分析层（自动运行 analyze.js）────────────────
-  // data_package.json 写入后，立即调用 analyze.js 执行 step5-14
-  var analyzeScript = path.join(__dirname, 'analyze.js');
-  if (fs.existsSync(analyzeScript)) {
-    console.log('');
-    console.log('→ 正在调用 AI 分析层（step5-14）...');
-    var { execSync } = require('child_process');
-    try {
-      execSync('node "' + analyzeScript + '" ' + asin, { stdio: 'inherit', windowsHide: true });
-    } catch(e) {
-      console.error('→ AI 分析层执行失败（' + e.message + '），报告仅含数据层');
-    }
-  }
-
   // ── 完成输出 ──────────────────────────────────────────────
   console.log('');
   console.log('════════════════════════════════════════');
-  console.log('  ✅ Complete — report ready');
+  console.log('  ✅ Data collection complete');
   console.log('════════════════════════════════════════');
+  console.log('');
+  console.log('产品:    ' + (s2.title || '(no title)').substring(0, 70));
+  console.log('价格:    ' + (s2.price ? '$' + s2.price : 'N/A'));
+  console.log('评分:    ' + (s2.rating || 'N/A') + ' (' + (s2.reviewCount || 0) + ' reviews)');
+  console.log('BSR:     ' + (s2.BSR   || 'N/A'));
+  console.log('品类:    ' + (s2.category || 'N/A'));
+  console.log('竞品数:  ' + s4.totalFound);
+  console.log('');
+  console.log('data_package: ' + pkgPath);
+  console.log('');
+  console.log('→ 下一步：Claude 读取 data_package.json 执行分析（参见 SKILL.md）');
+  var skipAnalysis = process.argv.includes('--no-analyze');
+  if (skipAnalysis) {
+    console.log('→ 生成报告：node report_gen.js ' + asin);
+  } else {
+    console.log('▶ Phase 2: Running analysis layer...');
+    var analyzePath = path.join(SKILL_DIR, 'analyze.js');
+    var child = require('child_process').spawn(
+      process.execPath,
+      [analyzePath, asin],
+      { stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true }
+    );
+    var aStdout = '', aStderr = '';
+    child.stdout.on('data', function(d) { aStdout += d; });
+    child.stderr.on('data', function(d) {
+      var line = d.toString().trim();
+      if (line) console.log('  [analyze] ' + line);
+    });
+    child.on('close', function(code) {
+      if (code === 0) {
+        console.log('');
+        console.log('  ✅ Analysis complete — generating report...');
+        var repChild = require('child_process').spawn(
+          process.execPath,
+          [path.join(SKILL_DIR, 'report_gen.js'), asin],
+          { stdio: ['inherit', 'pipe', 'pipe'], windowsHide: true }
+        );
+        repChild.stdout.pipe(process.stdout);
+        repChild.stderr.pipe(process.stderr);
+        repChild.on('close', function() {});
+      } else {
+        console.log('  ⚠ Analysis exited with code ' + code + ' — checkpoints may be incomplete');
+        console.log('  → 生成报告：node report_gen.js ' + asin);
+      }
+    });
+    child.on('error', function(e) {
+      console.log('  ⚠ Could not spawn analysis: ' + e.message);
+      console.log('  → 手动分析：node analyze.js ' + asin);
+    });
+  }
 }
 
 if (require.main === module) {
