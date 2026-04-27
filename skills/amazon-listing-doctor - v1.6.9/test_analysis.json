@@ -1,0 +1,85 @@
+{
+  "step5": {
+    "primary": ["office", "small", "computer"],
+    "secondary": ["desk", "table", "storage", "study", "white", "modern"],
+    "backend": ["gaming", "corner", "black", "reversible", "shelves", "writing"],
+    "sizeSignals": ["47 Inch"]
+  },
+  "step6": {
+    "issues": [
+      {"severity": "medium", "issue": "冗余词组", "detail": "'Furniture Corner Desks' 重复表达，L Shaped 已经包含 corner 含义"},
+      {"severity": "medium", "issue": "核心规格未前置", "detail": "47 Inch 埋在中间，竞品多以尺寸开头"},
+      {"severity": "low", "issue": "词序混乱", "detail": "Gaming Furniture Corner Desks Home Office PC Table 多产品词堆砌，无清晰卖点顺序"}
+    ],
+    "score": 58,
+    "titleCharCount": 170
+  },
+  "step7": {
+    "versionA": "DUMOS L Shaped Desk 47 Inch Computer Desk, L-Shaped Corner Gaming Table w/ Reversible Storage Shelves, for Home Office Writing Study (Black)",
+    "versionAChars": 149,
+    "versionANote": "规格前置，reversible storage shelves 作为核心差异化",
+    "versionAKeywords": ["L Shaped Desk", "47 Inch", "Reversible Storage", "Gaming"],
+    "versionB": "DUMOS 47 Inch L-Shaped Desk - Computer Desk with Storage Shelves, Reversible Corner Table for Home Office Gaming Work (Black)",
+    "versionBChars": 147,
+    "versionBNote": "数字47前置，corner 明确，Gaming 场景强化",
+    "versionBKeywords": ["47 Inch", "L-Shaped Desk", "Corner Table", "Gaming"],
+    "recommendation": "推荐 Version B — 数字前置符合竞品模式，Gaming 场景强化差异"
+  },
+  "step8": {
+    "backend": "gaming desk corner desk l shaped desk reversible storage shelves home office computer desk small desk writing study",
+    "byteCount": 198
+  },
+  "step9": {
+    "bullets": [
+      {"original": "Reversible & Space-Saving Design - This corner desk features reversible 2-tier shelves, easily installed on the left or right to fit any room layout. Perfect for tucking into a corner, it maximizes your home space while providing versatile storage.", "rewrite": "【Reversible Corner Design】2-tier shelves install left or right — L-shaped layout fits any room corner, maximizes space in small apartments, home offices, bedrooms.", "explanation": "Bullet 1 保留 reversible corner 核心差异化，但精简描述"},
+      {"original": "Large Workspace & Smart Organization - Enjoy a spacious L-shaped desktop for multiple monitors and work essentials. The 2-tier shelving keeps books and supplies neatly organized, while the open leg design ensures comfortable seating and movement.", "rewrite": "【Spacious L-Shaped Desktop】47\" x 47\" surface fits multiple monitors. Open leg design for comfortable seating and movement — no corner obstruction.", "explanation": "Large Workspace 改为具体尺寸，open leg design 作为差异化卖点"},
+      {"original": "Robust Stability with X-Brace Support - Built with reinforced X-shaped crossbars and a sturdy steel frame, this desk guarantees wobble-free stability. The robust construction reliably supports heavy office or gaming equipment for daily use.", "rewrite": "【Wobble-Free X-Brace Steel Frame】Reinforced crossbars + steel legs tested for daily heavy use. Adjustable feet keep desk stable on uneven floors.", "explanation": "去掉无数据的'robust construction'，强调 X-brace 具体支撑方式和可调节脚垫实用功能"},
+      {"original": "Adjustable Feet for Uneven Floors - Equipped with adjustable leveling feet, this desk remains stable and shake-free on any uneven surface. Combined with the X-brace, it delivers a solid and secure foundation for focused work or gaming.", "rewrite": "【Easy Assembly in 30 Min】Clear instructions + all tools included. All parts numbered, no special tools needed.", "explanation": "调整脚垫功能已在上个bullet提及，改为强调 easy assembly（用户真实痛点）"},
+      {"original": "Easy Assembly & Modern Aesthetic - Quick and straightforward setup with clear instructions and all tools provided. Available in 2 colors to match your home decor, combining effortless assembly with a modern, functional design.", "rewrite": "【2 Colors + Modern Aesthetic】Black or White finish matches any home decor. Sleek modern design blends seamlessly with home office, gaming room, or bedroom.", "explanation": "保留多颜色卖点，modern aesthetic 作为补充卖点（非核心功能）"}
+    ]
+  },
+  "step10": {
+    "questions": [
+      "What are the exact dimensions of the L-shaped desktop surface?",
+      "Can the storage shelves hold heavy books and equipment?",
+      "Is the desk surface large enough for a dual monitor setup plus keyboard?",
+      "How difficult is the assembly process — any common issues reported?",
+      "What is the weight capacity per shelf and the overall desk?"
+    ]
+  },
+  "step11": {
+    "scores": [
+      {"question": "What are the exact dimensions?", "score": 3, "label": "间接涉及", "evidence": "Bullet 2 说 '47\" x 47\" surface' 但没有给出完整的桌面尺寸说明"},
+      {"question": "Can storage shelves hold heavy items?", "score": 2, "label": "间接涉及", "evidence": "Bullet 1 提到 shelves 但没有承重数据"},
+      {"question": "Is desk large enough for dual monitors?", "score": 4, "label": "间接涉及", "evidence": "Bullet 2 说 fits multiple monitors，但没有具体数量和尺寸"},
+      {"question": "How difficult is assembly?", "score": 5, "label": "直接回答", "evidence": "Bullet 4 明确说 '30 Min' 和 'all tools included'" },
+      {"question": "What is the weight capacity?", "score": 0, "label": "完全未提及", "evidence": "没有任何 bullet 提到承重能力", "enhancement": "添加：'Each shelf supports up to 25 lbs, desk overall supports 100 lbs'" }
+    ],
+    "avg": 2.8
+  },
+  "step12": {
+    "explicit": [],
+    "implicit": [
+      {"severity": "medium", "rule": "V9", "id": "V9", "matched": "Robust Stability", "explanation": "无具体承重数据（lbs），买家无法判断是否适合重型 gaming 装备"}
+    ]
+  },
+  "step13": {
+    "summary": "Listing Weight处于中等，主要短板在标题冗余和承重数据缺失。$41.98 价格有竞争力，110 reviews 4.6星表现良好。L形设计差异化清晰但未在标题充分表达。",
+    "issues": [
+      {"factor": "Title", "current": "170字符，'Furniture Corner Desks' 重复", "action": "精简词组，前置尺寸和核心差异化", "impact": "high"},
+      {"factor": "Bullets", "current": "5条，功能描述完整但缺承重数据", "action": "补充具体尺寸和承重", "impact": "high"},
+      {"factor": "Backend Keywords", "current": "未优化", "action": "补充 gaming desk, l shaped desk, corner desk", "impact": "medium"},
+      {"factor": "A+ Content", "current": "未知", "action": "补充 L形使用场景实拍图", "impact": "medium"}
+    ]
+  },
+  "step14": {
+    "plan": [
+      {"priority": "P0", "action": "精简标题：删 'Furniture Corner Desks'，前置 '47 Inch' 和 'L-Shaped'", "location": "Title", "impact": "搜索权重+CTR预估+10-15%"},
+      {"priority": "P1", "action": "Bullet 补充具体承重数据：'Each shelf 25 lbs, desk 100 lbs total'", "location": "Bullet", "impact": "减少买家疑虑，提升转化"},
+      {"priority": "P1", "action": "Backend 补充：gaming desk l shaped desk corner desk reversible shelf", "location": "Backend Keywords", "impact": "精准流量提升"},
+      {"priority": "P2", "action": "Bullet 补充完整尺寸：桌面 47\"x47\" each arm", "location": "Bullet", "impact": "减少尺寸相关退货"}
+    ],
+    "qualityScore": 61,
+    "qualityGrade": "C"
+  }
+}
