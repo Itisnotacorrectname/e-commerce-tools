@@ -1,0 +1,20 @@
+沃尔玛（Walmart）Listing 全维度撰写与优化深度规范 (2026版)0. 前言：理解沃尔玛的“属性至上”哲学与亚马逊注重“关键词权重”的逻辑有着本质不同，沃尔玛的搜索算法 Polaris 是一种基于结构化数据（Structured Data）的索引机制。在沃尔玛平台，一个 Listing 的生死由两个核心指标决定：内容质量分（Content Quality Score）与属性填充率（Attribute Fill Rate）。沃尔玛更倾向于像百科全书一样准确、规范的页面。对于开发者而言，您的工具目标不应只是“翻译”文本，而应是“数据清洗与降维映射”。一、 产品标题 (Product Title)：算法的第一抓取位标题是 Polaris 算法建立索引的第一索引源，也是移动端用户点击（CTR）的决策关键。1.1 标准命名公式沃尔玛官方推荐（且算法加权）的固定公式如下：[品牌] + [产品名称] + [型号款式名] + [核心材质特征] + [尺寸容量] + [颜色] + [装箱数]正面示例： Mainstays 12-Inch Metal Platform Bed Frame with Steel Slats, Queen, Black, 1-Pack错误示例： Best Seller Metal Bed Frame Cheap Queen Size Fast Shipping（此类堆砌会被算法直接降权）。1.2 核心限制与逻辑字符限制： 理想长度为 50 – 75 个字符。超过 75 个字符后，权重会迅速递减，且在移动端搜索结果页会被强制截断。格式要求： 使用标题格式（Title Case），即每个单词首字母大写。禁止全大写。禁忌词库： 严禁出现 Best Seller、Free Shipping、Top Rated、Price Match 等促销性质词汇。转写逻辑： AI 必须具备“冗余剔除”能力，将亚马逊 150-200 字符的堆砌式标题，按公式重组为 75 字符内的精简标题。二、 关键特征 (Key Features  Bullet Points)：转化的引擎这是位于价格下方的 3 至 10 个卖点，直接决定了用户的转化率（CVR）。2.1 数量与长度约束数量： 必须提供 3 – 10 条。少于 3 条会导致内容质量分大幅下降。字符数： 每条建议在 80 个字符以内。沃尔玛的界面风格极其简洁，过长的句子会被算法视为垃圾信息。2.2 卖点分布策略（自动化建议）第一点：核心功能。 产品的主要用途。第二点：构造与耐用性。 特别是家具类，强调材质等级。第三点：兼容性规格。 解决“是否适合我”的疑问。后续点： 组装便捷性、维护说明、品牌保修。2.3 禁令：严禁使用 Emoji 或任何自定义符号。严禁在卖点中放入 URL 链接。严禁提及其他零售商（如 Amazon）。三、 产品描述 (Product Description)：SEO 的长尾地阵描述部分是嵌入长尾关键词、提升 SEO 外部权重的最佳场所。3.1 核心参数字数要求： 最低 150 词，建议在 400 - 600 词之间以获取高分。关键词布局： 品牌名、产品全称必须在前 100 个词中自然出现至少 2 次。排版逻辑： 必须使用 HTML 标签进行结构化处理。建议使用 b（加粗标题）和 ulli（列表）。3.2 文案调性采用第三人称叙述（如 This bed frame provides...），避免第一人称（如 We offer...）。强调使用场景（Use Cases），通过具体的应用场景自然植入长尾词。四、 核心属性 (Attributes)：Listing 的“隐形权重”这是沃尔玛区别于亚马逊的最关键特征。 沃尔玛前台左侧的过滤导航栏（Faceted Search）完全基于这些属性。4.1 属性分类与转写要求必填属性 (Required)： 不填无法成功上架（如颜色、尺寸）。推荐属性 (Recommended)： 决定内容质量分的关键。可选属性 (Optional)： 虽然可选，但每多填一个，就多一个从侧边栏搜索漏斗进入的入口。4.2 家具类目深度转写逻辑 (针对您的业务)在处理床架、沙发等产品时，工具必须强制执行以下映射：Assembled Product Dimensions 必须是 L x W x H 格式，单位标准化。Material 必须精确映射（例如：Amazon 描述中若含 High-carbon steel，应映射为沃尔玛枚举值 Steel）。Color Category 必须将亚马逊的多样化颜色映射为沃尔玛的色系（例如：Navy Blue - Blue）。Recommended Location 必须填充（例如：Indoor）。五、 图像与多媒体 (Images & Media)：视觉溢价沃尔玛对图片审核具有极高的“机器敏感度”，主图不合规会直接导致 Listing 被强制下架（Unpublished）。5.1 图像技术规范背景： 主图必须为 纯白背景 (RGB 255, 255, 255)。分辨率： 最小 1000x1000 px，推荐 2000x2000 px（沃尔玛的放大镜功能对高分率有加权）。比例： 11 正方形。占比： 产品需占据画面的 80% 以上。5.2 图像分级主图： 无阴影（或极淡阴影）的产品全貌。场景图： 至少 1 张真实家居场景图（提升点击意欲）。结构细节图： 特别是家具，展示连接处、排骨架。规格图： 带有长、宽、高标注。六、 2026 年特别合规项与敏感词词库在您的 layer1_data 中，必须配置一个动态过滤层。6.1 平台排他性敏感词（必须暴力剔除）Amazon、FBA、Prime、eBay、Target、Marketplace.任何关于“亚马逊物流”的描述（如 Shipped by Amazon）。6.2 营销禁用词Free、Cheap、Affordable、Discount、Money-back guarantee.Best、Highest quality、Number 1（除非能证明有第三方认证且在描述中详细说明）。6.3 包装合规性严禁在图片中包含任何带有亚马逊 Logo 的外包装箱。七、 内容质量分 (Content Quality Score) 提分算法您的转写引擎应以此为“质量验收”标准：维度满分标准转写工具操作点标题 (Title)50-75 字符，含品牌与关键参数。字符数硬截断与语义重组。属性 (Attributes)必填 100%，推荐项  85%。建立深度字段提取 NLP 逻辑。关键特征 (Bullet Points)3 - 10 个，且简洁有力。亚马逊五点描述的摘要化。图片 (Images)4 张以上，含高分辨率场景图。图像元数据校验。描述 (Description) 150 词，且排版结构化。自动注入 HTML 语义化标签。八、 自动化转写工具的 AI 逻辑指令 (Implementation Prompt)若您在 promptsconversion_prompt.txt 中调用 AI，建议使用以下指令集：Markdown### SYSTEM ROLE Walmart Listing Expert (Polaris Algorithm Focused)
+
+1. Title Reformation 
+   - Extract [Brand], [Core Material], [Product Type], [Size].
+   - Assemble [Brand] [Product Type] [Core Material], [Size], [Color].
+   - Constraint Strict 75 characters max.
+   
+2. Key Feature Extraction
+   - Summarize Amazon bullets into 3-5 concise lines.
+   - Max 80 characters per line.
+   - NO Emojis.
+
+3. Attribute Mapping
+   - Locate physical specs (Dimensions, Weight Capacity).
+   - Convert units to standardized US Imperial (in, lbs).
+   - Identify Walmart-compliant Color Categories.
+
+4. Sanitization
+   - REMOVE any mentions of Amazon, Prime, FBA.
+   - REMOVE subjective puffery like The world's best bed.

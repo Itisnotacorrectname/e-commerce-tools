@@ -1,0 +1,54 @@
+{
+  "_comment": "Wayfair Class ID 规则模板 — 请逐行填写，删除不需要的品类",
+  "_version": "1.0.1",
+  "_lastUpdated": "2026-05-03",
+  "_instruction": [
+    "每个 rule 对应一个 Wayfair Class",
+    "classId: 从 Partner Home 确认后填写（数字字符串，如 '49'）",
+    "className: 与 Partner Home 显示一致",
+    "triggerKeywords: Amazon 标题里会出现的品类词（逗号分隔）",
+    "excludeKeywords: 排除其他品类时的关键词",
+    "requiredSpecs: 该 Class 必填的属性字段名（参考规范文档第四节）",
+    "示例类目保留作为参考，完成后删除"
+  ],
+
+  "rules": [
+
+    {
+      "_template": true,
+      "_note": "── 模板 A：请填入你的第一个品类 ──",
+      "classId": "TODO_FILL_IN",
+      "className": "（品类名称，如 Platform Beds）",
+      "triggerKeywords": [""],
+      "excludeKeywords": [],
+      "requiredSpecs": ["weight_capacity", "assembly_required"]
+    },
+
+    {
+      "_template": true,
+      "_note": "── 模板 B：复制此块来添加更多品类 ──",
+      "classId": "TODO_FILL_IN",
+      "className": "（品类名称）",
+      "triggerKeywords": [""],
+      "excludeKeywords": [],
+      "requiredSpecs": []
+    },
+
+    {
+      "_example": true,
+      "_note": "── 参考示例（填写完自己的品类后删除此块）──",
+      "classId": "49",
+      "className": "Platform Beds",
+      "triggerKeywords": ["platform bed", "no box spring", "slat support"],
+      "excludeKeywords": ["adjustable base", "box spring"],
+      "requiredSpecs": ["weight_capacity", "number_of_slats", "headboard_height", "assembly_required", "box_spring_required"]
+    }
+
+  ],
+
+  "fallback": {
+    "className": "General Furniture",
+    "requiredSpecs": ["material", "assembly_required", "weight_capacity"],
+    "note": "当没有匹配到具体 Class 时使用"
+  }
+}

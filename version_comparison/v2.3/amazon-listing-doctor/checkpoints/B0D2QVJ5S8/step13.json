@@ -1,0 +1,40 @@
+{
+  "listingWeight": {
+    "totalScore": 68,
+    "maxPossible": 100,
+    "grade": "C+",
+    "breakdown": {
+      "titleQuality": {
+        "score": 15,
+        "max": 25,
+        "notes": "187 chars (limit 200) — acceptable. Brand at start. Primary keywords present but buried. Size signal unclear. Repeated words."
+      },
+      "bulletQuality": {
+        "score": 20,
+        "max": 30,
+        "notes": "5 bullets, avg 213 chars (recommend ≤200). Bullet 1 verbose at 245 chars. Material and use-case claims are solid. Some overstatement (year-round)."
+      },
+      "keywordCoverage": {
+        "score": 18,
+        "max": 20,
+        "notes": "All 3 primary keywords (couch cover, sofa cover, slipcover) present. Secondary coverage good. Size signals present."
+      },
+      "competitorAlignment": {
+        "score": 10,
+        "max": 15,
+        "notes": "Competitive price ($16.98 vs $22-45 range). Review count (832) is solid. Rating 4.4 is good but not top. No BSR limits comparability."
+      },
+      "complianceRisk": {
+        "score": 5,
+        "max": 10,
+        "notes": "Low risk. Only soft overstatement ('year-round') and ambiguous size description. No critical violations."
+      }
+    },
+    "rankingContext": {
+      "pricePosition": "below median (16.98 vs avg 30-35 for similar covers)",
+      "ratingPosition": "4.4 — good but 4.7-4.9 competitors exist",
+      "reviewVelocity": "832 reviews suggests steady seller but not viral",
+      "listingAgeSignal": "unknown (no review velocity data)"
+    }
+  }
+}

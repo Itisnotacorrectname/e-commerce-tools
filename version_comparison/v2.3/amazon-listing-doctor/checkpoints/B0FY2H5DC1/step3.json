@@ -1,0 +1,35 @@
+{
+  "coreProduct": "sectional sofa",
+  "brand": "MIXPATIO",
+  "sizeSignals": [],
+  "titleBigrams": [
+    {
+      "phrase": "sectional sofa",
+      "score": 2
+    },
+    {
+      "phrase": "shaped sectional",
+      "score": 1
+    },
+    {
+      "phrase": "modular couch",
+      "score": 1
+    },
+    {
+      "phrase": "seat modular",
+      "score": 1
+    },
+    {
+      "phrase": "sofa cloud",
+      "score": 1
+    },
+    {
+      "phrase": "deep seat",
+      "score": 1
+    },
+    {
+      "phrase": "couch set",
+      "score": 1
+    }
+  ]
+}

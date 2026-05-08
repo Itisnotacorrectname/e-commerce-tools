@@ -1,0 +1,37 @@
+{
+  "bullets": [
+    {
+      "original": "[Premium Material & Individual Sale] Sectional couch cover is sold individually, not as a set. Made from high-quality velvet, plush sofa cover offers a cloud-like soft and comfortable feel, enhancing the coziness of your living space.",
+      "rewritten": "[Premium Velvet Material — Sold Individually] High-quality velvet couch cover with cloud-like softness; designed to enhance your living space. (Note: sold as 1 piece, not a set — verify fits your sofa)",
+      "charCount": 245,
+      "factCheck": "MATERIAL: 'high-quality velvet' is plausible for this price point ($16.98). 'cloud-like soft' is descriptive claim, not verifiable. CLAIM: 'plush sofa cover' aligns with material. WARNING: buyer must verify 1-PCS sale model matches their need."
+    },
+    {
+      "original": "[Elegant Design & Versatile Use] The front features a stylish quilted pattern, perfect for loveseat, L-shaped sofas, and recliner. L shape couch cover also serves multiple purposes, such as a baby play mat, bedroom rug, or window seat cushion, making it ideal for both children and pets.",
+      "rewritten": "[Quilted Velvet Design — Fits Loveseat, L-Shaped & Recliner Sofas] Elegant front quilting with multi-use versatility — also works as a baby play mat, bedroom rug, or window seat cushion. Ideal for homes with children and pets.",
+      "charCount": 248,
+      "factCheck": "No specific measurements given for 'L-shaped' compatibility. 'Quilted pattern' is a design claim that can be visually verified from images. Multi-purpose claim (play mat/rug/cushion) is valid use case expansion. No false superlatives detected."
+    },
+    {
+      "original": "[Non-Slip & All-Season Protection] The back is equipped with anti-slip silicone particles to ensure better stability. Anti slip sofa slipcovers is warm yet breathable, suitable for year-round use, and protects your sofa from dirt and scratches throughout the year.",
+      "rewritten": "[Anti-Slip Silicone Back — Year-Round Sofa Protection] Backed with anti-slip silicone particles for stability; warm yet breathable — protects your sofa from dirt, scratches and daily wear year-round.",
+      "charCount": 196,
+      "factCheck": "'Anti-slip silicone particles' is a specific feature claim — plausible at this price point for cover products. 'Warm yet breathable' is a qualitative material claim. 'Year-round use' is an overstatement — no thermal rating given. Acceptable marketing language."
+    },
+    {
+      "original": "[Easy to Install & Clean] The plush material does not shed and retains its color even after machine washing (do not bleach). This ease of maintenance frees your hands from household chores.",
+      "rewritten": "[Easy Install & Machine Washable] Plush material doesn't shed; color stays vibrant wash after wash. Simple installation — no professional help needed. (Do not bleach)",
+      "charCount": 185,
+      "factCheck": "'Plush material does not shed' is a testable claim — plausible for velvet. 'Retains color even after machine washing' is a durability claim, can't verify but plausible for quality velvet. 'Do not bleach' is care instruction, accurate."
+    },
+    {
+      "original": "[Customer Service] Before purchasing, please measure your sofa. If you have any questions about size selection or quality, feel free to contact us. Our dedicated customer service team is ready to assist you, ensuring your satisfaction and peace of mind.",
+      "rewritten": "[Size Guide & Customer Support] Measure your sofa before purchasing — see size chart. Questions about fit or quality? Contact us anytime. We're here to help.",
+      "charCount": 192,
+      "factCheck": "This bullet is informational/customer service. No false claims. 'Measure your sofa' is responsible guidance. No unverifiable superlatives."
+    }
+  ],
+  "totalCharCount": 1066,
+  "avgCharPerBullet": 213,
+  "issues": ["Bullet 1 slightly verbose at 245 chars", "Bullet 3 claim 'year-round' is soft overstatement"]
+}

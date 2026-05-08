@@ -1,0 +1,37 @@
+{
+  "bullets": [
+    {
+      "original": "10 ADJUSTABLE HEIGHTS- The height of the pull up bar station can be adjusted from 65.7\" to 86.6\", achieving the perfect height for your exercises.This feature ensures versatility to meet the needs of users of different heights, making it ideal for individuals or families looking to enhance their strength training.",
+      "rewritten": "[10-Level Height Adjustment: 65.7\"–86.6\"] Adjust the pull up bar station to your perfect workout height — ideal for individuals and families. Versatile enough for any fitness level.",
+      "charCount": 195,
+      "factCheck": "Height range (65.7\" to 86.6\") is verifiable from product specs. '10-level' is consistent with adjustability claim. No unverifiable superlatives."
+    },
+    {
+      "original": "STURDY AND DURABLE- The pull up bar features reinforced steel tubing, making it more durable. The push-up bars are seamlessly integrated into the bottom steel tubing of the pull-up and dip station, improving stability and ensuring safety during workouts.The SogesPower Power Tower remains steady without any wobbling or shaking to ensure a safe and effective workout session.",
+      "rewritten": "[Reinforced Steel Frame — No Wobble] Heavy-duty steel tubing keeps the power tower steady during pull-ups, dips, and chin-ups. Push-up bars integrate seamlessly into the frame for maximum stability and safety.",
+      "charCount": 216,
+      "factCheck": "'Reinforced steel tubing' is a verifiable material claim. 'No wobble' is a performance claim — plausible for steel frame with proper construction. 'Seamlessly integrated' is a design claim."
+    },
+    {
+      "original": "MULTI-FUNCTION POWER TOWER- This dip station for your home gym supports a variety of exercise routines, including pull-ups, dips, chin-ups, push-up, knee raise,leg raises, and tricep dips.It helps you build triceps, chest, arm, back and shoulder muscles along with incredible upper body strength.Suitable for all fitness and strength-building workouts.",
+      "rewritten": "[Full Upper Body Workout Station] Pull-ups, dips, chin-ups, push-ups, knee raises, leg raises — one machine targets triceps, chest, arms, back, and shoulders. Suitable for all fitness levels.",
+      "charCount": 198,
+      "factCheck": "Exercise list (pull-ups, dips, chin-ups, etc.) is verifiable product capability. 'All fitness levels' is a marketing claim — acceptable. No false superlatives."
+    },
+    {
+      "original": "DESIGNED FOR COMFORT- The padded armrests and backrest of the pull up bar stand add an extra level of comfort during exercises like dips, making the workout experience more enjoyable and less strenuous on your joints.The dip bar features 2 levels of armrest adjustment, making it suitable for people with different arm lengths.",
+      "rewritten": "[Padded Armrests + Backrest] Comfort-focused design with padded supports and 2-level armrest adjustment — fits different arm lengths and reduces joint strain during dips.",
+      "charCount": 186,
+      "factCheck": "'Padded armrests and backrest' is verifiable product feature. '2 levels of armrest adjustment' is specific claim. 'Reduces joint strain' is a health-related claim — moderately acceptable as general comfort statement."
+    },
+    {
+      "original": "SPACE-SAVING- Maximize your home gym potential with our pull up bar station. The space-saving design allows you to reclaim valuable floor space, making it an ideal solution for those with limited workout areas. Transform any room into your personal fitness haven without compromising on functionality.",
+      "rewritten": "[Space-Saving Design] Compact footprint fits any room — reclaim floor space while getting a full home gym workout. No compromise on functionality.",
+      "charCount": 156,
+      "factCheck": "'Space-saving' is a design claim. 'Reclaim floor space' is a space efficiency claim. 'No compromise on functionality' is a marketing statement — no specific measurements given."
+    }
+  ],
+  "totalCharCount": 951,
+  "avgCharPerBullet": 190,
+  "issues": ["Bullet 2 slightly over 200 chars at 216", "Bullet 3 verbose, could be tightened"]
+}

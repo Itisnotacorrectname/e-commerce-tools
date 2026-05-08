@@ -1,0 +1,14 @@
+{
+  "qualityScore": 75,
+  "qualityGrade": "B",
+  "plan": [
+    {
+      "priority": "P1",
+      "action": "确认11条5星评论来源",
+      "location": "Bullet区",
+      "impact": "增强社会证明",
+      "execType": "operator"
+    }
+  ],
+  "pendingData": []
+}

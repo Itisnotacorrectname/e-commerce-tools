@@ -1,0 +1,100 @@
+{
+  "batch_ts": "20260430_180320",
+  "input_file": "输入数据_20260430_180320.xlsx",
+  "output_file": "输出报告_20260430_180320.xlsx",
+  "sku_count": 8,
+  "order_sku_count": 8,
+  "total_allocated": 5020,
+  "container_count": 9,
+  "avg_utilization": 90.3,
+  "low_util_count": 1,
+  "warning_count": 9,
+  "warehouses": [
+    "CHI"
+  ],
+  "container_summary": [
+    {
+      "id": "C001",
+      "warehouse": "CHI",
+      "utilization": 100.0,
+      "used_vol": 66.0,
+      "sku_count": 4,
+      "is_low": false
+    },
+    {
+      "id": "C002",
+      "warehouse": "CHI",
+      "utilization": 100.0,
+      "used_vol": 65.999,
+      "sku_count": 2,
+      "is_low": false
+    },
+    {
+      "id": "C003",
+      "warehouse": "CHI",
+      "utilization": 100.0,
+      "used_vol": 65.999,
+      "sku_count": 2,
+      "is_low": false
+    },
+    {
+      "id": "C004",
+      "warehouse": "CHI",
+      "utilization": 100.0,
+      "used_vol": 65.993,
+      "sku_count": 3,
+      "is_low": false
+    },
+    {
+      "id": "C005",
+      "warehouse": "CHI",
+      "utilization": 100.0,
+      "used_vol": 65.981,
+      "sku_count": 3,
+      "is_low": false
+    },
+    {
+      "id": "C006",
+      "warehouse": "CHI",
+      "utilization": 100.0,
+      "used_vol": 65.979,
+      "sku_count": 4,
+      "is_low": false
+    },
+    {
+      "id": "C007",
+      "warehouse": "CHI",
+      "utilization": 100.0,
+      "used_vol": 65.973,
+      "sku_count": 2,
+      "is_low": false
+    },
+    {
+      "id": "C008",
+      "warehouse": "CHI",
+      "utilization": 99.9,
+      "used_vol": 65.964,
+      "sku_count": 2,
+      "is_low": false
+    },
+    {
+      "id": "C009",
+      "warehouse": "CHI",
+      "utilization": 12.9,
+      "used_vol": 8.544,
+      "sku_count": 1,
+      "is_low": true
+    }
+  ],
+  "warnings": [
+    "SKU 20FJGS-YCTC104 目标比例之和=0.230，不等于1，已自动归一化",
+    "SKU 20FJGS-TC106-1 目标比例之和=0.230，不等于1，已自动归一化",
+    "SKU 20FJGS-TC106-2 目标比例之和=0.230，不等于1，已自动归一化",
+    "SKU 20FJGS-TC107 目标比例之和=0.230，不等于1，已自动归一化",
+    "SKU 20FJGS-YCTC103XL 目标比例之和=0.230，不等于1，已自动归一化",
+    "SKU 20FJGS-YCTC103XL-WT 目标比例之和=0.230，不等于1，已自动归一化",
+    "SKU 20FJGS-YCTC103-WT 目标比例之和=0.230，不等于1，已自动归一化",
+    "SKU 20ZZJR-LOFT-T 目标比例之和=0.230，不等于1，已自动归一化",
+    "✅ 全局低利用率集装箱：1个（C009，仓库=CHI，利用率=12.9%）—— 满足约束"
+  ]
+}

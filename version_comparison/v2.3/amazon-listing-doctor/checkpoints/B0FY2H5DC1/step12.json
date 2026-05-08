@@ -1,0 +1,38 @@
+{
+  "violations": [],
+  "implicit": [
+    {
+      "id": "V10",
+      "severity": "medium",
+      "rule": "User Intent覆盖不足",
+      "matched": "Cosmo评分全部3分，未拿到5分",
+      "explanation": "Pet/dog场景（Q3）完全空缺",
+      "description": "Pet/dog场景（Q3）完全空缺"
+    },
+    {
+      "id": "V11",
+      "severity": "medium",
+      "rule": "差异化不足",
+      "matched": "5条bullet缺少真正区分标的差异化声明",
+      "explanation": "'cloud cushions'和'removable arms'是实际差异点但表述不够强烈",
+      "description": "'cloud cushions'和'removable arms'是实际差异点但表述不够强烈"
+    },
+    {
+      "id": "V14",
+      "severity": "medium",
+      "rule": "权威性缺失",
+      "matched": "无认证/测试标准/技术参数引用",
+      "explanation": "海绵无密度/CertiPUR-US认证,木框架无承重规格",
+      "description": "海绵无密度/CertiPUR-US认证,木框架无承重规格"
+    },
+    {
+      "id": "V16",
+      "severity": "low",
+      "rule": "使用时机暗示缺失",
+      "matched": "无季节性/礼物场景暗示",
+      "explanation": "在搬家和换季场景可增加紧迫感",
+      "description": "在搬家和换季场景可增加紧迫感"
+    }
+  ],
+  "explicit": []
+}

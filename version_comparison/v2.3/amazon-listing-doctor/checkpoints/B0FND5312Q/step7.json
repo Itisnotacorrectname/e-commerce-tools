@@ -1,0 +1,20 @@
+{
+  "versionA": {
+    "title": "SogesPower Pull Up Bar Station, 10-Level Adjustable Height Power Tower Dip Bar for Home Gym Strength Training (65.7\"-86.6\")",
+    "chars": 172,
+    "primaryCovered": ["pull up bar", "power tower", "dip station"],
+    "note": "Maximum keyword coverage — all primary terms + adjustable height range"
+  },
+  "versionB": {
+    "title": "SogesPower Multi-Function Power Tower — Pull Up Bar + Dip Station Combo, Adjustable 65.7\"-86.6\", Home Gym Strength Training",
+    "chars": 161,
+    "primaryCovered": ["pull up bar", "power tower", "dip station"],
+    "note": "High CTR — separates product combo from key differentiator (adjustable range)"
+  },
+  "versionC": {
+    "title": "SogesPower Pull Up Bar Station 10-Level Adjustable Dip Bar Home Gym",
+    "chars": 98,
+    "primaryCovered": ["pull up bar", "dip station"],
+    "note": "Mobile-first ≤100 chars — brand + product + key feature"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "scores": [
+    {
+      "question": "这个inch shaped sectional适合什么使用场景？",
+      "score": 5,
+      "label": "Directly Addresses",
+      "evidence": "Bullet 1 覆盖此意图"
+    },
+    {
+      "question": "相比竞品有什么独特优势？",
+      "score": 5,
+      "label": "Directly Addresses",
+      "evidence": "Bullet 2 覆盖此意图"
+    },
+    {
+      "question": "尺寸规格是否适合我的空间？",
+      "score": 5,
+      "label": "Directly Addresses",
+      "evidence": "Bullet 3 覆盖此意图"
+    }
+  ],
+  "averageScore": 5
+}

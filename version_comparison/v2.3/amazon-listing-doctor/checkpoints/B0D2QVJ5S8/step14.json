@@ -1,0 +1,47 @@
+{
+  "priorityActions": [
+    {
+      "action": "Title Restructure — Lead with Size + Primary Keyword",
+      "priority": "P0",
+      "impact": "high",
+      "description": "Current title leads with 'Velvet Couch Cover' but size (71\"x118\") is hidden in parenthetical. Rearrange to: [Brand] + [Product] + [Size] + [Key Benefit] + [Material]. Competitors show size in title prominently.",
+      "effort": "low",
+      "expectedLift": "+5-10% CTR from mobile search results"
+    },
+    {
+      "action": "Bullet 1 Compression — Remove 1-PCS Sales Model Confusion",
+      "priority": "P1",
+      "impact": "medium",
+      "description": "Bullet 1 currently explains 'sold individually, not as a set' in the middle of a benefit paragraph. Move this to a separate sentence at the end OR remove if it creates confusion. Compress to ≤200 chars.",
+      "effort": "low",
+      "expectedLift": "+2-3% conversion from clearer expectations"
+    },
+    {
+      "action": "Add RV/Camper Compatibility Mention",
+      "priority": "P2",
+      "impact": "medium",
+      "description": "Competitors (RV Dinette Cushion Covers) serve the RV/camper niche with high-margin products. Target listing doesn't mention RV compatibility at all despite fitting certain RV sofa dimensions. A bullet or A+ mention could unlock this segment.",
+      "effort": "medium",
+      "expectedLift": "Tap underserved high-margin niche"
+    },
+    {
+      "action": "Bullet 3 — Remove 'Year-Round' Overstatement",
+      "priority": "P2",
+      "impact": "low",
+      "description": "'Suitable for year-round use' has no thermal data to support. Remove or change to 'suitable for all seasons'. Low risk but removes a potential compliance flag.",
+      "effort": "minimal",
+      "expectedLift": "Minor compliance risk reduction"
+    },
+    {
+      "action": "Add 'Sofa Makeover' Positioning for Budget Decorators",
+      "priority": "P3",
+      "impact": "medium",
+      "description": "Bullet 1 or new A+ content should explicitly frame this as a 'sofa transformation' — budget-friendly alternative to buying new furniture. Budget decorators search for 'sofa refresh', 'couch makeover' terms.",
+      "effort": "medium",
+      "expectedLift": "+3-5% relevance for budget decoration intent segment"
+    }
+  ],
+  "summary": "Top 3 actions that deliver most impact for least effort: (1) Title restructure with size prominent, (2) Bullet 1 compression, (3) RV niche mention. These three alone address the major gaps identified in Cosmo scoring and keyword audit.",
+  "phase2Complete": true,
+  "analysisTimestamp": "2026-05-06T09:16:00Z"
+}

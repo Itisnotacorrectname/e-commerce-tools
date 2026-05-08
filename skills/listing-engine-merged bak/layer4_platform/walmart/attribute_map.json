@@ -1,0 +1,40 @@
+{
+  "_comment": "Walmart attribute mapping — source A",
+  "_version": "1.0.0",
+  "color": {
+    "black": "Black", "matte black": "Black", "jet black": "Black",
+    "white": "White", "off-white": "White", "ivory": "White", "cream": "White",
+    "grey": "Gray", "gray": "Gray", "dark gray": "Gray", "charcoal": "Gray",
+    "brown": "Brown", "espresso": "Brown", "chocolate": "Brown", "walnut": "Brown",
+    "beige": "Beige", "tan": "Beige", "sand": "Beige",
+    "oak": "Natural", "natural": "Natural",
+    "navy": "Blue", "navy blue": "Blue", "teal": "Blue", "blue": "Blue",
+    "green": "Green", "olive": "Green",
+    "red": "Red", "wine": "Red", "burgundy": "Red",
+    "gold": "Gold", "brass": "Gold", "bronze": "Gold",
+    "silver": "Silver", "chrome": "Silver"
+  },
+  "material": {
+    "steel": "Steel", "metal": "Steel",
+    "iron": "Iron",
+    "aluminum": "Aluminum",
+    "wood": "Wood", "solid wood": "Solid Wood",
+    "mdf": "MDF", "engineered wood": "Engineered Wood", "particleboard": "Particleboard",
+    "fabric": "Fabric", "polyester": "Fabric", "microfiber": "Fabric",
+    "velvet": "Velvet",
+    "leather": "Leather", "faux leather": "Faux Leather",
+    "foam": "Foam", "memory foam": "Memory Foam",
+    "plastic": "Plastic", "abs": "ABS Plastic",
+    "glass": "Glass", "tempered glass": "Glass"
+  },
+  "size": {
+    "twin": "Twin", "twin xl": "Twin XL", "full": "Full", "queen": "Queen",
+    "king": "King", "cal king": "California King",
+    "small": "Small", "medium": "Medium", "large": "Large", "xl": "X-Large"
+  },
+  "roomType": {
+    "bedroom": "Bedroom", "living room": "Living Room", "office": "Home Office",
+    "home office": "Home Office", "dining room": "Dining Room", "kitchen": "Kitchen",
+    "outdoor": "Outdoor"
+  }
+}

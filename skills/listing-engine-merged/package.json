@@ -1,0 +1,16 @@
+{
+  "name": "listing-engine-merged",
+  "version": "2.0.0",
+  "description": "Merged Listing Engine v2 — Amazon Listing Rewrite + Walmart/Wayfair multi-platform",
+  "main": "index.js",
+  "engines": { "node": ">=18.0.0" },
+  "scripts": {
+    "test": "node smoke_test.js",
+    "diagnose": "node index.js diagnose",
+    "generate": "node index.js generate",
+    "transform": "node index.js transform"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.12"
+  }
+}

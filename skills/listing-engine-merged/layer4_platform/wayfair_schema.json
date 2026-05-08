@@ -1,0 +1,14 @@
+{
+  "title": {
+    "max_length": 150
+  },
+  "features": {
+    "max_items": 10
+  },
+  "specs": [
+    "dimensions",
+    "weight",
+    "material",
+    "assembly_required"
+  ]
+}

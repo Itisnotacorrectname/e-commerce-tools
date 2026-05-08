@@ -1,0 +1,17 @@
+{
+  "backendKeywords": [
+    "velvet sofa cover sectional couch slipcover",
+    "chenille jacquard furniture protector cover",
+    "non slip silicone grip sofa cover washable",
+    "pet friendly dog scratch resistant couch cover",
+    "3 cushion couch cover L shaped sectional fit",
+    "armrest backrest cover recliner protector",
+    "stretch elastic sofa seat cushion cover",
+    "machine washable velvet couch cover easy care",
+    "anti slip bottom sofa blanket furniture care",
+    "plush fuzzy sofa cover warm breathable all season"
+  ],
+  "excluded": ["MDSASFD", "brand", "only 1 pcs"],
+  "charCount": 462,
+  "note": "All backend terms exclude brand and generic stopwords. Non-competitor unique terms (armrest cover, recliner protector) added as target listing differentiators."
+}

@@ -1,0 +1,40 @@
+{
+  "listingWeight": {
+    "totalScore": 62,
+    "maxPossible": 100,
+    "grade": "C+",
+    "breakdown": {
+      "titleQuality": {
+        "score": 14,
+        "max": 25,
+        "notes": "180 chars (limit 200) — within limit. Brand at start. Primary keywords all present. '10-Level Adjustable' vague without range. 'Multi-Function' repeated."
+      },
+      "bulletQuality": {
+        "score": 18,
+        "max": 30,
+        "notes": "5 bullets, avg 190 chars. Good feature coverage. Missing weight capacity is critical gap. Bullet 2 slightly over 200 chars."
+      },
+      "keywordCoverage": {
+        "score": 16,
+        "max": 20,
+        "notes": "All 3 primary keywords in title. Secondary coverage good. Size signals (65.7\"-86.6\", 10-Level) present in title. Missing 'weight capacity' keyword."
+      },
+      "competitorAlignment": {
+        "score": 9,
+        "max": 15,
+        "notes": "Price $135.99 is mid-range. 21 reviews at 3.8 stars is below average for category. No BSR limits comparability. Low review count hurts conversion."
+      },
+      "complianceRisk": {
+        "score": 5,
+        "max": 10,
+        "notes": "Medium risk — missing weight capacity is functional gap. No promotional violations. No false claims detected."
+      }
+    },
+    "rankingContext": {
+      "pricePosition": "mid-range (competitors range $89-$299)",
+      "ratingPosition": "3.8 — below category average (typically 4.3+)",
+      "reviewVelocity": "21 reviews suggests low velocity — listing may be new or slow-selling",
+      "listingAgeSignal": "low review count at $135 suggests newer listing"
+    }
+  }
+}

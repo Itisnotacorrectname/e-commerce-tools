@@ -1,0 +1,49 @@
+{
+  "bullets": [
+    {
+      "original": "High-resilience soft foam with a reinforced support frame forms a deep, contoured seat that follows the natural curves of your back. Even with daily use, it maintains its shape, reducing muscle pressure. The extra-wide seat width and 24.4\" depth, combined with double-layer thickened seat cushions, ensure ample space for relaxed seating. Each seat comes with a lumbar pillow for added lower-back support",
+      "rewrite": "[优化] High-resilience soft foam with a reinforced support frame forms a deep, contoured seat that follows the natural curves of your back. Even with daily use, it maintains its shape, reducing muscle pressu",
+      "explain": "改写优化（来源：step2 bullet 1）",
+      "factCheck": {
+        "passed": true,
+        "claims": []
+      }
+    },
+    {
+      "original": "The fabric features a smooth texture that’s gentle on the skin for year-round comfort. Its fade-resistant, scratch-proof surface is easy to wipe clean, keeping the sofa looking fresh with minimal effort",
+      "rewrite": "[优化] The fabric features a smooth texture that’s gentle on the skin for year-round comfort. Its fade-resistant, scratch-proof surface is easy to wipe clean, keeping the sofa looking fresh with minimal effo",
+      "explain": "改写优化（来源：step2 bullet 2）",
+      "factCheck": {
+        "passed": true,
+        "claims": []
+      }
+    },
+    {
+      "original": "Sleek, minimalist lines and muted tones make it easy to fit into living rooms, offices, or lounges, enhancing the aesthetic of any space. Hidden functional elements keep the design clean and uncluttered, balancing style and practicality",
+      "rewrite": "[优化] Sleek, minimalist lines and muted tones make it easy to fit into living rooms, offices, or lounges, enhancing the aesthetic of any space. Hidden functional elements keep the design clean and unclutter",
+      "explain": "改写优化（来源：step2 bullet 3）",
+      "factCheck": {
+        "passed": true,
+        "claims": []
+      }
+    },
+    {
+      "original": "The solid wood frame offers robust support while remaining lightweight for easy moving. The 4.33-inch-tall legs are equipped with scratch-proof, silent feet to protect your floors, and their elevated design allows robot vacuums to clean underneath effortlessly. Wide armrest pillows on both sides provide a comfortable spot to rest your arms, blending support with relaxation",
+      "rewrite": "[优化] The solid wood frame offers robust support while remaining lightweight for easy moving. The 4.33-inch-tall legs are equipped with scratch-proof, silent feet to protect your floors, and their elevated ",
+      "explain": "改写优化（来源：step2 bullet 4）",
+      "factCheck": {
+        "passed": true,
+        "claims": []
+      }
+    },
+    {
+      "original": "No need for troublesome installation with tools, and the compact independent modules allow flexible placement. If you are not satisfied with the sofa you received, please feel free to contact our customer service team at any time. We will provide you with satisfactory customer service.",
+      "rewrite": "[优化] No need for troublesome installation with tools, and the compact independent modules allow flexible placement. If you are not satisfied with the sofa you received, please feel free to contact our cust",
+      "explain": "改写优化（来源：step2 bullet 5）",
+      "factCheck": {
+        "passed": true,
+        "claims": []
+      }
+    }
+  ]
+}

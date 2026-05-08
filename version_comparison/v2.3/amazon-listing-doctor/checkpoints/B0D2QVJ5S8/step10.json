@@ -1,0 +1,39 @@
+{
+  "intents": [
+    {
+      "intent": "pet owners protecting sofa from dogs/cats",
+      "searchPhrases": ["couch cover for dogs washable", "pet friendly sofa cover slipcover", "dog scratch resistant sofa cover", "cat proof couch cover"],
+      "priority": "high",
+      "alignment": "Target listing prominently features 'pet friendly' in title and bullets — strong match for this intent. Price $16.98 is competitive vs. $22-45 range for pet-focused covers."
+    },
+    {
+      "intent": "furniture refresh / decorating on budget",
+      "searchPhrases": ["velvet couch cover", " sectional sofa cover upgrade", "couch slipcover living room makeover", "affordable sofa furniture cover"],
+      "priority": "high",
+      "alignment": "'Velvet' material claim and 'elegant design' bullet appeals to decoration seekers. $16.98 is budget-friendly vs. replacing a sofa. Good match."
+    },
+    {
+      "intent": "parents with young children",
+      "searchPhrases": ["couch cover washable for kids", "sectional sofa cover family friendly", "couch protector baby proof", "spill proof sofa cover"],
+      "priority": "medium",
+      "alignment": "'Ideal for children and pets' in bullet 2 directly addresses this intent. 'Easy to Install & Clean' bullet addresses parent convenience. Good coverage."
+    },
+    {
+      "intent": "RV / camper owners needing custom cushion covers",
+      "searchPhrases": ["RV dinette cushion cover", "camper sofa cushion slipcover", "RV couch cushion replacement cover", "trailer seat cushion cover"],
+      "priority": "medium",
+      "alignment": "Some competitors (RV Dinette Cushion Covers) serve this niche. Target listing does not mention RV/camper compatibility — this is a MISSED OPPORTUNITY as RV covers are high-margin specialty items. Recommend adding RV compatibility mention."
+    },
+    {
+      "intent": "seasonal / holiday decoration",
+      "searchPhrases": ["Christmas sofa cover", "holiday couch slipcover", "seasonal furniture cover reversible"],
+      "priority": "low",
+      "alignment": "Competitors like EVENHUG target seasonal buyers. Target listing has no seasonal/holiday positioning. Lower priority but viable for promotion."
+    }
+  ],
+  "missedOpportunities": [
+    "RV/camper compatibility — NOT mentioned in any bullet. Competitors serve this niche prominently (RV Dinette Cushion Covers)",
+    "Exact fit dimensions prominently in title — competitors show '71\"x118\"' in title; target hides this in parenthetical",
+    "Reversible/vacation property use case — not mentioned; competitors target Airbnb/vacation rental hosts"
+  ]
+}

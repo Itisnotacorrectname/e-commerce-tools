@@ -1,0 +1,47 @@
+{
+  "priorityActions": [
+    {
+      "action": "Add Weight Capacity to Bullet 2 — CRITICAL",
+      "priority": "P0",
+      "impact": "high",
+      "description": "Fitness equipment buyers MUST know weight capacity for safety. Current bullet 2 says 'reinforced steel tubing' and 'steady without wobble' but no lbs. Add 'Supports up to 300 lbs' or actual tested capacity.",
+      "effort": "minimal",
+      "expectedLift": "+5-10% conversion for durability-conscious fitness buyers"
+    },
+    {
+      "action": "Title Restructure — Lead with Adjustable Range",
+      "priority": "P1",
+      "impact": "high",
+      "description": "Current title: 'SogesPower Multi-Function Power Tower Pull Up Bar Station...' — height range buried. Restructure to lead with the adjustable range (65.7\"-86.6\") prominently. Also remove 'Multi-Function' repetition.",
+      "effort": "low",
+      "expectedLift": "+3-5% CTR from search results with height-focused title"
+    },
+    {
+      "action": "Add Assembly/Ease-of-Setup Bullet",
+      "priority": "P1",
+      "impact": "medium",
+      "description": "Cosmo Score 0 on assembly question — buyers actively search for this info. Add bullet: 'Freestanding — No Wall Mount Required. Sets up in minutes with anti-scratch floor protectors.'",
+      "effort": "minimal",
+      "expectedLift": "+2-3% conversion by removing buyer uncertainty about installation"
+    },
+    {
+      "action": "Add Warranty Claim for Premium Price",
+      "priority": "P2",
+      "impact": "medium",
+      "description": "At $135.99, buyers expect warranty coverage. Add to bullet 2 or new bullet: '[1-Year Warranty] Backed by SogesPower quality guarantee.'",
+      "effort": "minimal",
+      "expectedLift": "+1-2% conversion by reducing perceived purchase risk"
+    },
+    {
+      "action": "Fix Rating Gap — Encourage Reviews",
+      "priority": "P2",
+      "impact": "medium",
+      "description": "3.8 stars at 21 reviews is below category average. At this price point, buyers look for social proof. A small discount on a 'verified purchase' review campaign could help.",
+      "effort": "medium",
+      "expectedLift": "+5-10% conversion with rating improvement from 3.8 to 4.3"
+    }
+  ],
+  "summary": "Top 3 actions: (1) Add weight capacity to Bullet 2 — highest impact, (2) Restructure title with height range, (3) Add assembly/ease bullet to fill Cosmo gap. These three address the critical quality gaps identified.",
+  "phase2Complete": true,
+  "analysisTimestamp": "2026-05-06T10:29:00Z"
+}

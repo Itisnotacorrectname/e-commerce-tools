@@ -1,0 +1,15 @@
+{
+  "coreProduct": "bar stand",
+  "brand": "SogesPower",
+  "sizeSignals": [],
+  "titleBigrams": [
+    {
+      "phrase": "bar stand",
+      "score": 1
+    },
+    {
+      "phrase": "stand dip",
+      "score": 1
+    }
+  ]
+}

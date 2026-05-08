@@ -1,0 +1,70 @@
+{
+  "primary": [
+    {
+      "keyword": "couch",
+      "freq": "74/60",
+      "note": "primary"
+    },
+    {
+      "keyword": "sofa",
+      "freq": "64/60",
+      "note": "primary"
+    },
+    {
+      "keyword": "cover",
+      "freq": "47/60",
+      "note": "primary"
+    },
+    {
+      "keyword": "sectional",
+      "freq": "41/60",
+      "note": "primary"
+    },
+    {
+      "keyword": "shape",
+      "freq": "27/60",
+      "note": "primary"
+    }
+  ],
+  "secondary": [
+    {
+      "keyword": "cushion",
+      "freq": "25/60",
+      "note": "secondary"
+    },
+    {
+      "keyword": "chaise",
+      "freq": "18/60",
+      "note": "secondary"
+    },
+    {
+      "keyword": "washable",
+      "freq": "16/60",
+      "note": "secondary"
+    },
+    {
+      "keyword": "pet",
+      "freq": "13/60",
+      "note": "secondary"
+    },
+    {
+      "keyword": "dogs",
+      "freq": "13/60",
+      "note": "secondary"
+    },
+    {
+      "keyword": "slipcover",
+      "freq": "12/60",
+      "note": "secondary"
+    }
+  ],
+  "backend": [
+    "slip soft furniture protector beige throw blanket stretch slipcovers shaped seat leftright chenille pets pack inch body"
+  ],
+  "sizeSignals": [
+    "87 inch",
+    "24.4 inch depth",
+    "4.33 inch legs"
+  ],
+  "competitorCount": 60
+}

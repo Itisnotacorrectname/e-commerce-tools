@@ -1,0 +1,27 @@
+{
+  "scores": [
+    {
+      "question": "...modular pieces small enough for narrow doorways...",
+      "score": 3,
+      "label": "Implicitly Addresses",
+      "evidence": "Bullet 5: 'compact independent modules'",
+      "enhancement": "建议Bullet 5增加通过30英寸doorway具体描述"
+    },
+    {
+      "question": "...taupe chenille against sunlight fading...",
+      "score": 3,
+      "label": "Implicitly Addresses",
+      "evidence": "Bullet 2: 'fade-resistant'",
+      "enhancement": "建议Bullet 2增加UV抗褪色具体场景"
+    },
+    {
+      "question": "...pet resilience, bounce back from jumping...",
+      "score": 3,
+      "label": "Implicitly Addresses",
+      "evidence": "Bullet 1: 'maintains shape'",
+      "enhancement": "建议Bullet 1增加宠物弹性恢复描述"
+    }
+  ],
+  "averageScore": 3,
+  "avg": 3
+}

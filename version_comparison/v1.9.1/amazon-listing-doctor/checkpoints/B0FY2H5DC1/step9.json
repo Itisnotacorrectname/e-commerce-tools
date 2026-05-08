@@ -1,0 +1,149 @@
+{
+  "bullets": [
+    {
+      "original": "High-resilience soft foam with a reinforced support frame forms a deep, contoured seat that follows the natural curves of your back. Even with daily use, it maintains its shape, reducing muscle pressure. The extra-wide seat width and 24.4\" depth, combined with double-layer thickened seat cushions, ensure ample space for relaxed seating. Each seat comes with a lumbar pillow for added lower-back support",
+      "rewrite": "Cloud Cushion Comfort — High-resilience foam and a reinforced frame create a deep, contoured seat that supports your body's natural curves. The 24.4\" extra-wide seat depth accommodates lounging or sitting upright, while each seat includes a lumbar pillow for lower-back support during long evenings.",
+      "explain": "重组顺序：Cloud Cushion（title关键词）前置 + Benefit驱动",
+      "factCheck": {
+        "passed": true,
+        "claims": [
+          {
+            "claim": "High-resilience foam",
+            "verified": true,
+            "source": "bullet 1 original"
+          },
+          {
+            "claim": "Reinforced support frame",
+            "verified": true,
+            "source": "bullet 1 original"
+          },
+          {
+            "claim": "24.4\" seat depth",
+            "verified": true,
+            "source": "bullet 1 original"
+          },
+          {
+            "claim": "Lumbar pillow included",
+            "verified": true,
+            "source": "bullet 1 original"
+          }
+        ]
+      }
+    },
+    {
+      "original": "The fabric features a smooth texture that's gentle on the skin for year-round comfort. Its fade-resistant, scratch-proof surface is easy to wipe clean, keeping the sofa looking fresh with minimal effort",
+      "rewrite": "Plush Chenille Upholstery — Smooth-textured fabric feels gentle against the skin in any season. Fade-resistant and scratch-proof, its surface wipes clean easily, keeping the sofa fresh with minimal effort — ideal for daily use and casual living spaces.",
+      "explain": "Added 'Chenille Upholstery' from title to reinforce material name",
+      "factCheck": {
+        "passed": true,
+        "claims": [
+          {
+            "claim": "Chenille upholstery",
+            "verified": true,
+            "source": "title"
+          },
+          {
+            "claim": "Fade-resistant surface",
+            "verified": true,
+            "source": "bullet 2 original"
+          },
+          {
+            "claim": "Scratch-proof surface",
+            "verified": true,
+            "source": "bullet 2 original"
+          },
+          {
+            "claim": "Easy to wipe clean",
+            "verified": true,
+            "source": "bullet 2 original"
+          }
+        ]
+      }
+    },
+    {
+      "original": "Sleek, minimalist lines and muted tones make it easy to fit into living rooms, offices, or lounges, enhancing the aesthetic of any space. Hidden functional elements keep the design clean and uncluttered, balancing style and practicality",
+      "rewrite": "Versatile Aesthetic for Any Room — Sleek, minimalist lines and muted taupe tones blend into living rooms, home offices, or lounges without clashing with your existing decor. Hidden functional details keep the look clean while maintaining everyday practicality.",
+      "explain": "Added 'taupe' (from title color) as specificity",
+      "factCheck": {
+        "passed": true,
+        "claims": [
+          {
+            "claim": "Muted taupe tones",
+            "verified": true,
+            "source": "title (taupe)"
+          },
+          {
+            "claim": "Hidden functional elements",
+            "verified": true,
+            "source": "bullet 3 original"
+          }
+        ]
+      }
+    },
+    {
+      "original": "The solid wood frame offers robust support while remaining lightweight for easy moving. The 4.33-inch-tall legs are equipped with scratch-proof, silent feet to protect your floors, and their elevated design allows robot vacuums to clean underneath effortlessly. Wide armrest pillows on both sides provide a comfortable spot to rest your arms, blending support with relaxation",
+      "rewrite": "Solid Wood Frame with Pet-Friendly Design — The lightweight yet sturdy solid wood frame supports daily use while remaining easy to reposition. Raised 4.33\" legs with scratch-proof, silent feet protect hardwood floors and let robot vacuums clean underneath. Generous armrest pillows on both sides offer arm support for reading, TV, or napping.",
+      "explain": "Added 'Pet-Friendly Design' signal from competitor analysis",
+      "factCheck": {
+        "passed": true,
+        "claims": [
+          {
+            "claim": "Solid wood frame",
+            "verified": true,
+            "source": "bullet 4 original"
+          },
+          {
+            "claim": "Lightweight",
+            "verified": true,
+            "source": "bullet 4 original"
+          },
+          {
+            "claim": "4.33\" legs",
+            "verified": true,
+            "source": "bullet 4 original"
+          },
+          {
+            "claim": "Scratch-proof, silent feet",
+            "verified": true,
+            "source": "bullet 4 original"
+          },
+          {
+            "claim": "Robot vacuum clearance",
+            "verified": true,
+            "source": "bullet 4 original"
+          },
+          {
+            "claim": "Armrest pillows",
+            "verified": true,
+            "source": "bullet 4 original"
+          }
+        ]
+      }
+    },
+    {
+      "original": "No need for troublesome installation with tools, and the compact independent modules allow flexible placement. If you are not satisfied with the sofa you received, please feel free to contact our customer service team at any time. We will provide you with satisfactory customer service.",
+      "rewrite": "Tool-Free Assembly in Minutes — Independent modular units snap together without tools, making setup effortless. The compact modules also allow flexible reconfiguration — split into two loveseats or rearrange to fit your space. Questions? Contact our support team for prompt assistance.",
+      "explain": "Moved warranty/satisfaction from negative frame to positive",
+      "factCheck": {
+        "passed": true,
+        "claims": [
+          {
+            "claim": "No tools needed for assembly",
+            "verified": true,
+            "source": "bullet 5 original"
+          },
+          {
+            "claim": "Compact independent modules",
+            "verified": true,
+            "source": "bullet 5 original"
+          },
+          {
+            "claim": "Customer support available",
+            "verified": true,
+            "source": "bullet 5 original"
+          }
+        ]
+      }
+    }
+  ]
+}

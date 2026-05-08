@@ -1,0 +1,58 @@
+{
+  "_comment": "Walmart platform hard constraints — source: Walmart Listing 规范 2026版",
+
+  "title": {
+    "maxChars": 75,
+    "idealRange": [50, 75],
+    "format": "Title Case",
+    "formula": "[Brand] [Product Type] [Material], [Size], [Color]",
+    "noAllCaps": true
+  },
+
+  "keyFeatures": {
+    "min": 3,
+    "max": 10,
+    "maxCharsPerItem": 80,
+    "noEmoji": true,
+    "noUrls": true,
+    "noCompetitorMentions": true
+  },
+
+  "description": {
+    "minWords": 150,
+    "idealWords": [400, 600],
+    "requiresHtml": true,
+    "allowedTags": ["b", "ul", "li", "p"],
+    "person": "third",
+    "brandMentionInFirst100Words": 2
+  },
+
+  "forbiddenWords": [
+    "Amazon", "FBA", "Prime", "eBay", "Target", "Marketplace",
+    "Shipped by Amazon", "Fulfilled by Amazon",
+    "Free", "Cheap", "Affordable", "Discount", "Money-back guarantee",
+    "Best Seller", "Best", "Highest quality", "Number 1", "#1",
+    "Free Shipping", "Top Rated", "Price Match",
+    "Limited time", "Sale", "Today only"
+  ],
+
+  "forbiddenPatterns": [
+    "\\bAmazon\\b",
+    "\\bPrime\\b",
+    "\\bFBA\\b",
+    "free shipping",
+    "best seller",
+    "\\#1\\b",
+    "price match"
+  ],
+
+  "images": {
+    "mainBackground": "white",
+    "minResolution": 1000,
+    "recommendedResolution": 2000,
+    "aspectRatio": "1:1",
+    "productCoverageMin": 0.80,
+    "noTextOverlay": false,
+    "noLogo": false
+  }
+}

@@ -1,0 +1,477 @@
+{
+  "meta": {
+    "asin": "B0FY2H5DC1",
+    "marketplace": "US",
+    "domain": "amazon.com",
+    "url": "https://www.amazon.com/dp/B0FY2H5DC1",
+    "scrapedAt": "2026-05-06T04:09:00.132Z"
+  },
+  "product": {
+    "title": "87-Inch L Shaped Sectional Sofa with Cloud Cushions, Deep Seat Modular Couch Set w/ 3 Seats & 1 Ottomans, Removable Arms, Plush Chenille Upholstery for Living Room, Apartment - Taupe",
+    "brand": "MIXPATIO",
+    "bullets": [
+      "High-resilience soft foam with a reinforced support frame forms a deep, contoured seat that follows the natural curves of your back. Even with daily use, it maintains its shape, reducing muscle pressure. The extra-wide seat width and 24.4\" depth, combined with double-layer thickened seat cushions, ensure ample space for relaxed seating. Each seat comes with a lumbar pillow for added lower-back support",
+      "The fabric features a smooth texture that’s gentle on the skin for year-round comfort. Its fade-resistant, scratch-proof surface is easy to wipe clean, keeping the sofa looking fresh with minimal effort",
+      "Sleek, minimalist lines and muted tones make it easy to fit into living rooms, offices, or lounges, enhancing the aesthetic of any space. Hidden functional elements keep the design clean and uncluttered, balancing style and practicality",
+      "The solid wood frame offers robust support while remaining lightweight for easy moving. The 4.33-inch-tall legs are equipped with scratch-proof, silent feet to protect your floors, and their elevated design allows robot vacuums to clean underneath effortlessly. Wide armrest pillows on both sides provide a comfortable spot to rest your arms, blending support with relaxation",
+      "No need for troublesome installation with tools, and the compact independent modules allow flexible placement. If you are not satisfied with the sofa you received, please feel free to contact our customer service team at any time. We will provide you with satisfactory customer service."
+    ],
+    "price": 499.99,
+    "rating": "4.5 out of 5 stars",
+    "reviewCount": 43,
+    "BSR": null,
+    "category": "Home & Kitchen > Furniture > Living Room Furniture > Sofas & Couches",
+    "scrapeError": null
+  },
+  "keywords": {
+    "coreProduct": "inch shaped sectional",
+    "sizeSignals": [],
+    "titleBigrams": [
+      "shaped sectional",
+      "sectional sofa",
+      "sofa cloud",
+      "deep seat",
+      "seat modular",
+      "modular couch",
+      "couch set"
+    ]
+  },
+  "competitors": {
+    "items": [
+      {
+        "asin": "B0G2RLB366",
+        "title": "Sofa Covers for 3 Cushion Couch, Non Slip Couch Covers Pet Friendly Washable Couch Covers for Sofa, Soft Thick Sectional Couch Cover L Shape Sofa Furniture Protector for Kids Dogs Cat Pet, 27.6\"x82.7\"",
+        "price": "$44.99",
+        "rating": "4.7 out of 5 stars",
+        "reviews": "(37)"
+      },
+      {
+        "asin": "B0FJ871QBT",
+        "title": "130 Sheets Christmas Tissue Paper, Christmas Gift Wrapping Paper Sheets 19.6 x 13.7 Inch,5 Festive Designs (Red,Green,White,Stripe,Xmas Tree) for Gift Bags, Xmas Presents,DIY Crafts & Party Decoration",
+        "price": "$8.99",
+        "rating": "4.9 out of 5 stars",
+        "reviews": "(147)"
+      },
+      {
+        "asin": "B0DT11YM7K",
+        "title": "STACYPIK Thick Soft Beige Couch Cover Dogs Jacquard Sofa Cover for 3 Cushion Couch Tassels, Modern L-Shape Couch Cover for Sectional, Pet Sofa Slipcover Multi-use Throw Blanket Pet-Friendly-91X150IN",
+        "price": "$29.99",
+        "rating": "4.4 out of 5 stars",
+        "reviews": "(330)"
+      },
+      {
+        "asin": "B0F2612VFR",
+        "title": "HDCAXKJ Corner Sectional Couch Covers Velvet Stretch L Shape Sofa Cover Soft Thick Sectional Slipcovers Set U Shaped Living Room Non Slip Magic Furniture Protector for Pet Dogs (Dark Gray, X-Large)",
+        "price": "$106.38",
+        "rating": "3.8 out of 5 stars",
+        "reviews": "(82)"
+      },
+      {
+        "asin": "B0BGLX5R4H",
+        "title": "Bold & Divine American Flag Design Urn - Mini Heart Cremation Urn with Stand & Premium Box - Small Keepsake Urn for Ashes - Honor Your Loved One with Urn Heart Shaped - Perfect for Adults & Infants",
+        "price": "$17.00",
+        "rating": "4.9 out of 5 stars",
+        "reviews": "(462)"
+      },
+      {
+        "asin": "B0CY2VXZZN",
+        "title": "H.VERSAILTEX Velvet Stretch Sectional Couch Covers 4 Pieces Sofa Seat Cushion Covers L Shape Separate Cushion Couch Chaise Cover for Both Left/Right Couch (Large Sofa 3 Seater + 1 Chaise, Oatmeal)",
+        "price": "$56.95",
+        "rating": "4.6 out of 5 stars",
+        "reviews": "(6.8K)"
+      },
+      {
+        "asin": "B0FHCZ16LJ",
+        "title": "VANJOROY Grey Oversized Couch Sofa Cover for 3-4 Cushion Sectional Sofa L-Shape -Washable Chenille Couch Cover for Dogs Pets, Boho Couch Cover Protector Soft Sofa Slipcovers with Tassel,91\"x 150\"",
+        "price": "$75.99",
+        "rating": "4.8 out of 5 stars",
+        "reviews": "(38)"
+      },
+      {
+        "asin": "B0DNPZR2DK",
+        "title": "VClife Boho Couch Cover Washable Sectional Sofa Cover, Pet Couch Cover for Loveseat Versatile Coffee Black Geometry Sofa Throw Cover for L-Shape Sofa - Anti Slip Couch Sofa Cover for Dog 71\"x118\"",
+        "price": "$20.04",
+        "rating": "4.6 out of 5 stars",
+        "reviews": "(248)"
+      },
+      {
+        "asin": "B0C2KDTJPQ",
+        "title": "MYSKY HOME Khaki Sectional Sofa Covers Chenille Couch Cover for Dogs Solid Sofa Cover for 3 Cushion Couch Washable Couch Covers with Tassel Edge L Shape Sofa Throw Large Sofa Slipcover, 91\" X134\"",
+        "price": "$49.99",
+        "rating": "4.4 out of 5 stars",
+        "reviews": "(1.4K)"
+      },
+      {
+        "asin": "B0D38SNGYW",
+        "title": "MYSKY HOME Sectional Couch Cover Khaki Geometric Rhombic Sofa Covers for Sectional Sofa L Shape Chenille Couch Protector for Dogs Pets Couch Throw Cover Washable Durable for Home Decor, 71\" X118\"",
+        "price": "$35.99",
+        "rating": "4.4 out of 5 stars",
+        "reviews": "(532)"
+      },
+      {
+        "asin": "B0C1FXSHLP",
+        "title": "VClife Boho Couch Covers for Sofa Aztec Geometric Patterned Couch Slipcover for Dog, Non Slip Washable Sectional Sofa Cover for 2 Cushion Couch Heavy Duty Furniture Slip Covers, Beige, 71''x118''",
+        "price": "$35.69",
+        "rating": "4.3 out of 5 stars",
+        "reviews": "(1.6K)"
+      },
+      {
+        "asin": "B0BRN8SFVQ",
+        "title": "NICETOWN Blackout Moon Stars Kids Curtains for Girls Bedroom Aesthetic Decor Colorful Cute Double Layer Stripe Rainbow Window Wall Home Decoration Curtain, 2 Panels, W52 x L84 Inches, Pink & Grey",
+        "price": "$37.46",
+        "rating": "4.9 out of 5 stars",
+        "reviews": "(2.2K)"
+      },
+      {
+        "asin": "B07TSNSBG8",
+        "title": "VClife Blue Couch Cover Chenille Sofa Cover Pet Sofa Throw Cover for 2 Cushion Couch Navy Throw Couch Cover Flower Lace Sofa Cover for Sectional L Shape Non-Slip Sofa Slip Cover for Dog 71\"X118\"",
+        "price": "$35.37",
+        "rating": "4.3 out of 5 stars",
+        "reviews": "(76)"
+      },
+      {
+        "asin": "B0FJXDDQ8J",
+        "title": "Couch Cover Pack of 2, L Shaped Sectional Sofa Covers Washable, Velvet Fuzzy Sofa Slipcovers for 3 Cushion Couch cover, Non-Slip Furniture Protector for Dog Pet White, 36x63+36x83 Inch (2 Pcs)",
+        "price": "$39.99",
+        "rating": "4.1 out of 5 stars",
+        "reviews": "(85)"
+      },
+      {
+        "asin": "B0FJX87RJC",
+        "title": "Couch Cover for Dogs, Boho Sofa Covers for 3 Cushion Couch, Chenille Sofa Slipcover for Pets Washable, L-Shape Sectional Loveseat Cover Soft Throw Blankets with Tassels(71x118,Striped Beige)",
+        "price": "$39.99",
+        "rating": "4.6 out of 5 stars",
+        "reviews": "(227)"
+      },
+      {
+        "asin": "B0F9YLK9Q9",
+        "title": "MYSKY HOME Couch Cover for Dogs, Sectional Couch Cover, Beige Lines Sofa Covers for Sectional Sofa L Shape Chenille Couch Protector for Dogs Pets Couch Covers Washable Soft Throw, 71\" X118\"",
+        "price": "$32.39",
+        "rating": "4.3 out of 5 stars",
+        "reviews": "(1.5K)"
+      },
+      {
+        "asin": "B0G6K2BSJS",
+        "title": "Sectional Couch Covers 2 Pieces, L Shaped Sofa Cover for Sectional Washable, Pet Couch Covers for Sectional Sofa, Blanket Furniture Protector (XX-Large: 78\" x 118\" + 78\" x 118\", Off White)",
+        "price": "$56.99",
+        "rating": "4.4 out of 5 stars",
+        "reviews": "(23)"
+      },
+      {
+        "asin": "B0G2RKDH5L",
+        "title": "Waterproof Couch Covers for 3 Cushion Couch, Non Slip Cat-Scratch Resistant Sofa Couch Covers for Dogs, L Shape Sectional Protectors Slipcovers, Furniture Covers for Pets, 91\" x 118\", Grey",
+        "price": "$59.99",
+        "rating": "4.2 out of 5 stars",
+        "reviews": "(51)"
+      },
+      {
+        "asin": "B0D186FBYL",
+        "title": "Heavy Duty Black Wall Mount Hand Rails for Outdoor Steps, U-Shaped Outdoor Stair Railing for Garage, Front Porch, Garden Steps, Safety Grab Bars for Pregnant, Elderly, Seniors or Handicaps",
+        "price": "$32.99",
+        "rating": "4.9 out of 5 stars",
+        "reviews": "(107)"
+      },
+      {
+        "asin": "B0B1LHL58N",
+        "title": "FUNHOME Outdoor Bench Cushion 45 x18 x3 Inch,Waterproof Portable Settee Cushion,Foam Insert with Handle&Ties,Bench Seat Pads for Garden Patio Porch Swing Backyard Furniture(Blue Geometry)",
+        "price": "$45.99",
+        "rating": "4.9 out of 5 stars",
+        "reviews": "(116)"
+      },
+      {
+        "asin": "B0F4QKKGFQ",
+        "title": "TAOCOCO 100% Waterproof Oversized Sofa Seat Covers Reversible Couch Cover for Dogs Pets Sofa Cover for Chaise Sectional Sofas U Shape Sofa Slipcovers 30×90 Inches(Oversized Sofa, Black)",
+        "price": "$27.99",
+        "rating": "4.2 out of 5 stars",
+        "reviews": "(432)"
+      },
+      {
+        "asin": "B0G2SHCWHJ",
+        "title": "Sectional Couch Covers 2 Pieces with Herringbone Pattern, Washable L Shaped Couch Cover Blanket for Sectional Sofa, Sofa Protector Slipcovers, XX-Large: 71\"x118\"+71\"x118\", Grass Green",
+        "price": "$82.99",
+        "rating": "4.4 out of 5 stars",
+        "reviews": "(38)"
+      },
+      {
+        "asin": "B0C57YM9N2",
+        "title": "Sectional Couch Covers Sofa Seat/Chaise Cushion Slipcover L Shape Sofa Cushion Cover for Loveseat Sofa and Both Left/Right Sectional Couch Thick Jacquard (3 Seater + 1 Chaise,Black)",
+        "price": "$34.88",
+        "rating": "4.7 out of 5 stars",
+        "reviews": "(33)"
+      },
+      {
+        "asin": "B0F23XFX8F",
+        "title": "Tape Measure Soft Measuring Tape for Body Fabric Sewing Tailor Cloth Knitting Measurements,2 Pack 60 Inch/150 cm Soft Fashion Double Scales Rulers for Body Weight (Rose Red & White)",
+        "price": "$3.99",
+        "rating": "4.9 out of 5 stars",
+        "reviews": "(111)"
+      },
+      {
+        "asin": "B0BTVQ2YXC",
+        "title": "Easy-Going Stretch 4 Pieces Couch Cushion Covers for Sectional Sofa Left/Right L Shape Chaise Lounge Sofa Seat slipcover Anti-Slip Sofa Cover Soft (3 Seater + 1 Chaise, Dark Gray)",
+        "price": "$49.99",
+        "rating": "4.5 out of 5 stars",
+        "reviews": "(10.6K)"
+      },
+      {
+        "asin": "B0BYJ6X9BF",
+        "title": "Eismodra Couch Covers for 3 Cushion Couch Sofa Magic Stretch Sofa Slipcover for Dogs Pet L Shape 2 Seat Replacement Furniture Protector,Dark Gray Length 65-78 inches(Only 1 Piece)",
+        "price": "$23.19",
+        "rating": "4.2 out of 5 stars",
+        "reviews": "(564)"
+      },
+      {
+        "asin": "B0CDNTC6QK",
+        "title": "LukieJac Sister Gifts from Sister - Unique Sister Birthday Acrylic Puzzle-Shaped Plaque Desk Decorations Present for Big Sister Mothers Day Christmas Wedding from Sister Brother",
+        "price": "$12.99",
+        "rating": "4.9 out of 5 stars",
+        "reviews": "(1.9K)"
+      },
+      {
+        "asin": "B0DCFFM44V",
+        "title": "-3 Inch (76mm) Brass Knurled Kitchen Cabinet Handles, 5 Pack Antique Brass Vanity Dresser Drawer Puls, Modern Bathroom Cabinet Furniture Handles Wardrobe Furniture Door Hardware",
+        "price": "$33.99",
+        "rating": "5.0 out of 5 stars",
+        "reviews": "(45)"
+      },
+      {
+        "asin": "B0BZH3P5DX",
+        "title": "Maroon General Purpose Scuff Pads, Scuffing, Scouring Pad, Sanding, Paint Primer Prep Scratch - Surface Preparation Pad Car Auto Body Woodworking 7447-Premium, 5 Inches*15 Feet",
+        "price": "$19.99",
+        "rating": "4.9 out of 5 stars",
+        "reviews": "(242)"
+      },
+      {
+        "asin": "B0D2B84LNM",
+        "title": "Boho Style Webbing 1.5 inch -6 Yards Jacquard Webbing Beige Black Diamond Shape Patterns-1 1/2 inch Nylon Webbing for Crafts Pet Collars Leash Tent Bag Purse Making Supplies",
+        "price": "$14.99",
+        "rating": "4.9 out of 5 stars",
+        "reviews": "(294)"
+      },
+      {
+        "asin": "B0B7HRDNM9",
+        "title": "PrinceDeco Sectional Couch Covers 4 Pieces Velvet Separate Couch Cushion Covers L Shape for Left/Right Chaise Sectional Couch with Elastic Bottom (3 Seater + 1 Chaise,Grey)",
+        "price": "$55.95",
+        "rating": "4.6 out of 5 stars",
+        "reviews": "(3K)"
+      },
+      {
+        "asin": "B0C5VFGDNT",
+        "title": "ADPON Sectional Couch Covers Sofa Chaise/Seat Cushion Slipcover L Shape Separate Cushion Couch Chaise Cover for Both Left/Right Sectional Couch (1 Chaise Lounge,Storm Blue)",
+        "price": "$19.88",
+        "rating": "4.3 out of 5 stars",
+        "reviews": "(17)"
+      },
+      {
+        "asin": "B0C5VKR2X2",
+        "title": "ADPON Velvet Sectional Couch Covers Sofa Chaise/Seat Cushion Slipcover L Shape Separate Cushion Couch Chaise Cover for Both Left/Right Sectional Couch (Chaise Lounge,Navy)",
+        "price": "$20.88",
+        "rating": "4.6 out of 5 stars",
+        "reviews": "(33)"
+      },
+      {
+        "asin": "B0DDKRJGGP",
+        "title": "Couch Cushion Covers, Washable Stretch Stripe Sofa Covers for 1 Cushion Couch L Shape Sectional Sofa Slipcovers Furniture Protector for Dog(Back Couch Cover, Light Gray)",
+        "price": "$15.20",
+        "rating": "4.2 out of 5 stars",
+        "reviews": "(298)"
+      },
+      {
+        "asin": "B0CRDL6B27",
+        "title": "H.VERSAILTEX Fleece Sectional Couch Covers L Shape Stretch Couch Cushion Covers Thick and Soft Sofa Covers for Sectional Sofa Set Washable (2 Seater + 1 Chaise, Taupe)",
+        "price": "$48.95",
+        "rating": "3.9 out of 5 stars",
+        "reviews": "(174)"
+      },
+      {
+        "asin": "B0C84FB3F7",
+        "title": "Cruising Rubber Duck Tags, Duck Ducking Game Card, 35 Pack, Suitcase Shape Design Cruise Duck Tags, with Hole and Rubber Bands,Cruise Duck Tags for Cruise Ship (Blue)",
+        "price": "$7.99",
+        "rating": "4.9 out of 5 stars",
+        "reviews": "(253)"
+      },
+      {
+        "asin": "B0BXNW66S1",
+        "title": "H.VERSAILTEX Sectional Couch Covers 1 Piece Chaise Slipcover L Shape Separate Cushion Couch Cover for Both Left/Right Sectional Couch (Seat Only: 1 Chaises, Ivory)",
+        "price": "$29.99",
+        "rating": "4.4 out of 5 stars",
+        "reviews": "(1.8K)"
+      },
+      {
+        "asin": "B0DT76KDFR",
+        "title": "RAQWI Cute Pig Figurine Eating Cake on Heart-Shaped Sofa, Mini Resin Piglet Statue for Easter Spring Home Office Desk Decor, Sweet Gift for Girls Women Pig Lovers",
+        "price": "$5.99",
+        "rating": "4.9 out of 5 stars",
+        "reviews": "(189)"
+      },
+      {
+        "asin": "B0CMCRJJX8",
+        "title": "Valentines Day Wreath Decor,14 Inches Artificial Red Pink Berries and Small Pink Hearts,Valentines Wreaths for Front Door Home Indoor,Wedding Anniversary Party",
+        "price": "$23.99",
+        "rating": "4.9 out of 5 stars",
+        "reviews": "(134)"
+      },
+      {
+        "asin": "B0BXNJ9MJ1",
+        "title": "6Pcs Easter Bunny Decorations, Wooden Rabbit Egg Shaped Tabletop Centerpieces Table Signs with Rope Farmhouse Spring Easter Decor for Home Office Dining Room",
+        "price": "$9.99",
+        "rating": "5.0 out of 5 stars",
+        "reviews": "(51)"
+      },
+      {
+        "asin": "B09MV2ZYLD",
+        "title": "Nomnu Coffin Coffee Bar Mat For Countertop - Goth Kitchen Halloween Decor - Gothic Coffee Bar Accessories 17x11\" Inch Non Slip Spill Bar Mat - Spooky Gifts",
+        "price": "$32.97",
+        "rating": "4.9 out of 5 stars",
+        "reviews": "(364)"
+      },
+      {
+        "asin": "B0F1YGFSM5",
+        "title": "Tiawudi Heart Shaped Cake Pans, Large Baking Pan for Lovely Cakes, Nonstick Baking Molds, 9 Inch Cake Tins for Wedding, Birthday, Party & Family, Set of 2",
+        "price": "$16.99",
+        "rating": "4.9 out of 5 stars",
+        "reviews": "(112)"
+      },
+      {
+        "asin": "B0F8HSGX9S",
+        "title": "Vorspack Travel Makeup Bag - 3 Pack Travel Toiletry Bag for Women Clear Cosmetic Bag Makeup Organizer Zipper Pouch for Travel Essentials Storage - Beige",
+        "price": "$13.99",
+        "rating": "4.9 out of 5 stars",
+        "reviews": "(106)"
+      },
+      {
+        "asin": "B0FP4NKYJ5",
+        "title": "Glass Dropper Bottles, Clear, 1 oz Capacity, Leak-Proof, Cylindrical Shape with Glass Eye Dropper, 12 Pack for Essential Oils, Tinctures, Aromatherapy",
+        "price": "$13.29",
+        "rating": "5.0 out of 5 stars",
+        "reviews": "(48)"
+      },
+      {
+        "asin": "B0D16W8FMZ",
+        "title": "Baby Security Blanket, Soft Baby Lovey Toy Blanket for Boys and Girls, Snuggle Toy Lovie Newborn Gift, Unisex Nursery Bed Blankets Green Duck16 Inch",
+        "price": "$13.99",
+        "rating": "4.9 out of 5 stars",
+        "reviews": "(1.1K)"
+      },
+      {
+        "asin": "B082HLL8NG",
+        "title": "Easy-Going L Shape Sofa Slipcover - Sectional Couch Cover with Chaise Lounge & Reversible Sofa Cover Protection for Pets & Kids (Large, Gray/Gray)",
+        "price": "$75.99",
+        "rating": "4.0 out of 5 stars",
+        "reviews": "(18.8K)"
+      },
+      {
+        "asin": "B09HN3GQZY",
+        "title": "G.I. Joe Classified Series Spirit Iron-Knife Action Figure 36 Collectible Premium Toy, Multiple Accessories 6-Inch-Scale, Custom Package Art",
+        "price": "$27.50",
+        "rating": "4.9 out of 5 stars",
+        "reviews": "(2.6K)"
+      },
+      {
+        "asin": "B0FWBR1V78",
+        "title": "Sofa Cover for Washable Sectional L Shape Couch Covers Protector with Tassel Sofa Slipcover for Pet & Kid Friendly,71\"x118\",Beige",
+        "price": "",
+        "rating": "4.7 out of 5 stars",
+        "reviews": "(25)"
+      },
+      {
+        "asin": "B09V59QZDM",
+        "title": "HANDONTIME Couch Cover for Sectional Sofa L Shape Light Green Cute Chenille Pet Couch Cover with Lace, Machine Washable, 71\" X150",
+        "price": "$65.59",
+        "rating": "4.3 out of 5 stars",
+        "reviews": "(1.8K)"
+      },
+      {
+        "asin": "B0CNC552P6",
+        "title": "PH PandaHall Tibetan Turtle Shaped Alloy Charms, Vintage Turtle Pendant Turtle Charms for Bracelet Necklace Jewelry DIY Crafting",
+        "price": "$9.99",
+        "rating": "4.9 out of 5 stars",
+        "reviews": "(211)"
+      },
+      {
+        "asin": "B0F1SSK3P8",
+        "title": "Sofa Cover Washable Sectional Couch Covers Sofa Slipcovers for 3 Cushion Couch Pet Friendly L Shaped Couch Protector for Dogs",
+        "price": "$9.99",
+        "rating": "4.2 out of 5 stars",
+        "reviews": "(293)"
+      },
+      {
+        "asin": "B0FQTSFWWT",
+        "title": "sellto Tummy Control Shapewear Shorts High Waisted Body Shaper Shorts Women Seamless Girdles Under Dresses Thigh Slimmer",
+        "price": "$7.99",
+        "rating": "",
+        "reviews": ""
+      },
+      {
+        "asin": "B0GTKF79YP",
+        "title": "sellto Shapewear Tummy Control High Waisted Body Shaper Shorts Women Smooth Girdles Under Dresses Shorts Thigh Slimmer",
+        "price": "$9.99",
+        "rating": "4.9 out of 5 stars",
+        "reviews": "(118)"
+      },
+      {
+        "asin": "B0G518BDKM",
+        "title": "Tummy Control Shapewear for Women Seamless Girdle Shapewear Shorts Mid Waist Body Shaper Thigh Slimmers",
+        "price": "$12.99",
+        "rating": "5.0 out of 5 stars",
+        "reviews": "(72)"
+      },
+      {
+        "asin": "B00KXYBFG6",
+        "title": "Cosmas 10 Pack 161-3SN Satin Nickel Contemporary Bar Cabinet Handle Pull - 3\" Inch (76mm) Hole Centers",
+        "price": "$41.75",
+        "rating": "4.9 out of 5 stars",
+        "reviews": "(172)"
+      },
+      {
+        "asin": "B0CJJ4F678",
+        "title": "LUBTOSMN Bear Cookie Cutter-3.5 Inch-Diswasher Safe-Biscui Cookie Cutter Fondant Mold for Baking",
+        "price": "$8.99",
+        "rating": "5.0 out of 5 stars",
+        "reviews": "(80)"
+      },
+      {
+        "asin": "B0041FFU3M",
+        "title": "Barefoot Dreams® CozyChic® Dream Receiving Blanket, Pink-White Hearts, 30\"x30\"",
+        "price": "$44.95",
+        "rating": "4.9 out of 5 stars",
+        "reviews": "(491)"
+      },
+      {
+        "asin": "B0091XIBOE",
+        "title": "The Lord of the Rings: The Return of the King",
+        "price": "$7.99",
+        "rating": "4.9 out of 5 stars",
+        "reviews": "(18K)"
+      },
+      {
+        "asin": "B004E4G9CG",
+        "title": "Sahih Al-bukhari (Summarized Large Size)",
+        "price": "",
+        "rating": "4.9 out of 5 stars",
+        "reviews": "(306)"
+      },
+      {
+        "asin": "B002Y0KR70",
+        "title": "Dragon Ball: Season 3",
+        "price": "",
+        "rating": "4.9 out of 5 stars",
+        "reviews": "(1.8K)"
+      }
+    ],
+    "totalFound": 60,
+    "cascadeRounds": [
+      {
+        "round": 1,
+        "keyword": "inch shaped sectional",
+        "found": 30
+      },
+      {
+        "round": 2,
+        "keyword": "inch shaped",
+        "found": 30
+      }
+    ],
+    "scrapeError": null
+  }
+}

@@ -1,0 +1,219 @@
+{
+  "_comment": "Walmart attribute mapping — 需要你填写的部分标注了 TODO",
+  "_version": "1.0.0",
+  "_lastUpdated": "2026-05",
+
+  "color": {
+    "_comment": "将 Amazon 颜色词映射到 Walmart 枚举色系。TODO: 补充你产品常见的颜色词",
+    "_walmart_enum": ["Black", "White", "Gray", "Brown", "Beige", "Blue", "Green", "Red", "Pink", "Purple", "Gold", "Silver", "Natural", "Multi"],
+
+    "black": "Black",
+    "matte black": "Black",
+    "jet black": "Black",
+    "piano black": "Black",
+
+    "white": "White",
+    "off-white": "White",
+    "ivory": "White",
+    "cream": "White",
+    "snow white": "White",
+
+    "grey": "Gray",
+    "gray": "Gray",
+    "dark gray": "Gray",
+    "light gray": "Gray",
+    "charcoal": "Gray",
+    "slate": "Gray",
+
+    "brown": "Brown",
+    "espresso": "Brown",
+    "chocolate": "Brown",
+    "dark brown": "Brown",
+    "walnut": "Brown",
+    "mocha": "Brown",
+
+    "beige": "Beige",
+    "tan": "Beige",
+    "sand": "Beige",
+    "champagne": "Beige",
+    "wheat": "Beige",
+    "linen": "Beige",
+
+    "rustic brown": "Brown",
+    "rustic gray": "Gray",
+    "rustic black": "Black",
+
+    "oak": "Natural",
+    "natural wood": "Natural",
+    "natural": "Natural",
+    "pine": "Natural",
+    "light wood": "Natural",
+
+    "navy": "Blue",
+    "navy blue": "Blue",
+    "dark blue": "Blue",
+    "royal blue": "Blue",
+    "teal": "Blue",
+    "blue": "Blue",
+
+    "green": "Green",
+    "olive": "Green",
+    "sage": "Green",
+    "forest green": "Green",
+
+    "red": "Red",
+    "wine": "Red",
+    "burgundy": "Red",
+    "cherry": "Red",
+
+    "pink": "Pink",
+    "blush": "Pink",
+    "rose": "Pink",
+    "mauve": "Pink",
+
+    "purple": "Purple",
+    "lavender": "Purple",
+    "violet": "Purple",
+
+    "gold": "Gold",
+    "brass": "Gold",
+    "bronze": "Gold",
+    "antique gold": "Gold",
+
+    "silver": "Silver",
+    "chrome": "Silver",
+    "nickel": "Silver",
+    "stainless": "Silver",
+
+    "TODO_ADD_YOUR_COLORS_HERE": "WALMART_ENUM_VALUE"
+  },
+
+  "material": {
+    "_comment": "将 Amazon 材质描述映射到 Walmart 枚举材质。TODO: 补充你产品常见的材质词",
+    "_walmart_enum": ["Steel", "Iron", "Aluminum", "Wood", "Solid Wood", "Engineered Wood", "MDF", "Particleboard", "Bamboo", "Fabric", "Velvet", "Linen", "Leather", "Faux Leather", "Foam", "Memory Foam", "Plastic", "ABS Plastic", "Glass", "Marble", "Wicker", "Rattan"],
+
+    "steel": "Steel",
+    "metal": "Steel",
+    "heavy duty metal": "Steel",
+    "high-carbon steel": "Steel",
+    "reinforced steel": "Steel",
+    "steel frame": "Steel",
+    "carbon steel": "Steel",
+    "stainless steel": "Steel",
+
+    "iron": "Iron",
+    "cast iron": "Iron",
+    "wrought iron": "Iron",
+
+    "aluminum": "Aluminum",
+    "aluminium": "Aluminum",
+    "alloy": "Aluminum",
+
+    "wood": "Wood",
+    "solid wood": "Solid Wood",
+    "solid pine": "Solid Wood",
+    "solid oak": "Solid Wood",
+    "solid birch": "Solid Wood",
+    "real wood": "Solid Wood",
+
+    "mdf": "MDF",
+    "medium density fiberboard": "MDF",
+    "engineered wood": "Engineered Wood",
+    "manufactured wood": "Engineered Wood",
+    "particleboard": "Particleboard",
+    "particle board": "Particleboard",
+
+    "bamboo": "Bamboo",
+
+    "fabric": "Fabric",
+    "upholstered": "Fabric",
+    "polyester": "Fabric",
+    "microfiber": "Fabric",
+    "woven": "Fabric",
+
+    "velvet": "Velvet",
+    "soft velvet": "Velvet",
+    "premium velvet": "Velvet",
+    "tufted velvet": "Velvet",
+    "chenille": "Fabric",
+    "boucle": "Fabric",
+    "linen": "Linen",
+
+    "leather": "Leather",
+    "genuine leather": "Leather",
+    "top grain leather": "Leather",
+    "faux leather": "Faux Leather",
+    "pu leather": "Faux Leather",
+    "bonded leather": "Faux Leather",
+    "vegan leather": "Faux Leather",
+
+    "foam": "Foam",
+    "memory foam": "Memory Foam",
+    "high density foam": "Foam",
+    "gel memory foam": "Memory Foam",
+
+    "plastic": "Plastic",
+    "abs": "ABS Plastic",
+    "abs plastic": "ABS Plastic",
+    "polypropylene": "Plastic",
+    "nylon": "Plastic",
+
+    "glass": "Glass",
+    "tempered glass": "Glass",
+    "acrylic": "Plastic",
+
+    "marble": "Marble",
+    "faux marble": "Marble",
+
+    "rattan": "Rattan",
+    "wicker": "Wicker",
+    "woven rattan": "Rattan",
+
+    "TODO_ADD_YOUR_MATERIALS_HERE": "WALMART_ENUM_VALUE"
+  },
+
+  "size": {
+    "_comment": "尺寸/床型映射",
+    "twin": "Twin",
+    "twin xl": "Twin XL",
+    "full": "Full",
+    "double": "Full",
+    "queen": "Queen",
+    "king": "King",
+    "cal king": "California King",
+    "california king": "California King",
+    "small": "Small",
+    "medium": "Medium",
+    "large": "Large",
+    "x-large": "X-Large",
+    "xl": "X-Large"
+  },
+
+  "assembly": {
+    "_comment": "组装难度映射",
+    "no tools required": "Tool-Free",
+    "tool-free": "Tool-Free",
+    "tool free": "Tool-Free",
+    "tools included": "Tools Included",
+    "some assembly required": "Some Assembly Required",
+    "fully assembled": "No Assembly Required",
+    "ready to use": "No Assembly Required"
+  },
+
+  "roomType": {
+    "_comment": "房间类型映射（Recommended Location）",
+    "bedroom": "Bedroom",
+    "living room": "Living Room",
+    "office": "Home Office",
+    "home office": "Home Office",
+    "dining room": "Dining Room",
+    "kitchen": "Kitchen",
+    "bathroom": "Bathroom",
+    "outdoor": "Outdoor",
+    "patio": "Outdoor",
+    "kids room": "Kids Room",
+    "nursery": "Kids Room",
+    "guest room": "Bedroom",
+    "dorm": "Bedroom"
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "_comment": "Walmart 属性映射模板 — 请逐行填写你实际会用到的映射关系",
+  "_version": "1.0.1",
+  "_lastUpdated": "2026-05-03",
+  "_instruction": [
+    "每项的 key 是 Amazon 文案里可能出现的描述词",
+    "每项的 value 是 Walmart 后台要求的枚举值",
+    "可以填满也可以只填你实际会用到的",
+    "示例数据保留作为参考，完成后删除示例"
+  ],
+
+  "color": {
+    "_comment": "Amazon 颜色描述 → Walmart 枚举色系",
+    "_walmart_enum": ["Black","White","Gray","Brown","Beige","Blue","Green","Red","Pink","Purple","Gold","Silver","Natural","Multi"],
+
+    "_example": "示例（删除前先确认是否是你会用到的颜色）",
+    "black": "Black",
+    "gray": "Gray",
+    "white": "White",
+    "brown": "Brown",
+
+    "_your_colors": "── 在下面填入你实际会用到的颜色映射 ──",
+    "TODO_YOUR_COLOR_1": "Black",
+    "TODO_YOUR_COLOR_2": "Gray"
+  },
+
+  "material": {
+    "_comment": "Amazon 材质描述 → Walmart 枚举材质",
+    "_walmart_enum": ["Steel","Iron","Aluminum","Wood","Solid Wood","Engineered Wood","MDF","Particleboard","Bamboo","Fabric","Velvet","Linen","Leather","Faux Leather","Foam","Memory Foam","Plastic","ABS Plastic","Glass","Marble","Wicker","Rattan"],
+
+    "_example": "示例（删除前先确认是否是你会用到的材质）",
+    "steel": "Steel",
+    "metal": "Steel",
+    "fabric": "Fabric",
+    "memory foam": "Memory Foam",
+
+    "_your_materials": "── 在下面填入你实际会用到的材质映射 ──",
+    "TODO_YOUR_MATERIAL_1": "Steel",
+    "TODO_YOUR_MATERIAL_2": "Fabric"
+  },
+
+  "size": {
+    "_comment": "Amazon 尺寸/床型描述 → Walmart 枚举值",
+    "_walmart_enum": ["Twin","Twin XL","Full","Queen","King","California King","Small","Medium","Large","X-Large"],
+
+    "_example": "示例",
+    "twin": "Twin",
+    "full": "Full",
+    "queen": "Queen",
+    "king": "King",
+    "small": "Small",
+    "medium": "Medium",
+    "large": "Large",
+    "xl": "X-Large",
+
+    "_your_sizes": "── 在下面填入你实际会用到的尺寸映射 ──",
+    "TODO_YOUR_SIZE_1": "Twin",
+    "TODO_YOUR_SIZE_2": "Queen"
+  },
+
+  "assembly": {
+    "_comment": "Amazon 组装描述 → Walmart 枚举值",
+    "_walmart_enum": ["No Assembly Required","Some Assembly Required","Tools Included","Tool-Free"],
+
+    "_example": "示例",
+    "no tools required": "Tool-Free",
+    "tool free": "Tool-Free",
+    "fully assembled": "No Assembly Required",
+    "some assembly required": "Some Assembly Required",
+
+    "_your_assembly": "── 在下面填入你实际会用到的组装描述映射 ──",
+    "TODO_YOUR_ASSEMBLY_1": "Tool-Free",
+    "TODO_YOUR_ASSEMBLY_2": "Some Assembly Required"
+  }
+}

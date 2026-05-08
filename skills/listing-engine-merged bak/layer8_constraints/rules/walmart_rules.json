@@ -1,0 +1,8 @@
+{
+  "title": [
+    { "type": "max_length", "value": 75 }
+  ],
+  "bullets": [
+    { "type": "max_length", "value": 300 }
+  ]
+}

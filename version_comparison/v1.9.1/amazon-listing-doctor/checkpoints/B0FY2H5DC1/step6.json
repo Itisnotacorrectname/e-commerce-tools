@@ -1,0 +1,24 @@
+{
+  "issues": [
+    {
+      "severity": "medium",
+      "type": "Brand Word Order",
+      "location": "title",
+      "current": "87-Inch L Shaped Sectional Sofa with Cloud Cushions...",
+      "issue": "Brand 'MIXPATIO' does not appear at title start. NPO structure expects brand at absolute start.",
+      "suggestion": "Prepend brand: 'MIXPATIO 87-Inch L Shaped Sectional Sofa...'"
+    },
+    {
+      "severity": "low",
+      "type": "Missing Size Signal",
+      "location": "title",
+      "current": "87-Inch L Shaped Sectional Sofa",
+      "issue": "No explicit width indicator in title",
+      "suggestion": "Consider adding total width if available"
+    }
+  ],
+  "spellErrors": [],
+  "charCount": 182,
+  "charLimit": 200,
+  "brandAtStart": false
+}

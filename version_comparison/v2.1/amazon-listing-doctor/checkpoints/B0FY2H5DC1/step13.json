@@ -1,0 +1,41 @@
+{
+  "issues": [
+    {
+      "factor": "Reviews",
+      "current": 43,
+      "action": "加入Vine计划，目标3个月200+条",
+      "impact": "high"
+    },
+    {
+      "factor": "Rating",
+      "current": "4.5/5",
+      "action": "监控差评主题",
+      "impact": "low"
+    },
+    {
+      "factor": "Price",
+      "current": 499.99,
+      "action": "定价合理（中段价位）",
+      "impact": "info"
+    },
+    {
+      "factor": "BSR",
+      "current": null,
+      "action": "BSR缺失需手动确认",
+      "impact": "info"
+    },
+    {
+      "factor": "Main Images",
+      "current": "无法获取",
+      "action": "需人工检查主图和场景图",
+      "impact": "medium"
+    },
+    {
+      "factor": "Video & A+",
+      "current": "无法获取",
+      "action": "需人工确认视频和A+内容",
+      "impact": "medium"
+    }
+  ],
+  "summary": "评论数43条是最大短板。竞品集60个有大量非直接竞品（couch covers vs 实际sofa）。"
+}

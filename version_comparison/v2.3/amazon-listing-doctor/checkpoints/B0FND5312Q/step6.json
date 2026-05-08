@@ -1,0 +1,31 @@
+{
+  "issues": [
+    {
+      "severity": "high",
+      "type": "primary-keyword-not-first",
+      "description": "Brand 'SogesPower' precedes primary keyword 'Pull Up Bar' — brand should be followed immediately by product type",
+      "current": "SogesPower Multi-Function Power Tower Pull Up Bar...",
+      "suggestion": "Restructure: SogesPower Pull Up Bar Station, Multi-Function Power Tower with 10-Level Adjustable Height, Dip Bar for Home Gym Strength Training"
+    },
+    {
+      "severity": "medium",
+      "type": "promotion-word",
+      "description": "'Multi-Function' is repeated — in title and brand positioning",
+      "current": "Multi-Function Power Tower Pull Up Bar Station Pull Up Dip Station",
+      "suggestion": "Streamline: 'Pull Up Bar Station with Dip Station, 10-Level Adjustable Power Tower for Home Gym'"
+    },
+    {
+      "severity": "medium",
+      "type": "unclear-size-spec",
+      "description": "'10-Level Adjustable' is vague — competitors show actual height ranges (65.7\"-86.6\")",
+      "current": "10-Level Adjustable Height",
+      "suggestion": "Move height range to title: '10-Level Adjustable (65.7\"-86.6\")' or mention max load capacity instead"
+    }
+  ],
+  "spellErrors": [],
+  "charCount": 180,
+  "charLimit": 200,
+  "brandAtStart": true,
+  "primaryKeywordsInTitle": ["pull up bar", "power tower", "dip station"],
+  "missingPrimaryInFirst60Chars": false
+}

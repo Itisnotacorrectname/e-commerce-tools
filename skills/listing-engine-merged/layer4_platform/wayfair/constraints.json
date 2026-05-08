@@ -1,0 +1,26 @@
+{
+  "_comment": "Wayfair platform constraints — source: Wayfair Listing Style Guide",
+  "title": {
+    "maxChars": 70,
+    "idealRange": [40, 70],
+    "format": "Title Case",
+    "formula": "[Brand] [Material] [ProductType] [Size/Color]",
+    "noAllCaps": true,
+    "noMarketing": true
+  },
+  "overview": {
+    "minWords": 50,
+    "idealWords": [100, 200],
+    "maxSentences": 6,
+    "noSecondPerson": true,
+    "noMarketing": true
+  },
+  "forbiddenWords": [
+    "Amazon", "Prime", "FBA", "free shipping", "best seller",
+    "#1", "top rated", "award winning", "compare to", "you will love"
+  ],
+  "compliance": {
+    "prop65Required": true,
+    "flameRetardantDeclaration": false
+  }
+}

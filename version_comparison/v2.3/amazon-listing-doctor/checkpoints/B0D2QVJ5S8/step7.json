@@ -1,0 +1,20 @@
+{
+  "versionA": {
+    "title": "MDSASFD Velvet Couch Cover, Washable Sectional Sofa Cover Anti Slip for 3 Cushion Couch L Shaped Armrest Backrest Furniture Protector (White, 71x118 inch)",
+    "chars": 174,
+    "primaryCovered": ["couch cover", "sofa cover", "slipcover"],
+    "note": "Maximum keyword coverage — all 3 primary terms + pet-friendly + washable + non-slip + sectional + 3-cushion + L-shaped + dimension"
+  },
+  "versionB": {
+    "title": "MDSASFD Velvet Sectional Sofa Cover — Non Slip, Washable Furniture Protector for 3-Cushion L Shaped Couch (White, 71\"x118\")",
+    "chars": 156,
+    "primaryCovered": ["sofa cover", "slipcover"],
+    "note": "High CTR — lead with material/design difference (velvet), most actionable features, cleaner mobile scan"
+  },
+  "versionC": {
+    "title": "MDSASFD Velvet Couch Cover 71\"x118\" Washable Non Slip Sofa Slipcover for 3 Cushion L Shaped",
+    "chars": 112,
+    "primaryCovered": ["couch cover", "sofa cover", "slipcover"],
+    "note": "Mobile-first ≤80 chars — lead with brand+product, immediate size signal, key features compressed"
+  }
+}

@@ -1,0 +1,116 @@
+{
+  "_comment": "Wayfair Class ID rules — confirm class IDs with Partner Home",
+  "_version": "1.0.0",
+
+  "rules": [
+    {
+      "classId": "TODO_CONFIRM",
+      "className": "Pots and Pans Set",
+      "triggerKeywords": [
+        "pots and pans set", "cookware set", "cooking set", "kitchen set",
+        "pots set", "pans set", "camping cookware set", "rv kitchen set"
+      ],
+      "excludeKeywords": ["air fryer", "slow cooker", "electric cooker", "pressure cooker"],
+      "requiredAttributes": [
+        "material", "oven_safe_temperature", "stovetop_type",
+        "dishwasher_safe", "handle_type", "piece_count"
+      ]
+    },
+    {
+      "classId": "TODO_CONFIRM",
+      "className": "Skillets and Frying Pans",
+      "triggerKeywords": [
+        "frying pan", "skillet", "saute pan", "fry pan", "omelette pan",
+        "crepe pan", "tacometer", "stir-fry pan"
+      ],
+      "excludeKeywords": ["air fryer"],
+      "requiredAttributes": [
+        "material", "oven_safe_temperature", "stovetop_type",
+        "dishwasher_safe", "diameter", "handle_type"
+      ]
+    },
+    {
+      "classId": "TODO_CONFIRM",
+      "className": "Bakeware",
+      "triggerKeywords": [
+        "baking sheet", "baking pan", "cake pan", "muffin tin",
+        "cookie sheet", "roasting pan", "bread loaf pan", "pie dish"
+      ],
+      "excludeKeywords": [],
+      "requiredAttributes": [
+        "material", "color", "dimensions", "oven_safe_temperature", "dishwasher_safe"
+      ]
+    },
+    {
+      "classId": "TODO_CONFIRM",
+      "className": "Platform Beds",
+      "triggerKeywords": ["platform bed", "no box spring", "slat support", "with headboard"],
+      "excludeKeywords": ["adjustable base", "box spring"],
+      "requiredAttributes": [
+        "weight_capacity", "number_of_slats", "headboard_height",
+        "assembly_required", "box_spring_required"
+      ],
+      "boxSpringRequired": false
+    },
+    {
+      "classId": "TODO_CONFIRM",
+      "className": "Bed Frames",
+      "triggerKeywords": ["bed frame", "metal frame", "steel frame"],
+      "excludeKeywords": ["headboard", "upholstered", "adjustable"],
+      "requiredAttributes": [
+        "weight_capacity", "frame_height", "assembly_required",
+        "box_spring_required", "slat_kit_included"
+      ],
+      "boxSpringRequired": "check listing"
+    },
+    {
+      "classId": "TODO_CONFIRM",
+      "className": "Adjustable Bases",
+      "triggerKeywords": ["adjustable base", "adjustable bed", "power base", "massage"],
+      "excludeKeywords": [],
+      "requiredAttributes": [
+        "weight_capacity", "remote_included", "massage_zones",
+        "compatible_mattress_types", "assembly_required"
+      ],
+      "boxSpringRequired": false
+    },
+    {
+      "classId": "TODO_CONFIRM",
+      "className": "Sofas",
+      "triggerKeywords": ["sofa", "couch", "loveseat"],
+      "excludeKeywords": ["sleeper", "futon", "sectional"],
+      "requiredAttributes": [
+        "seat_depth", "seat_height", "weight_capacity",
+        "upholstery_material", "leg_material", "assembly_required"
+      ],
+      "flameRetardantDeclaration": true
+    },
+    {
+      "classId": "TODO_CONFIRM",
+      "className": "Sectional Sofas",
+      "triggerKeywords": ["sectional", "l-shaped sofa", "modular sofa"],
+      "excludeKeywords": [],
+      "requiredAttributes": [
+        "number_of_pieces", "configuration", "seat_depth",
+        "overall_width", "upholstery_material", "weight_capacity"
+      ],
+      "flameRetardantDeclaration": true
+    },
+    {
+      "classId": "TODO_CONFIRM",
+      "className": "Dining Tables",
+      "triggerKeywords": ["dining table", "kitchen table", "dinner table"],
+      "excludeKeywords": ["coffee table", "end table"],
+      "requiredAttributes": [
+        "table_top_material", "base_material", "shape",
+        "seating_capacity", "assembly_required", "weight_capacity"
+      ]
+    }
+  ],
+
+  "fallback": {
+    "className": "General Furniture",
+    "requiredAttributes": ["material", "assembly_required", "weight_capacity"],
+    "note": "Used when no specific class matches with confidence >= 0.70"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "_comment": "Walmart schema — source B",
+  "title": { "max_length": 75 },
+  "highlights": { "max_length": 300, "max_items": 10 },
+  "description": { "max_length": 2500 },
+  "attributes": ["color","material","size","weightCapacity","assembledProductDimensions","assemblyRequired","certifications","recommendedLocation"]
+}

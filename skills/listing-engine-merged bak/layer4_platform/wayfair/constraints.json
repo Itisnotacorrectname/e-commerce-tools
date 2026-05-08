@@ -1,0 +1,16 @@
+{
+  "_comment": "Wayfair constraints — source A",
+  "_version": "1.0.0",
+  "title": {
+    "maxChars": 70,
+    "idealRange": [40, 70]
+  },
+  "description": {
+    "minWords": 200
+  },
+  "forbiddenWords": [
+    "Amazon", "Prime", "FBA", "eBay",
+    "Best Seller", "Best", "#1", "Top Rated",
+    "Free Shipping", "Money-back"
+  ]
+}

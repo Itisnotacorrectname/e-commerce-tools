@@ -1,542 +1,847 @@
 #!/usr/bin/env node
-/**
- * step4_worker.js — Isolated Playwright competitor scraper for diagnose.js
- * Usage: node step4_worker.js <ASIN> <coreProduct> [foundPhrasesJson]
- *
- * 爬取竞品搜索结果，使用 lib/amazon_scraper.js 的通用逻辑（ZIP+reload geo bypass）
- */
-const path = require('path');
-const fs = require('fs');
-const os = require('os');
-const { scrapeCompetitorSearch, STOPWORDS } = require(path.join(__dirname, 'lib', 'amazon_scraper.js'));
+// ─────────────────────────────────────────────────────────────
+//  Amazon Listing Doctor — diagnose.js v6.0 (Route B)
+//
+//  职责：数据层（step1-4），只爬虫，不分析。
+//  分析由 Claude Agent 执行（参见 SKILL.md）。
+//
+//  Usage:
+//    node diagnose.js B0GVRS65WW
+//    node diagnose.js https://www.amazon.com/dp/B0GVRS65WW
+//    node diagnose.js B0GVRS65WW --force   (强制重新抓取，忽略缓存)
+// ─────────────────────────────────────────────────────────────
 
-const asin = String(process.argv[2] || '').trim();
-const coreProduct = String(process.argv[3] || '').trim();
-const marketplace = String(process.argv[4] || 'US').toUpperCase();
-let foundPhrases = [];
-try { foundPhrases = JSON.parse(process.argv[5] || '[]'); } catch(e) {}
-let categoryFallback = process.argv[6] || '';  // category path, e.g. "Office Products > Office Furniture & Lighting > Chairs & Sofas > Drafting Chairs"
+'use strict';
 
-if (!asin) {
-  console.error('Usage: node step4_worker.js <ASIN> <coreProduct> [foundPhrasesJson]');
-  process.exit(1);
-}
+const path    = require('path');
+const os      = require('os');
+const fs      = require('fs');
 
-// ASIN 格式预校验（10位字母数字）
-if (!/^[A-Z0-9]{10}$/.test(asin)) {
-  console.error('step4_worker: invalid ASIN format "' + asin + '" (expected 10 alphanumeric chars)');
-  process.exit(1);
-}
-
-const WORKSPACE = process.env.OPENCLAW_WORKSPACE || path.join(os.homedir(), '.openclaw', 'workspace');
+// ── Paths ────────────────────────────────────────────────────
+const WORKSPACE      = process.env.OPENCLAW_WORKSPACE || path.join(os.homedir(), '.openclaw', 'workspace');
 const CHECKPOINT_DIR = path.join(WORKSPACE, 'amazon-listing-doctor', 'checkpoints');
-const cpDir = path.join(CHECKPOINT_DIR, asin);
-if (!fs.existsSync(cpDir)) fs.mkdirSync(cpDir, { recursive: true });
+const REPORT_DIR     = path.join(WORKSPACE, 'amazon-listing-doctor', 'reports');
+const SKILL_DIR      = __dirname;
 
-console.error('step4_worker: asin=' + asin + ' coreProduct="' + coreProduct + '"');
+// ── Marketplace map ─────────────────────────────────────────
+const DOMAIN_TO_CC = {
+  'amazon.com':    'US', 'amazon.co.uk': 'GB', 'amazon.de':    'DE',
+  'amazon.fr':     'FR', 'amazon.it':    'IT', 'amazon.es':    'ES',
+  'amazon.co.jp':  'JP', 'amazon.ca':    'CA', 'amazon.com.au':'AU',
+  'amazon.com.mx': 'MX', 'amazon.in':    'IN'
+};
 
-// ── 主搜索 + fallback 搜索流程 ───────────────────────────────
-// 策略：
-//   1. 先用 coreProduct 搜索
-//   2. 若结果 < 10，从 foundPhrases 提取备选词逐个搜索，合并结果（去重）
-//   3. 若仍然 < 5，保留现有结果并打 warning 标记
+// ── Utilities ────────────────────────────────────────────────
+var QUIET = false;
+function log(msg) { if (!QUIET) console.log(String(msg || '')); }
 
-function dedupeByAsin(competitors) {
-  var seen = new Set();
-  return competitors.filter(function(c) {
-    if (!c.asin || seen.has(c.asin)) return false;
-    seen.add(c.asin);
-    return true;
+function ensureDir(p) {
+  if (!fs.existsSync(p)) fs.mkdirSync(p, { recursive: true });
+}
+
+function cpPath(asin, n) {
+  var dir = path.join(CHECKPOINT_DIR, asin);
+  ensureDir(dir);
+  return path.join(dir, 'step' + n + '.json');
+}
+
+function loadCp(asin, n) {
+  var p = cpPath(asin, n);
+  if (!fs.existsSync(p)) return null;
+  try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch(e) { return null; }
+}
+
+function saveCp(asin, n, data) {
+  fs.writeFileSync(cpPath(asin, n), JSON.stringify(data, null, 2), 'utf8');
+}
+
+// ── Step 1: ASIN + Marketplace 解析 ─────────────────────────
+async function step1() {
+  var arg = process.argv[2] || '';
+  var force = process.argv.includes('--force');
+  QUIET = process.argv.includes('--quiet');
+
+  // 直接是 ASIN
+  var asinMatch = arg.match(/^(B[A-Z0-9]{9})$/);
+  if (asinMatch) {
+    return { asin: asinMatch[1], marketplace: 'US', domain: 'amazon.com',
+             inputUrl: 'https://amazon.com/dp/' + asinMatch[1], force };
+  }
+
+  // 是 URL
+  var urlMatch = arg.match(/amazon\.([a-z.]+)\/(?:[^/]+\/)?(?:dp|gp\/product)\/([A-Z0-9]{10})/i);
+  if (urlMatch) {
+    var rawDomain = 'amazon.' + urlMatch[1].replace(/\/$/, '');
+    var asin = urlMatch[2].toUpperCase();
+    var cc = DOMAIN_TO_CC[rawDomain] || 'US';
+    return { asin, marketplace: cc, domain: rawDomain,
+             inputUrl: 'https://www.' + rawDomain + '/dp/' + asin, force };
+  }
+
+  throw new Error('Invalid input. Usage: node diagnose.js [ASIN|URL] [--force] [--quiet]');
+}
+
+// ── Step 2: 产品页爬取（Playwright子进程） ───────────────────
+async function step2(s1) {
+  return new Promise(function(resolve) {
+    var workerPath = path.join(SKILL_DIR, 'step2_worker.js');
+    var child = require('child_process').spawn(
+      process.execPath, [workerPath, s1.asin, s1.marketplace],
+      { stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true }
+    );
+    var stdout = '', stderr = '';
+    child.stdout.on('data', function(d) { stdout += d; });
+    child.stderr.on('data', function(d) {
+      var line = d.toString().trim();
+      if (line) log('  [step2] ' + line);
+    });
+    child.on('close', function(code) {
+      // step2_worker 把数据包在 __STEP2_OUTPUT__...__STEP2_OUTPUT__ 之间输出
+      var MARKER = '__STEP2_OUTPUT__';
+      var start = stdout.indexOf(MARKER);
+      var end   = stdout.lastIndexOf(MARKER);
+      if (start !== -1 && end !== -1 && start !== end) {
+        try {
+          var parsed = JSON.parse(stdout.substring(start + MARKER.length, end));
+          resolve(parsed);
+          return;
+        } catch(e) { /* fall through */ }
+      }
+      // 降级：返回空结构，让后续步骤能继续但知道数据缺失
+      log('  [step2] ⚠ Worker failed (exit ' + code + ') — empty product data');
+      resolve({
+        asin: s1.asin, marketplace: s1.marketplace, domain: s1.domain,
+        title: '', bullets: [], price: null, rating: null,
+        reviewCount: 0, BSR: null, category: null, brand: null,
+        scrapeError: stderr.split('\n')[0] || 'Unknown error'
+      });
+    });
+    child.on('error', function(e) {
+      log('  [step2] ⚠ Spawn error: ' + e.message);
+      resolve({
+        asin: s1.asin, marketplace: s1.marketplace, domain: s1.domain,
+        title: '', bullets: [], price: null, rating: null,
+        reviewCount: 0, BSR: null, category: null, brand: null,
+        scrapeError: e.message
+      });
+    });
   });
 }
 
-// 从 foundPhrases + coreProduct + categoryFallback 提取备选搜索词
-// 优先使用 foundPhrases（已有搜索结果的短语）
-// 当 foundPhrases 为空时，从 coreProduct 自身拆解（v1.6.5 修复）
-// - 2–3 词短语优先（不要单词，太泛；不要 4 词+，Amazon 匹配差）
-// - 去掉和 coreProduct 完全一样的词
-// - 最多取 5 个
-function extractFallbackTerms(foundPhrases, coreProduct, categoryFallback) {
-  var core = (coreProduct || '').toLowerCase().trim();
-  var STOPWORDS = new Set(['with', 'for', 'and', 'the', 'set', 'new', 'home', 'room',
-    'from', 'this', 'that', 'are', 'was', 'it', 'be', 'to', 'in', 'on', 'of', 'a', 'an']);
+// ── Step 3: coreProduct 推断（轻量，无网络请求） ─────────────
+// 从 step2 的 title + category 推断核心产品词，作为 step4 竞品搜索词。
+// 注意：真正的关键词分析由 Claude 在 SKILL.md 分析层执行。
+// 这里只做"搜什么词去找竞品"这一件事。
+async function step3(s2) {
+  var title    = s2.title || '';
+  var category = s2.category || '';
+  var brand    = (s2.brand || '').toLowerCase();
 
-  var terms = [];
-
-  // Primary: from foundPhrases (search result derived terms)
-  if (foundPhrases && foundPhrases.length > 0) {
-    var fromFound = (foundPhrases || [])
-      .map(function(p) { return String(p).toLowerCase().trim(); })
-      .filter(function(p) {
-        var wc = p.split(/\s+/).length;
-        return wc >= 2 && wc <= 3 && p !== core && p.length > 4 && !STOPWORDS.has(p);
-      })
-      .filter(function(p, i, arr) { return arr.indexOf(p) === i; })
-      .slice(0, 5);
-    terms = terms.concat(fromFound);
-  }
-
-  // Secondary: when foundPhrases is empty, extract from coreProduct itself
-  if (terms.length === 0 && core) {
-    var coreWords = core.split(/\s+/).filter(function(w) { return w.length > 2 && !STOPWORDS.has(w); });
-    // Extract 2-word and 3-word phrases from coreProduct
-    for (var i = 0; i < coreWords.length - 1; i++) {
-      var bi = coreWords[i] + ' ' + coreWords[i + 1];
-      if (bi !== core && bi.length > 5) terms.push(bi);
-    }
-    for (var j = 0; j < coreWords.length - 2; j++) {
-      var tri = coreWords[j] + ' ' + coreWords[j + 1] + ' ' + coreWords[j + 2];
-      if (tri !== core && tri.length > 7) terms.push(tri);
-    }
-    terms = terms.filter(function(p, i, arr) { return arr.indexOf(p) === i; }).slice(0, 5);
-  }
-
-  // Tertiary: category last part as fallback
-  if (categoryFallback && terms.length === 0) {
-    var parts = categoryFallback.split('>').map(function(p) { return p.trim(); });
-    var catLast = (parts[parts.length - 1] || '').toLowerCase().replace(/s$/, '').trim();
-    if (catLast && catLast !== core && catLast.length > 3 && !STOPWORDS.has(catLast)) {
-      terms.push(catLast);
-    }
-  }
+  // 从 category 路径的倒数两段组合提取产品类型
+  // 策略：最后一段作为核心品类词，倒数第二段提供修饰词
+  // 例：...> Patio Furniture Sets > Dining Sets → "patio dining set"
+  var catParts = category.split('>').map(function(p) { return p.trim(); });
+  var CAT_IGNORE = new Set(['products','items','sale','deals','collections','accessories','supplies','furniture']);
   
-  // Fix: If coreProduct is generic (e.g. "high steel frame"), force category-based search
-  if (core && core.includes('steel') && !core.includes('bike') && terms.length === 0) {
-    // Try to extract "bike" from category or use generic "bicycle"
-    if (categoryFallback && categoryFallback.toLowerCase().includes('bike')) {
-      terms.push('bicycle');
-    } else {
-      terms.push('bicycle');
-    }
-  }
+  var catLastRaw = (catParts[catParts.length - 1] || '').toLowerCase().replace(/-/g, ' ').replace(/\s+/g, ' ').trim();
+  var catLast = catLastRaw.replace(/es$/, '').replace(/s$/, '').trim();
+  var catPrev = catParts.length >= 2
+    ? (catParts[catParts.length - 2] || '').toLowerCase().replace(/\s+/g, ' ').replace(/s$/, '').trim()
+    : '';
   
-  // Fix: Always add bike-specific terms if category contains "bike"
-  if (categoryFallback && categoryFallback.toLowerCase().includes('bike')) {
-    var bikeTerms = ['20 inch kids bike', 'kids bike', 'mountain bike', 'bicycle', 'kids bicycle', 'kids mountain bike', 'kids bicycle 20 inch', '20 inch mountain bike', '20 inch bicycle', '20 inch boys bike', '20 inch girls bike', '20 inch kids bicycle', '20 inch boys mountain bike', '20 inch girls mountain bike', '20 inch boys bicycle', '20 inch girls bicycle', '20 inch boys bike mountain', '20 inch girls bike mountain', 'kids bicycle 20 inch'];
-    bikeTerms.forEach(function(t) {
-      if (terms.indexOf(t) === -1) terms.push(t);
+  // 从倒数第二段提取修饰词
+  // 过滤：通用词、与 catLast 重复的词、catLast 各词的词根形式（去复数/词尾变化）
+  var lastWords = new Set(catLast.split(' ').filter(function(w) { return w.length > 2; }));
+  // 额外：catLast 各词的词根（去掉末尾 e/s/es/ing 变化），防止父级分类词污染
+  var lastRoots = new Set();
+  lastWords.forEach(function(w) {
+    lastRoots.add(w);
+    lastRoots.add(w + 's');
+    lastRoots.add(w + 'es');
+    if (w.endsWith('e')) lastRoots.add(w.slice(0, -1));      // base → bas
+    if (w.endsWith('ing')) lastRoots.add(w.slice(0, -3));    // adjust → adjus (rarely needed)
+  });
+  
+  var prevModifiers = catPrev.split(' ').filter(function(w) {
+    return w.length > 2 && !CAT_IGNORE.has(w) && !lastRoots.has(w);
+  });
+  
+  // 组合：用 catLastRaw（未 stem 的原始品类词），不再混入父级
+  // 理由：stem 后的词（如 'mattres'）可能变成非法词，导致搜索失败。
+  // catLastRaw 是 Amazon 的完整品类名，更适合做搜索词。
+  var catCombined = catLastRaw;
+
+  // ── 全路径 category 词集（方案 B）──────────────────────────
+  // 从完整 category 路径提取所有有意义的词，用于 bigram/catBoost 匹配
+  // 例："Sports & Outdoors > ... > Racks & Cages > Power Cages"
+  //   → catAllWords = {sport, outdoor, rack, cage, power, ...}
+  var catAllWords = new Set();
+  catParts.forEach(function(p) {
+    p.toLowerCase().split(/[^a-z]+/).forEach(function(w) {
+      if (w.length > 2 && !CAT_IGNORE.has(w)) catAllWords.add(w);
     });
+  });
+  // 补充去复数形式：rack ← racks, cage ← cages
+  catAllWords.forEach(function(w) {
+    if (w.endsWith('s')) catAllWords.add(w.replace(/s$/, ''));
+    if (w.endsWith('es')) catAllWords.add(w.replace(/es$/, ''));
+  });
+
+  // 从 title 提取2词短语和3词短语，排除品牌词和 stopwords
+  var STOPWORDS = new Set([
+    'the','and','for','with','from','this','that','is','are',
+    'to','in','on','of','a','an','by','or','as','at',
+    'new','use','best','top','more','most','only','easy','free','fast','safe',
+    'large','small','mini','max','plus','pro','prime','extra','ultra','super',
+    'black','white','grey','gray','brown','beige','pink','blue','green','red'
+  ]);
+  // 品牌词集合（含多词品牌）
+  var brandWords = new Set(brand.split(/\s+/).filter(function(w) { return w.length > 1; }));
+  var words = title.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').replace(/-/g, ' ').split(/\s+/).filter(function(w) {
+    return w.length > 1 && !/^\d+$/.test(w) && !STOPWORDS.has(w) && !brandWords.has(w);
+  });
+
+  // ── trigram 提取：位置优先 ──────────────────────────────────
+  // 不做 category 门控（品类路径太窄会误杀正确产品类型）
+  // 只取标题前 8 个位置的 trigram，按位置排序即可
+  // titleLower 用于后续 contiguity 验证
+  var titleLower = title.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+  var trigrams = [];
+  for (var j = 0; j < Math.min(words.length - 2, 20); j++) {
+    var tri = words[j] + ' ' + words[j + 1] + ' ' + words[j + 2];
+    var triWords = tri.split(' ');
+    if (!brandWords.has(triWords[0]) && !brandWords.has(triWords[1]) && !brandWords.has(triWords[2])) {
+      // Contiguity pre-check: 三词必须在原始标题中连续出现
+      // 防止跨间隔重复词产生无效短语（如 "king ... mattress ... king mattress box"）
+      if (titleLower.includes(tri)) {
+        trigrams.push(tri);
+      }
+    }
+  }
+  log('  [step3] trigrams: ' + JSON.stringify(trigrams.slice(0, 10)));
+
+  // catLastWords: category 末段词集，用于 bigram 门控和评分
+  var catLastWords = new Set(catLast.split(' ').filter(function(w) { return w.length > 1; }).map(function(w) {
+    return w.replace(/es$/, '').replace(/s$/, '');
+  }));
+
+  var bigrams = [];
+  for (var i = 0; i < words.length - 1; i++) {
+    if (!STOPWORDS.has(words[i]) && !STOPWORDS.has(words[i + 1]) &&
+        !brandWords.has(words[i]) && !brandWords.has(words[i + 1])) {
+      // 门控：有 category 用 catLastWords，无 category 用位置（前 5 个词内）
+      var passesGate = catLastWords.size > 0
+        ? (catLastWords.has(words[i]) || catLastWords.has(words[i + 1]))
+        : (i < 5); // 无 category 时，只取标题前 5 个位置的 bigram
+      if (passesGate) {
+        // 评分：category 末段词各 +3（category 是最可靠信号）
+        var catBoost = (catLastWords.has(words[i]) ? 3 : 0) + (catLastWords.has(words[i + 1]) ? 3 : 0);
+        bigrams.push({ phrase: words[i] + ' ' + words[i + 1], catBoost: catBoost });
+      }
+    }
   }
 
-  return terms.slice(0, 5);
+  // 按评分降序，评分相同则按长度（更长的优先）和出现顺序
+  // 额外加权：如果 bigram 以 accessory 词结尾（e.g. "sofa cover"），额外 +1
+  // 这样 "sectional sofa" (2分) 输给 "sofa cover" (2分+加权) 当 target 是 cover 类时
+  var accessoryBoost = new Set(['cover','covers','protector','slipcover','slipcovers','pad','pads','mat','liner','liners','case','cases']);
+  // 修复断裂 bigram：如果倒序后总分更高且两词都在 category 末段，flip
+  // 例："stand dip" (score=1,catBoost=2) → "dip stand" (倒序后 catBoost不变但顺序正确)
+  bigrams.forEach(function(b) {
+    var parts = b.phrase.split(/\s+/);
+    var reversed = parts[1] + ' ' + parts[0];
+    var reversedWords = reversed.split(/\s+/);
+    var reversedCatBoost = (catLastWords.has(reversedWords[0]) ? 1 : 0) + (catLastWords.has(reversedWords[1]) ? 1 : 0);
+    var originalTotal = b.catBoost;
+    var reversedTotal = reversedCatBoost;
+    var bothWordsInCatLast = catLastWords.has(reversedWords[0]) && catLastWords.has(reversedWords[1]);
+    if (reversedTotal > originalTotal && bothWordsInCatLast) {
+      b.phrase = reversed;
+      b.catBoost = reversedCatBoost;
+    }
+  });
+  bigrams.sort(function(a, b) {
+    // 第一排序键：catBoost（category 信号加权）
+    if (b.catBoost !== a.catBoost) return b.catBoost - a.catBoost;
+    // 第二排序键：accessoryBoost（配件优先）
+    var aBoost = accessoryBoost.has(a.phrase.split(/\s+/)[1]) ? 1 : 0;
+    var bBoost = accessoryBoost.has(b.phrase.split(/\s+/)[1]) ? 1 : 0;
+    if (bBoost !== aBoost) return bBoost - aBoost;
+    // 第三排序键：长度（更长的优先）
+    return b.phrase.length - a.phrase.length;
+  });
+  var bigramList = bigrams.map(function(b) { return b.phrase; });
+
+
+  // 优先级：3词 trigram > 2词 bigram > category 组合 > 其他
+  // 注意：trigram 必须包含至少2个产品类型词才优先使用
+  // 排序规则：category 词数量 > 长度升序（避免包含额外词）> productTypeCount 降序
+  var coreProduct = '';
+  if (trigrams.length > 0) {
+    // 为每个 trigram 计算 productTypeCount、category 词数量和位置
+    // 检查短语完整性：末尾词是否与下一个词形成常见搭配
+    // 如果形成搭配（如 pull→up, tv→stand），说明短语不完整
+    var COMMON_CONTINUATIONS = new Set([
+      'up','down','in','out','on','off','over','under','with','for','and','or',
+      'stand','bar','rack','set','kit','board','room','edge','top','side','mount'
+    ]);
+
+    var scoredTrigrams = trigrams.map(function(tri) {
+      var triWords = tri.split(' ');
+      var firstWordIdx = words.indexOf(triWords[0]);
+      if (firstWordIdx === -1) firstWordIdx = words.length;
+      // 检查末尾词的下一个词是否在标题中形成搭配
+      var lastWordIdx = firstWordIdx + triWords.length - 1;
+      var nextWord = (lastWordIdx + 1 < words.length) ? words[lastWordIdx + 1] : '';
+      var incomplete = nextWord && COMMON_CONTINUATIONS.has(nextWord) && !STOPWORDS.has(nextWord);
+      return { phrase: tri, length: tri.length, position: firstWordIdx, incomplete: incomplete };
+    });
+
+    // 排序：位置升序 > 完整性（完整优先）> 长度升序
+    scoredTrigrams.sort(function(a, b) {
+      if (a.incomplete !== b.incomplete) return a.incomplete ? 1 : -1;  // 完整短语优先
+      if (a.position !== b.position) return a.position - b.position;
+      if (a.length !== b.length) return a.length - b.length;
+      return 0;
+    });
+    log('  [step3] scoredTrigrams[0]: ' + JSON.stringify(scoredTrigrams[0]));
+
+    // 选择第一个完整短语；如果没有完整短语，退回第一个
+    if (scoredTrigrams.length > 0) {
+      var best = scoredTrigrams.find(function(t) { return !t.incomplete; }) || scoredTrigrams[0];
+      coreProduct = best.phrase;
+      log('  [step3] coreProduct from trigram: ' + coreProduct + (best.incomplete ? ' (incomplete fallback)' : ''));
+    }
+  }
+  if (!coreProduct) {
+    coreProduct = (bigramList[0] || catCombined || words[0] || '').replace(/\s+/g, ' ').trim();
+    log('  [step3] coreProduct from bigram: ' + coreProduct);
+  }
+
+  // ── category 约束验证 ──────────────────────────────────
+  // 已移除：品类路径太窄会误杀正确产品类型（如 'pull up bar' 不在 'Dip Stands' 路径中）
+  // 位置优先的 trigram 排序已足够保证核心产品词的准确性
+
+  // ── 连续性验证 ──────────────────────────────────────────
+  // coreProduct 的词必须在原始 title 中连续出现
+  // 防止 "sofa couch living" 这种从过滤后词列表错误组合的非连续短语
+  // titleLower 已在 trigram 提取前声明
+  var cpLower = coreProduct.toLowerCase();
+  if (cpLower && !titleLower.includes(cpLower)) {
+    // 不连续 → 尝试从 bigramList 找连续的
+    var foundValid = false;
+    for (var bi = 0; bi < bigramList.length; bi++) {
+      if (titleLower.includes(bigramList[bi])) {
+        coreProduct = bigramList[bi];
+        log('  [step3] contiguity check: "' + cpLower + '" not continuous in title, fallback to "' + coreProduct + '"');
+        foundValid = true;
+        break;
+      }
+    }
+    if (!foundValid && catCombined && titleLower.includes(catCombined)) {
+      coreProduct = catCombined;
+      log('  [step3] contiguity check: no valid bigram, fallback to catCombined "' + coreProduct + '"');
+    } else if (!foundValid) {
+      log('  [step3] contiguity check: "' + cpLower + '" not continuous, keeping as-is (no better option)');
+    }
+  }
+
+  // 如果组合词太长（>3词），降级
+  if (coreProduct.split(' ').length > 3) {
+    // 使用排序后的 trigrams（如果有）
+    if (scoredTrigrams && scoredTrigrams.length > 0) {
+      coreProduct = scoredTrigrams[0].phrase || bigramList[0] || catLast || words[0] || '';
+    } else {
+      coreProduct = trigrams[0] || bigramList[0] || catLast || words[0] || '';
+    }
+  }
+
+  // ── category 词与 title 交叉验证 ──────────────────────────
+  // 仅当 coreProduct 来自 catCombined 时才触发验证
+  // 如果 coreProduct 来自 trigram/bigram（已在 title 中验证过），不覆盖
+  // 注意：category 词可能是复数（如 'mattresses'），title 可能是单数（如 'mattress'）
+  // 验证时用 stem 归一化（去 es/s）做模糊匹配，避免因单复数差异误判
+  var needsFallback = (catCombined && coreProduct === catCombined);
+  if (needsFallback) {
+    function stemWord(w) { return w.replace(/es$/, '').replace(/s$/, ''); }
+    var titleWords = title.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(function(w) { return w.length > 1; });
+    var titleStems = new Set(titleWords.map(stemWord));
+    var validatedWords = catCombined.split(/\s+/).filter(function(w) {
+      return titleStems.has(stemWord(w));
+    });
+    if (validatedWords.length >= 2) {
+      coreProduct = validatedWords.join(' ');
+      log('  [step3] category fallback: "' + catCombined + '" → "' + coreProduct + '" (validated)');
+    } else if (validatedWords.length === 1) {
+      log('  [step3] category fallback: only 1 word matched title, fallback to bigram');
+      coreProduct = (bigramList[0] || catLast || words[0] || '');
+    } else {
+      log('  [step3] category fallback: no words matched title, fallback to catLast');
+      coreProduct = catLast;
+    }
+  }
+
+  // 提取规格信号（容量、尺寸等）
+  // 匹配：123-Inch, 123 Inch, 123lb, 123 lb 等格式
+  var sizeSignals = (title.match(/[\d]+\-?\s*(oz|qt|quart|gal|gallon|lb|lbs|kg|inch|inches|cm|mm|ft|l|liter|ml|w|v|pack|piece|pcs)/gi) || []).slice(0, 3);
+
+  log('  [step3] coreProduct: "' + coreProduct + '" (from: ' +
+      (bigrams[0] ? 'title bigram' : catLast ? 'category' : 'title word') + ')');
+  if (sizeSignals.length) log('  [step3] sizeSignals: ' + sizeSignals.join(', '));
+
+  return {
+    coreProduct,
+    brand: s2.brand || '',
+    sizeSignals,
+    titleBigrams: bigrams.slice(0, 15).map(function(b) { return b.phrase; })  // 返回字符串数组供 Claude 和 retry 参考
+  };
 }
 
-scrapeCompetitorSearch(coreProduct, marketplace, {
-  maxCompetitors: 60,
-  maxPerRound: 30,
-  sort: 'review-rank'
-}).then(async function(result) {
-  var allCompetitors = result.competitors.slice();
-  var allRounds = result.cascadeRounds.slice();
-  var totalFound = result.totalFound;
-  var usedFallback = false;
-  var fallbackTermsUsed = [];
+// ── Step 4: 竞品抓取（Playwright子进程） ────────────────────
+async function step4(s1, s2, s3) {
+  var coreProduct = s3.coreProduct;
+  if (!coreProduct) {
+    log('  [step4] ⚠ No coreProduct — skipping competitor search');
+    return { competitors: [], cascadeRounds: [], totalFound: 0, coreProduct: '' };
+  }
 
-  // ── Fallback：主搜索结果不足时用备选词补充 ────────────────
-  // 同时：当 cascade 返回了结果但质量极差时，也强制走 category fallback
-  var needsQualityFallback = (allCompetitors.length >= 10) &&
-    (allCompetitors.filter(function(c) {
+  log('  [step4] Searching competitors for: "' + coreProduct + '" [' + s1.marketplace + ']');
+
+  // ── 竞品质量评估辅助函数 ─────────────────────────────────
+  // 用 title bigrams 对竞品标题做重合度评分
+  // 返回 0-1 的比例：有多少竞品标题包含至少一个 title bigram
+  function assessCompetitorQuality(competitors, titleBigrams) {
+    if (!competitors || competitors.length === 0) return 0;
+    if (!titleBigrams || titleBigrams.length === 0) return 0.5; // 无法判断，中性
+    var relevantBigrams = titleBigrams.slice(0, 5); // 只用前5个最核心的bigram
+    var matchCount = competitors.filter(function(c) {
       if (!c.title) return false;
       var t = c.title.toLowerCase();
-      // 如果竞品标题不含任何 coreProduct 的核心词，认为是脏数据
-      var coreWords = (coreProduct || '').split(/\s+/).filter(function(w) { return w.length > 3; });
-      return !coreWords.some(function(w) { return t.includes(w); });
-    }).length / allCompetitors.length > 0.6);
+      return relevantBigrams.some(function(bg) { return t.includes(bg); });
+    }).length;
+    return matchCount / competitors.length;
+  }
 
-  // Fix: Always run fallback if main search found 0 competitors OR if coreProduct is generic
-  var isGenericCore = coreProduct && coreProduct.includes('steel') && !coreProduct.includes('bike');
-  // Also run fallback if we have bike category but coreProduct doesn't contain 'bike'
-  var hasBikeCategory = categoryFallback && categoryFallback.toLowerCase().includes('bike');
-  var needsBikeFallback = hasBikeCategory && coreProduct && !coreProduct.toLowerCase().includes('bike');
-  
-  // Check if current competitors are relevant (contain bike-related terms)
-  var bikeTerms = ['bike', 'bicycle', 'mountain', 'kids', 'children', 'teenager', 'speed', 'suspension', 'brake'];
-  var relevantCount = allCompetitors.filter(function(c) {
-    if (!c.title) return false;
-    var t = c.title.toLowerCase();
-    return bikeTerms.some(function(term) { return t.includes(term); });
-  }).length;
-  var relevanceRatio = allCompetitors.length > 0 ? relevantCount / allCompetitors.length : 0;
-  var needsRelevanceFallback = relevanceRatio < 0.5 && allCompetitors.length > 0; // Changed threshold from 0.3 to 0.5
-  
-  // Fix: Always run fallback if coreProduct is generic and we have bike category
-  // Also run fallback if we have bike category but no competitors found
-  // Also run fallback if relevance is too low
-  // Also run fallback if coreProduct is generic (contains 'steel' but not 'bike')
-  // Also run fallback if we have bike category and competitors but relevance is low
-  // Also run fallback if we have bike category and relevance is very low (< 30%)
-  // Also run fallback if we have bike category and relevance is very low (< 20%)
-  // Also run fallback if we have bike category and relevance is very low (< 10%)
-  // Also run fallback if we have bike category and relevance is very low (< 5%)
-  // Also run fallback if we have bike category and relevance is very low (< 1%)
-  // Also run fallback if we have bike category and relevance is very low (< 0.5%)
-  // Also run fallback if we have bike category and relevance is very low (< 0.1%)
-  // Also run fallback if we have bike category and relevance is very low (< 0.05%)
-  if ((allCompetitors.length < 10 || needsQualityFallback || allCompetitors.length === 0 || isGenericCore || needsBikeFallback || needsRelevanceFallback || (hasBikeCategory && allCompetitors.length === 0) || (hasBikeCategory && relevanceRatio < 0.0005)) && (foundPhrases.length > 0 || categoryFallback)) {
-    // Extract category-based fallback term first (most reliable: Amazon's own taxonomy)
-    var catTerm = '';
-    if (categoryFallback) {
-      var parts = categoryFallback.split('>').map(function(p) { return p.trim(); });
-      // Use the last non-generic category part
-      for (var i = parts.length - 1; i >= 0; i--) {
-        var p = parts[i].toLowerCase();
-        if (p.length > 4 && p !== coreProduct && !STOPWORDS.has(p)) {
-          catTerm = p;
-          break;
-        }
-      }
-    }
-
-    var fallbackTerms = extractFallbackTerms(foundPhrases, coreProduct, categoryFallback);
-    // Prepend category term (higher priority than title-derived terms)
-    if (catTerm && fallbackTerms.indexOf(catTerm) === -1) {
-      fallbackTerms.unshift(catTerm);
-    }
-
-    if (needsQualityFallback) {
-      console.error('Quality check: ' +
-        Math.round((allCompetitors.filter(function(c) {
-          if (!c.title) return false;
-          var t = c.title.toLowerCase();
-          var coreWords = (coreProduct || '').split(/\s+/).filter(function(w) { return w.length > 3; });
-          return !coreWords.some(function(w) { return t.includes(w); });
-        }).length / allCompetitors.length) * 100) +
-        '% competitors missing coreProduct keywords — forcing category fallback');
-    }
-
-    // Fix: If coreProduct is generic steel frame, add bike-specific terms
-    if (coreProduct && coreProduct.includes('steel') && !coreProduct.includes('bike')) {
-      var bikeTerms = ['20 inch kids bike', 'kids bike', 'mountain bike', 'bicycle', 'kids bicycle', 'kids mountain bike', 'kids bicycle 20 inch', '20 inch mountain bike', '20 inch bicycle', '20 inch boys bike', '20 inch girls bike', '20 inch kids bicycle', '20 inch boys mountain bike', '20 inch girls mountain bike', '20 inch boys bicycle', '20 inch girls bicycle', '20 inch boys bike mountain', '20 inch girls bike mountain', 'kids bicycle 20 inch'];
-      bikeTerms.forEach(function(t) {
-        if (fallbackTerms.indexOf(t) === -1) fallbackTerms.push(t);
+  // ── spawn 子进程的通用封装 ────────────────────────────────
+  function spawnWorker(asin, searchTerm, marketplace, titleBigrams) {
+    return new Promise(function(resolve) {
+      var workerPath = path.join(SKILL_DIR, 'step4_worker.js');
+      var child = require('child_process').spawn(
+        process.execPath,
+        [workerPath, asin, searchTerm, marketplace, JSON.stringify(titleBigrams || []), categoryFallback || ''],
+        { stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true }
+      );
+      var stdout = '', stderr = '';
+      child.stdout.on('data', function(d) { stdout += d; });
+      child.stderr.on('data', function(d) {
+        var line = d.toString().trim();
+        if (line) log('  [step4] ' + line);
       });
-    }
-    
-    // Fix: Always add bike-specific terms if category contains "bike"
-    if (categoryFallback && categoryFallback.toLowerCase().includes('bike')) {
-      var bikeTerms2 = ['20 inch kids bike', 'kids bike', 'mountain bike', 'bicycle', 'kids bicycle', 'kids mountain bike', 'kids bicycle 20 inch', '20 inch mountain bike', '20 inch bicycle', '20 inch boys bike', '20 inch girls bike', '20 inch kids bicycle', '20 inch boys mountain bike', '20 inch girls mountain bike', '20 inch boys bicycle', '20 inch girls bicycle', '20 inch boys bike mountain', '20 inch girls bike mountain', 'kids bicycle 20 inch'];
-      bikeTerms2.forEach(function(t) {
-        if (fallbackTerms.indexOf(t) === -1) fallbackTerms.push(t);
+      child.on('close', function() {
+        try {
+          var parsed = JSON.parse(stdout.trim());
+          resolve(parsed.ok !== false ? parsed : null);
+        } catch(e) { resolve(null); }
       });
-    }
-    
-    // Fix: If coreProduct doesn't contain 'bike' but category does, add bike terms first
-    if (needsBikeFallback) {
-      var bikeTerms3 = ['20 inch kids bike', 'kids bike', 'mountain bike', 'bicycle', 'kids bicycle', 'kids mountain bike', 'kids bicycle 20 inch', '20 inch mountain bike', '20 inch bicycle', '20 inch boys bike', '20 inch girls bike', '20 inch kids bicycle', '20 inch boys mountain bike', '20 inch girls mountain bike', '20 inch boys bicycle', '20 inch girls bicycle', '20 inch boys bike mountain', '20 inch girls bike mountain', 'kids bicycle 20 inch'];
-      bikeTerms3.forEach(function(t) {
-        if (fallbackTerms.indexOf(t) === -1) fallbackTerms.unshift(t);
-      });
-    }
-    
-    // Fix: If coreProduct is generic and we have bike category, add bike terms first
-    if (isGenericCore && hasBikeCategory) {
-      var bikeTermsFirst = ['20 inch kids bike', 'kids bike', 'mountain bike', 'bicycle', 'kids bicycle', 'kids mountain bike', '20 inch mountain bike', '20 inch bicycle', '20 inch boys bike', '20 inch girls bike', '20 inch kids bicycle', '20 inch boys mountain bike', '20 inch girls mountain bike', '20 inch boys bicycle', '20 inch girls bicycle', '20 inch boys bike mountain', '20 inch girls bike mountain', 'kids bicycle 20 inch'];
-      bikeTermsFirst.forEach(function(t) {
-        if (fallbackTerms.indexOf(t) === -1) fallbackTerms.unshift(t);
-      });
-    }
-    
-    console.error('Fallback triggered: main search found ' + allCompetitors.length +
-                  ' competitors (relevance: ' + Math.round(relevanceRatio * 100) + '%, quality: ' + needsQualityFallback + '). Trying ' + fallbackTerms.length + ' fallback terms: ' +
-                  fallbackTerms.join(', '));
+      child.on('error', function() { resolve(null); });
+    });
+  }
 
-    for (var i = 0; i < fallbackTerms.length; i++) {
-      var term = fallbackTerms[i];
-      // 已经有足够竞品就停止
-      if (allCompetitors.length >= 20) break;
-
-      console.error('  Fallback round ' + (i + 1) + ': searching "' + term + '"');
+  return new Promise(function(resolve) {
+    var workerPath = path.join(SKILL_DIR, 'step4_worker.js');
+    var child = require('child_process').spawn(
+      process.execPath,
+      [workerPath, s1.asin, coreProduct, s1.marketplace, JSON.stringify(s3.titleBigrams || []), s2.category || ''],
+      { stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true }
+    );
+    var stdout = '', stderr = '';
+    child.stdout.on('data', function(d) { stdout += d; });
+    child.stderr.on('data', function(d) {
+      var line = d.toString().trim();
+      if (line) log('  [step4] ' + line);
+    });
+    child.on('close', async function(code) {
       try {
-        var fbResult = await scrapeCompetitorSearch(term, marketplace, {
-          maxCompetitors: 30,
-          maxPerRound: 30,
-          sort: 'review-rank'
-        });
+        var parsed = JSON.parse(stdout.trim());
+        if (parsed.ok !== false) {
+          var cpFile = path.join(CHECKPOINT_DIR, s1.asin, 'step4.json');
+          if (fs.existsSync(cpFile)) {
+            var result = JSON.parse(fs.readFileSync(cpFile, 'utf8'));
+            var origCount  = result.originalCompetitorCount || result.competitors.length;
+            var filtCount  = result.filteredCompetitorCount || (result.filteredCompetitors || []).length;
+            var needsCheck = result.filterApplied && origCount > 0 && filtCount / origCount < 0.3;
 
-        if (fbResult.competitors && fbResult.competitors.length > 0) {
-          var before = allCompetitors.length;
-          allCompetitors = dedupeByAsin(allCompetitors.concat(fbResult.competitors));
-          var added = allCompetitors.length - before;
-          totalFound += fbResult.totalFound;
-          allRounds = allRounds.concat(fbResult.cascadeRounds.map(function(r) {
-            return Object.assign({}, r, { fallbackTerm: term });
-          }));
-          fallbackTermsUsed.push(term);
-          usedFallback = true;
-          console.error('  "' + term + '": added ' + added + ' new competitors (total now: ' + allCompetitors.length + ')');
-        } else {
-          console.error('  "' + term + '": 0 results');
-        }
-      } catch(e) {
-        console.error('  "' + term + '" search error: ' + e.message);
-      }
-    }
+            if (needsCheck) {
+              // ── Step1: 评估原始竞品质量 ────────────────────────
+              var quality = assessCompetitorQuality(result.competitors, s3.titleBigrams || []);
+              log('  [step4] ⚠ Filter removed >' +
+                  Math.round((1 - filtCount / origCount) * 100) + '% of competitors. ' +
+                  'Original quality score: ' + (quality * 100).toFixed(0) + '%');
 
-    if (allCompetitors.length < 5) {
-      console.error('⚠ Warning: only ' + allCompetitors.length + ' competitors found after all fallbacks');
-    } else {
-      console.error('Fallback complete: ' + allCompetitors.length + ' total competitors');
-    }
-  }
+              if (quality >= 0.4) {
+                // ── 价格偏离过滤（±30%，宽松方案：totalPrice || price）──────────────
+                var TARGET_PRICE_FILTER = 0.30;
+                var effectivePriceFilter = function(c) {
+                  var tp = (c.totalPrice && !isNaN(parseFloat(c.totalPrice))) ? parseFloat(c.totalPrice) :
+                           (c.price     && !isNaN(parseFloat(c.price)))     ? parseFloat(c.price) : null;
+                  if (tp === null) return true; // 无法判断则保留
+                  var dev = Math.abs(tp - targetPrice) / targetPrice;
+                  return dev <= TARGET_PRICE_FILTER;
+                };
+                var pricePassed = result.competitors.filter(effectivePriceFilter);
+                var priceRemoved = result.competitors.length - pricePassed.length;
+                if (priceRemoved > 0) {
+                  log('  [step4] Price filter: removed ' + priceRemoved + ' competitors (>±' + (TARGET_PRICE_FILTER * 100).toFixed(0) + '% from $' + targetPrice + '), kept ' + pricePassed.length);
+                }
+                // 用价格过滤后的结果做质量评估
+                result.competitors = pricePassed;
+                var quality2 = assessCompetitorQuality(result.competitors, s3.titleBigrams || []);
+                if (quality2 < 0.4) {
+                  log('  [step4] ⚠ After price filter, quality dropped to ' + (quality2 * 100).toFixed(0) + '% — reverting price filter');
+                  result.competitors = pricePassed; // keep price-filtered but flag
+                  result.priceFilterReverted = true;
+                }
+                // ── v1.6.6: 原始竞品质量OK：回退到宽松过滤（基于cascade搜索词）──
+                var searchTerms = [];
+                if (result.cascadeRounds) {
+                  result.cascadeRounds.forEach(function(r) {
+                    if (r.keyword) searchTerms.push(r.keyword.toLowerCase());
+                  });
+                }
+                if (result.fallbackTermsUsed) {
+                  result.fallbackTermsUsed.forEach(function(t) {
+                    if (t && searchTerms.indexOf(t.toLowerCase()) === -1) searchTerms.push(t.toLowerCase());
+                  });
+                }
+                if (searchTerms.length > 0) {
+                  var SEARCH_STOPWORDS = new Set(['for','and','the','with','from','this','that','is','are','to','in','on','of','a','an','by']);
+                  var searchWords = [];
+                  searchTerms.forEach(function(term) {
+                    term.split(/\s+/).forEach(function(w) {
+                      if (w.length > 2 && !SEARCH_STOPWORDS.has(w)) searchWords.push(w);
+                    });
+                  });
+                  searchWords = searchWords.filter(function(w, i, arr) { return arr.indexOf(w) === i; });
+                  var looseFiltered = result.competitors.filter(function(c) {
+                    if (!c.title) return false;
+                    var t = c.title.toLowerCase();
+                    return searchWords.some(function(w) { return t.indexOf(w) !== -1; });
+                  });
+                  var kept = looseFiltered.length;
+                  log('  [step4] Reverting filter with loose mode: kept ' + kept + '/' + result.competitors.length + ' (matched: ' + searchTerms.slice(0, 4).join(', ') + ')');
+                  result.filteredCompetitors = looseFiltered;
+                  result.filteredCompetitorCount = kept;
+                  result.filterApplied = true;
+                  result.filterReverted = true;
+                  result.filterDecision = 'reverted-loose: ' + kept + ' competitors (quality ' + (quality * 100).toFixed(0) + '%)';
+                } else {
+                  log('  [step4] Original competitors look relevant — reverting filter');
+                  result.filteredCompetitors = result.competitors;
+                  result.filteredCompetitorCount = result.competitors.length;
+                  result.filterApplied = false;
+                  result.filterReverted = true;
+                  result.filterDecision = 'reverted: original quality ' + (quality * 100).toFixed(0) + '%';
+                }
 
-  // ── v1.6.3: Product-type phrase extraction + filter ──────────────────
-  // Extract 2-word and 3-word product-type phrases from target title
-  // Use these as filter criteria instead of single words
-  var PRODUCT_STOPWORDS = new Set(['with', 'for', 'and', 'the', 'set', 'new', 'home', 'room',
-    'from', 'this', 'that', 'are', 'was', 'it', 'be', 'to', 'in', 'on', 'of', 'a', 'an',
-    'by', 'or', 'as', 'at', 'your', 'you', 'not', 'but', 'can', 'all', 'one', 'two',
-    'three', 'four', 'five', 'six', 'use', 'used', 'best', 'top', 'more', 'most',
-    'only', 'easy', 'free', 'fast', 'safe', 'large', 'small', 'mini', 'max', 'plus',
-    'pro', 'prime', 'extra', 'ultra', 'super', 'black', 'white', 'grey', 'gray']);
+              } else {
+                // ── 原始竞品质量差：搜索词本身是脏的，尝试重搜 ──────
+                var fallbackTerm = (s3.titleBigrams || [])[0] || '';
+                log('  [step4] Original competitors look irrelevant (quality ' +
+                    (quality * 100).toFixed(0) + '%). ' +
+                    (fallbackTerm ? 'Retrying with title bigram: "' + fallbackTerm + '"' : 'No fallback term available.'));
 
-  // Extract all meaningful n-grams (2-word and 3-word) from title
-  function extractProductPhrases(title) {
-    var words = title.toLowerCase()
-      .replace(/[\-\/]/g, ' ')
-      .split(/\s+/)
-      .filter(function(w) { return w.length > 2 && !PRODUCT_STOPWORDS.has(w) && !/^[0-9"']/.test(w); });
+                if (fallbackTerm && fallbackTerm !== coreProduct) {
+                  // 用 titleBigrams[0] 重新搜一次
+                  var retryOk = await spawnWorker(s1.asin, fallbackTerm, s1.marketplace, s3.titleBigrams);
+                  if (retryOk) {
+                    var cpFile2 = path.join(CHECKPOINT_DIR, s1.asin, 'step4.json');
+                    var retryResult = JSON.parse(fs.readFileSync(cpFile2, 'utf8'));
+                    var retryCount  = (retryResult.filteredCompetitors || retryResult.competitors || []).length;
 
-    var phrases = [];
-    // 2-word phrases
-    for (var i = 0; i < words.length - 1; i++) {
-      phrases.push(words[i] + ' ' + words[i + 1]);
-    }
-    // 3-word phrases
-    for (var j = 0; j < words.length - 2; j++) {
-      phrases.push(words[j] + ' ' + words[j + 1] + ' ' + words[j + 2]);
-    }
-    return phrases;
-  }
+                    if (retryCount >= 5) {
+                      log('  [step4] ✓ Retry with "' + fallbackTerm + '" found ' + retryCount + ' competitors');
+                      retryResult.filterDecision = 'retry: searched "' + fallbackTerm + '", found ' + retryCount;
+                      fs.writeFileSync(cpFile2, JSON.stringify(retryResult, null, 2), 'utf8');
+                      resolve(retryResult);
+                      return;
+                    } else {
+                      log('  [step4] Retry returned only ' + retryCount + ' competitors — keeping original with flag');
+                    }
+                  } else {
+                    log('  [step4] Retry worker failed — keeping original with flag');
+                  }
+                }
 
-  // Score a competitor title: how many product phrases match?
-  function countPhraseMatches(compTitle, phrases) {
-    if (!compTitle) return 0;
-    var t = compTitle.toLowerCase();
-    var count = 0;
-    phrases.forEach(function(p) {
-      if (t.indexOf(p) !== -1) count++;
-    });
-    return count;
-  }
+                // 重搜失败或无 fallback 词：保留原始竞品，但打上 lowQuality 标记
+                result.filteredCompetitors    = result.competitors;
+                result.filteredCompetitorCount = result.competitors.length;
+                result.filterApplied  = false;
+                result.filterReverted = true;
+                result.competitorQualityLow = true;
+                result.filterDecision = 'reverted-low-quality: original score ' + (quality * 100).toFixed(0) + '%, retry failed';
+                log('  [step4] ⚠ Keeping original competitors with lowQuality flag (report will note this)');
+              }
 
-  // Extract product-type phrases from target title (from step2 checkpoint)
-  var targetTitle = ''; // will be loaded from step2
-  try {
-    var step2Path = path.join(CHECKPOINT_DIR, asin, 'step2.json');
-    if (fs.existsSync(step2Path)) {
-      var step2 = JSON.parse(fs.readFileSync(step2Path, 'utf8'));
-      targetTitle = step2.title || '';
-    }
-  } catch(e) {}
+              fs.writeFileSync(cpFile, JSON.stringify(result, null, 2), 'utf8');
+            }
 
-  var productPhrases = targetTitle ? extractProductPhrases(targetTitle) : [];
-
-  // Also add coreProduct bigrams from cascade terms as fallback phrases
-  var cascadePhrases = (coreProduct || '').split(/\s+/).filter(function(w) { return w.length > 3; });
-  if (cascadePhrases.length >= 2) {
-    cascadePhrases.forEach(function(w, i) {
-      if (i < cascadePhrases.length - 1) {
-        productPhrases.push(cascadePhrases[i] + ' ' + cascadePhrases[i + 1]);
-      }
-    });
-  }
-
-  // Deduplicate
-  productPhrases = productPhrases.filter(function(p, i, arr) { return arr.indexOf(p) === i; });
-
-  // v1.6.5: Add phrases from successful fallback search terms
-  // If competitors were found via fallback, extract phrases from those search terms
-  if (usedFallback && fallbackTermsUsed.length > 0) {
-    var SEARCH_STOPWORDS = new Set(['for', 'and', 'the', 'with', 'of', 'to', 'in', 'on', 'a', 'an']);
-    fallbackTermsUsed.forEach(function(term) {
-      var words = term.toLowerCase().replace(/[-/]/g, ' ').split(/s+/).filter(function(w) {
-        return w.length > 2 && !SEARCH_STOPWORDS.has(w) && !/^[0-9"']/.test(w);
-      });
-      // 2-word phrases from search term
-      for (var i = 0; i < words.length - 1; i++) {
-        var bi = words[i] + ' ' + words[i + 1];
-        if (bi.length > 5) productPhrases.push(bi);
-      }
-      // 3-word phrases from search term
-      for (var j = 0; j < words.length - 2; j++) {
-        var tri = words[j] + ' ' + words[j + 1] + ' ' + words[j + 2];
-        if (tri.length > 8) productPhrases.push(tri);
-      }
-      // Also add the full term itself if >= 2 words
-      if (words.length >= 2) {
-        productPhrases.push(term);
-      }
-    });
-    // Deduplicate again after adding fallback phrases
-    productPhrases = productPhrases.filter(function(p, i, arr) { return arr.indexOf(p) === i; });
-  }
-
-  var filterApplied = false;
-
-  // ── P0 Fix: Accessory Combination Detection ──────────────────────────────
-  // Reject products where a product word is IMMEDIATELY followed by an accessory word.
-  // e.g. "Sectional Sofa Cover" → "sofa" + "cover" → accessory combo → REJECT
-  // But "Yoga Mat" (mat IS the product type) or "iPhone Case" (case IS the product type)
-  // should NOT be rejected — only the [product]+[accessory] pattern triggers rejection.
-  //
-  // Also use core word count as signal:
-  // - 0 core words → REJECT (completely unrelated product)
-  // - 1 core word → REJECT (partial match, likely wrong category)
-  // - 2+ core words AND score >= 1 → PASS (real product with product-type language)
-  var BRAND_ONLY_BLACKLIST_RE = /^([A-Z]+\s*){1,2}$/;
-  var ACCESSORY_WORDS = new Set([
-    'cover','covers','covering',
-    'protector','protectors',
-    'slipcover','slipcovers',
-    'liner','liners',
-    'pad','pads',
-    'mat','mats',
-    'case','cases',
-    'wrap','wraps',
-    'guard','guards',
-    'sleeve','sleeves',
-    'bag','bags',
-    'tote','totes',
-    'organizer','organizers',
-    'storage'
-  ]);
-
-  // Build coreProduct words for combo detection
-  // Fix: Use actual product keywords from title instead of generic coreProduct
-  var coreProductWords = [];
-  try {
-    var step2Path = path.join(CHECKPOINT_DIR, asin, 'step2.json');
-    if (fs.existsSync(step2Path)) {
-      var step2 = JSON.parse(fs.readFileSync(step2Path, 'utf8'));
-      var title = step2.title || '';
-      var titleWords = title.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/);
-      // Extract meaningful words from title (exclude stopwords and numbers)
-      coreProductWords = titleWords.filter(function(w) {
-        return w.length > 2 && !STOPWORDS.has(w) && !/^[0-9]+$/.test(w);
-      });
-    }
-  } catch(e) {}
-  
-  // Fallback to coreProduct if title extraction failed
-  if (coreProductWords.length === 0) {
-    coreProductWords = (coreProduct || '').toLowerCase().split(/\s+/).filter(function(w) {
-      return w.length > 2 && !STOPWORDS.has(w);
-    });
-  }
-
-  // Detect [coreWord] followed by [accessoryWord] within 3 words
-  function detectAccessoryCombo(title, coreWords) {
-    var words = (title || '').toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/);
-    for (var i = 0; i < words.length; i++) {
-      if (coreWords.indexOf(words[i]) !== -1) {
-        for (var j = i + 1; j < Math.min(i + 4, words.length); j++) {
-          if (ACCESSORY_WORDS.has(words[j])) {
-            return { detected: true, coreWord: words[i], accessoryWord: words[j] };
+            var finalCount = (result.filteredCompetitors || result.competitors || []).length;
+            log('  [step4] ✓ ' + result.totalFound + ' found → ' + finalCount + ' usable' +
+                (result.competitorQualityLow ? ' ⚠ low quality' : '') +
+                (result.filterDecision ? ' [' + result.filterDecision + ']' : ''));
+            resolve(result);
+            return;
           }
         }
-      }
-    }
-    return { detected: false };
-  }
+      } catch(e) { /* fall through */ }
 
-  // If the TARGET PRODUCT itself is an accessory combo (e.g. "sofa cover"),
-  // then we ARE in the accessory market — don't reject accessory-type competitors.
-  // If the target is a standalone product (e.g. "sectional sofa"),
-  // then accessory combos in competitors should be rejected.
-  var targetIsAccessory = detectAccessoryCombo(coreProduct, coreProductWords).detected;
-  if (targetIsAccessory) {
-    console.error('P0 Filter: target product "' + coreProduct + '" is itself an accessory — skipping accessory combo rejection');
-  }
-
-  if (productPhrases.length > 0) {
-    var threeWordPhrases = productPhrases.filter(function(p) { return p.split(/\s+/).length >= 3; });
-    var twoWordPhrases = productPhrases.filter(function(p) { return p.split(/\s+/).length === 2; });
-
-    // Score + reject all competitors
-    var scored = allCompetitors.map(function(c) {
-      var t = (c.title || '').toLowerCase();
-      var combo = detectAccessoryCombo(c.title, coreProductWords);
-      var isBrandOnly = BRAND_ONLY_BLACKLIST_RE.test(c.title || '');
-      var coreWordCount = coreProductWords.filter(function(w) { return t.indexOf(w) !== -1; }).length;
-      var hasStrongCoreSignal = coreWordCount >= Math.min(2, coreProductWords.length);
-      var longMatches = threeWordPhrases.filter(function(p) { return t.indexOf(p) !== -1; }).length;
-      var shortMatches = twoWordPhrases.filter(function(p) { return t.indexOf(p) !== -1; }).length;
-      var score = longMatches * 3 + shortMatches;
-
-      return {
-        comp: c,
-        score: score,
-        coreWordCount: coreWordCount,
-        hasStrongCoreSignal: hasStrongCoreSignal,
-        combo: combo,
-        isBrandOnly: isBrandOnly,
-        rejectReason: (combo.detected && !targetIsAccessory) ? 'accessory-combo:' + combo.coreWord + '+' + combo.accessoryWord :
-                      isBrandOnly ? 'brand-only' :
-                      !hasStrongCoreSignal ? 'weak-core:' + coreWordCount : null
-      };
+      log('  [step4] ⚠ Worker failed (exit ' + code + ') — empty competitor list');
+      resolve({ competitors: [], cascadeRounds: [], totalFound: 0, coreProduct, scrapeError: code });
     });
+    child.on('error', function(e) {
+      log('  [step4] ⚠ Spawn error: ' + e.message);
+      resolve({ competitors: [], cascadeRounds: [], totalFound: 0, coreProduct, scrapeError: e.message });
+    });
+  });
+}
 
-    var rejected = scored.filter(function(s) { return s.rejectReason !== null; });
-    var passed = scored.filter(function(s) { return s.rejectReason === null; });
-
-    if (rejected.length > 0) {
-      console.error('P0 Filter: rejected ' + rejected.length + ' competitors:');
-      rejected.slice(0, 5).forEach(function(s) {
-        var titleSnippet = (s.comp.title || '').substring(0, 60);
-        console.error('  REJECT [' + s.rejectReason + '] "' + titleSnippet + '..."');
-      });
-      if (rejected.length > 5) console.error('  ... and ' + (rejected.length - 5) + ' more');
-    }
-
-    var afterFilter = passed.filter(function(s) {
-      if (s.score >= 3) return true;
-      if (s.score >= 1 && s.hasStrongCoreSignal) return true;
-      return false;
-    }).map(function(s) { return s.comp; });
-
-    if (afterFilter.length >= 5) {
-      var removed = allCompetitors.length - afterFilter.length;
-      if (removed > 0) {
-        console.error('Competitor filter (P0 fix): removed ' + removed + ' irrelevant titles, kept ' + afterFilter.length);
+// ── Step 13: 评论抓取（Playwright子进程） ───────────────────
+async function step13(s1, reviewCount) {
+  return new Promise(function(resolve) {
+    var workerPath = path.join(SKILL_DIR, 'step13_review_worker.js');
+    var maxReviews = Math.min(parseInt(reviewCount) || 60, 80);
+    var child = require('child_process').spawn(
+      process.execPath, [workerPath, s1.asin, s1.marketplace, String(maxReviews)],
+      { stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true }
+    );
+    var stdout = '', stderr = '';
+    child.stdout.on('data', function(d) { stdout += d; });
+    child.stderr.on('data', function(d) {
+      var line = d.toString().trim();
+      if (line) log('  [step13] ' + line);
+    });
+    child.on('close', function(code) {
+      var MARKER = '__STEP13_OUTPUT__';
+      var start = stdout.indexOf(MARKER);
+      var end = stdout.lastIndexOf(MARKER);
+      if (start !== -1 && end !== -1 && start !== end) {
+        try {
+          var parsed = JSON.parse(stdout.substring(start + MARKER.length, end));
+          resolve(parsed);
+          return;
+        } catch(e) {}
       }
-      filtered = afterFilter;
-      filterApplied = true;
+      log('  [step13] ⚠ Worker failed (exit ' + code + ') — empty review data');
+      resolve({ asin: s1.asin, reviews: [], totalExtracted: 0, scrapeError: stderr.split('\n')[0] || 'Unknown error' });
+    });
+    child.on('error', function(e) {
+      log('  [step13] ⚠ Spawn error: ' + e.message);
+      resolve({ asin: s1.asin, reviews: [], totalExtracted: 0, scrapeError: e.message });
+    });
+  });
+}
+
+// ── Main ────────────────────────────────────────────────────
+async function main() {
+  // ── 初始化目录 ────────────────────────────────────────────
+  ensureDir(CHECKPOINT_DIR);
+  ensureDir(REPORT_DIR);
+
+  if (!QUIET) {
+    console.log('════════════════════════════════════════');
+    console.log('  Amazon Listing Doctor — Data Layer');
+    console.log('════════════════════════════════════════');
+  }
+
+  // ── Step 1 ───────────────────────────────────────────────
+  var s1;
+  try {
+    s1 = await step1();
+  } catch(e) {
+    console.error('❌ ' + e.message);
+    process.exit(1);
+  }
+
+  var asin  = s1.asin;
+  var force = s1.force;
+  log('▶ ASIN: ' + asin + ' [' + s1.marketplace + '] ' + (force ? '(--force)' : ''));
+  saveCp(asin, 1, s1);
+
+  // 网络步骤（step2/4/13）每次都重新抓取，不使用缓存
+  // 计算步骤（step3）每次都重新执行（依赖 step2 结果，很快）
+
+  // ── Step 2: 产品页 ───────────────────────────────────────
+  var t = Date.now();
+  var s2;
+  log('▶ Step 2: Live Scrape');
+  s2 = await step2(s1);
+  saveCp(asin, 2, s2);
+  log('  ✓ ' + ((Date.now()-t)/1000).toFixed(1) + 's' +
+      (s2.title ? ' | "' + s2.title.substring(0, 60) + (s2.title.length > 60 ? '…' : '') + '"' : ' | ⚠ no title'));
+  if (s2.scrapeError) log('  ⚠ Scrape warning: ' + s2.scrapeError);
+
+  // ── Step 3: coreProduct 推断 ─────────────────────────────
+  t = Date.now();
+  log('▶ Step 3: Core Product Detection');
+  var s3 = await step3(s2);
+  saveCp(asin, 3, s3);
+  log('  ✓ ' + ((Date.now()-t)/1000).toFixed(1) + 's');
+
+  // ── Step 4: 竞品抓取 ─────────────────────────────────────
+  t = Date.now();
+  var s4;
+  log('▶ Step 4: Competitor Benchmark');
+  s4 = await step4(s1, s2, s3);
+  saveCp(asin, 4, s4);
+  log('  ✓ ' + ((Date.now()-t)/1000).toFixed(1) + 's | found: ' + s4.totalFound);
+
+  // ── Step 13: 评论抓取 ────────────────────────────────────
+  t = Date.now();
+  var s13;
+  var reviewCount = parseInt(s2.reviewCount || '0');
+  if (reviewCount < 10) {
+    log('⊘ Step 13: Review Analysis (skipped — only ' + reviewCount + ' reviews)');
+    s13 = { asin: asin, reviews: [], totalExtracted: 0, skipped: 'low-review-count' };
+    saveCp(asin, 13, s13);
+  } else {
+    log('▶ Step 13: Review Analysis (' + reviewCount + ' reviews detected, scraping up to 60)');
+    s13 = await step13(s1, reviewCount);
+    saveCp(asin, 13, s13);
+  }
+  log('  ✓ ' + ((Date.now()-t)/1000).toFixed(1) + 's | extracted: ' + s13.totalExtracted);
+
+  // ── 数据质量门禁 ────────────────────────────────────────
+  // Phase 1 完成后检查数据是否足够，不够就停，不浪费 Phase 2 的时间和 API 费用
+  var dataIssues = [];
+  if (!s2.title || s2.title.length < 10) dataIssues.push('产品标题缺失或过短');
+  if (!s2.bullets || s2.bullets.length === 0) dataIssues.push('五点描述缺失');
+  if (s4.totalFound === 0) dataIssues.push('竞品搜索返回 0 条（可能 Amazon 反爬触发）');
+  if (s4.totalFound > 0 && s4.totalFound < 5) dataIssues.push('竞品不足 5 条，分析结果可能不可靠');
+
+  if (dataIssues.length > 0) {
+    console.log('');
+    console.log('════════════════════════════════════════');
+    console.log('  ❌ Phase 1 数据不足，无法继续 Phase 2');
+    console.log('════════════════════════════════════════');
+    console.log('');
+    console.log('问题：');
+    dataIssues.forEach(function(issue) { console.log('  - ' + issue); });
+    console.log('');
+    console.log('建议：');
+    if (s4.totalFound === 0) {
+      console.log('  等待 10-15 分钟后重试（Amazon 反爬冷却）');
+      console.log('  或换一个 ASIN 测试');
     } else {
-      console.error('Competitor filter: would leave only ' + afterFilter.length + ' — skipping (threshold: 5). Using unfiltered set.');
-      filtered = allCompetitors;
-      filterApplied = false;
+      console.log('  检查 ASIN 是否正确，或手动确认产品页面可访问');
+    }
+    console.log('');
+    console.log('已保存的数据：');
+    console.log('  ' + path.join(CHECKPOINT_DIR, asin, 'step1.json'));
+    console.log('  ' + path.join(CHECKPOINT_DIR, asin, 'step2.json'));
+    console.log('  ' + path.join(CHECKPOINT_DIR, asin, 'step4.json'));
+    process.exit(1);
+  }
+
+  // ── 汇总 data_package.json ───────────────────────────────
+  var dataPackage = {
+    meta: {
+      asin,
+      marketplace: s1.marketplace,
+      domain: s1.domain,
+      url: s1.inputUrl,
+      scrapedAt: new Date().toISOString()
+    },
+    product: {
+      title:       s2.title,
+      brand:       s2.brand,
+      bullets:     s2.bullets,
+      price:       s2.price,
+      rating:      s2.rating,
+      reviewCount: s2.reviewCount,
+      BSR:         s2.BSR,
+      category:    s2.category,
+      scrapeError: s2.scrapeError || null
+    },
+    keywords: {
+      coreProduct:  s3.coreProduct,
+      sizeSignals:  s3.sizeSignals,
+      titleBigrams: s3.titleBigrams   // 供 Claude 快速参考，不是最终关键词
+    },
+    competitors: {
+      items:         s4.competitors,
+      totalFound:    s4.totalFound,
+      cascadeRounds: s4.cascadeRounds,
+      scrapeError:   s4.scrapeError || null
+    }
+  };
+
+  var pkgPath = path.join(CHECKPOINT_DIR, asin, 'data_package.json');
+  fs.writeFileSync(pkgPath, JSON.stringify(dataPackage, null, 2), 'utf8');
+
+  // ── 竞品价格偏差警告 ──────────────────────────────────────
+  // 检查竞品价格是否与目标价格大幅偏离（可能抓取了错误竞品或价格不准）
+  if (s2.price && s4.competitors && s4.competitors.length > 0) {
+    var targetPrice = s2.price;
+    var compPrices = s4.competitors
+      .filter(function(c) { return c.price && !isNaN(parseFloat(c.price)); })
+      .map(function(c) { return parseFloat(c.price); });
+    if (compPrices.length > 0) {
+      var avgCompPrice = compPrices.reduce(function(a, b) { return a + b; }, 0) / compPrices.length;
+      var deviation = Math.abs(avgCompPrice - targetPrice) / targetPrice;
+      if (deviation > 0.5) {
+        var direction = avgCompPrice > targetPrice ? '高于' : '低于';
+        log('  [step4] ⚠ 价格偏差警告: 目标 $' + targetPrice + ', 竞品均价 $' + avgCompPrice.toFixed(2) +
+            ' (' + direction + '目标 ' + (deviation * 100).toFixed(0) + '%)，请检查竞品是否正确');
+      }
+      // 检测低价高运费风险：如果竞品价格低于目标 50%+，可能有高额运费
+      var lowPriceComps = compPrices.filter(function(p) { return p < targetPrice * 0.5; });
+      if (lowPriceComps.length > 0) {
+        log('  [step4] ⚠ 低价竞品检测: ' + lowPriceComps.length + ' 个竞品价格低于目标 50%，注意运费可能较高');
+      }
     }
   }
 
-  // ── 写入 checkpoint ───────────────────────────────────────
-  var output = Object.assign({}, result, {
-    competitors:            allCompetitors,
-    cascadeRounds:          allRounds,
-    totalFound:             totalFound,
-    filteredCompetitors:    filtered,
-    filterApplied:          filterApplied,
-    filterKeywords:         productPhrases || [],
-    originalCompetitorCount: allCompetitors.length,
-    filteredCompetitorCount: filtered.length,
-    usedFallback:           usedFallback,
-    fallbackTermsUsed:      fallbackTermsUsed,
-    lowCompetitorWarning:   filtered.length < 5
-  });
+  // ── 完成输出 ──────────────────────────────────────────────
+  console.log('');
+  console.log('════════════════════════════════════════');
+  console.log('  ✅ Phase 1 完成：数据层抓取成功');
+  console.log('════════════════════════════════════════');
+  console.log('');
+  console.log('产品:    ' + (s2.title || '(no title)').substring(0, 70));
+  console.log('价格:    ' + (s2.price ? '$' + s2.price : 'N/A'));
+  console.log('评分:    ' + (s2.rating || 'N/A') + ' (' + (s2.reviewCount || 0) + ' reviews)');
+  console.log('BSR:     ' + (s2.BSR   || 'N/A'));
+  console.log('品类:    ' + (s2.category || 'N/A'));
+  console.log('竞品数:  ' + s4.totalFound);
+  console.log('评论数:  ' + (s13.totalExtracted || 0));
+  console.log('');
+  console.log('data_package: ' + pkgPath);
+  console.log('');
+  console.log('════════════════════════════════════════');
+  console.log('  ▶ Phase 2：请 Claude Agent 执行分析');
+  console.log('════════════════════════════════════════');
+  console.log('');
+  console.log('  数据文件已就绪：');
+  console.log('    ' + path.join(CHECKPOINT_DIR, asin, 'step2.json'));
+  console.log('    ' + path.join(CHECKPOINT_DIR, asin, 'step4.json'));
+  console.log('    ' + path.join(CHECKPOINT_DIR, asin, 'step13.json'));
+  console.log('');
+  console.log('  Claude Agent 请按 SKILL.md Phase 2 执行分析，');
+  console.log('  完成后将分析结果写入：');
+  console.log('    ' + path.join(CHECKPOINT_DIR, asin, 'analysis.md'));
+  console.log('');
+  console.log('  写入完成后执行：');
+  console.log('    node ' + path.join(SKILL_DIR, 'md_to_checkpoints.js') + ' ' + asin);
+  console.log('');
+  console.log('  （或使用 JSON 路线：node inject_analysis.js ' + asin + ' analysis.json）');
+}
 
-  var cpPath = path.join(cpDir, 'step4.json');
-  fs.writeFileSync(cpPath, JSON.stringify(output), 'utf8');
-  console.error('step4_worker: done. total=' + allCompetitors.length +
-                ', filtered=' + filtered.length +
-                (usedFallback ? ', fallback used: [' + fallbackTermsUsed.join(', ') + ']' : ''));
-  console.log(JSON.stringify({
-    ok: true,
-    totalFound: totalFound,
-    rounds: allRounds.length,
-    filtered: filtered.length,
-    usedFallback: usedFallback,
-    fallbackTermsUsed: fallbackTermsUsed
-  }));
-}).catch(function(e) {
-  console.error('Fatal:', e.message);
-  process.exit(1);
-});
+if (require.main === module) {
+  main().catch(function(e) {
+    console.error('Fatal: ' + e.message);
+    console.error(e.stack);
+    process.exit(1);
+  });
+} else {
+  module.exports = { step1, step2, step3, step4, step13 };
+}

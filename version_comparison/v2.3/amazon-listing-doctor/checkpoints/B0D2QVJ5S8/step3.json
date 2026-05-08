@@ -1,0 +1,61 @@
+{
+  "coreProduct": "couch cover",
+  "brand": "MDSASFD",
+  "sizeSignals": [
+    "1 PCS"
+  ],
+  "titleBigrams": [
+    {
+      "phrase": "couch cover",
+      "score": 2
+    },
+    {
+      "phrase": "sofa cover",
+      "score": 2
+    },
+    {
+      "phrase": "sectional sofa",
+      "score": 2
+    },
+    {
+      "phrase": "cushion couch",
+      "score": 2
+    },
+    {
+      "phrase": "couch sofa",
+      "score": 2
+    },
+    {
+      "phrase": "sofa slipcover",
+      "score": 1
+    },
+    {
+      "phrase": "washable sectional",
+      "score": 1
+    },
+    {
+      "phrase": "slipcover cushion",
+      "score": 1
+    },
+    {
+      "phrase": "cover washable",
+      "score": 1
+    },
+    {
+      "phrase": "velvet couch",
+      "score": 1
+    },
+    {
+      "phrase": "sofa shaped",
+      "score": 1
+    },
+    {
+      "phrase": "cover anti",
+      "score": 1
+    },
+    {
+      "phrase": "slip sofa",
+      "score": 1
+    }
+  ]
+}

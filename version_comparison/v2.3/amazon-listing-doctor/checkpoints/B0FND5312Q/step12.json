@@ -1,0 +1,45 @@
+{
+  "explicitViolations": [
+    {
+      "type": "promotion_word",
+      "severity": "medium",
+      "rule": "Title/bullets must not contain promotional words: 'Best', '#1', 'Free Shipping', etc.",
+      "detected": false,
+      "description": "No promotional words found. Compliant."
+    },
+    {
+      "type": "missing_weight_capacity",
+      "severity": "high",
+      "rule": "Fitness equipment should specify weight capacity for safety",
+      "detected": true,
+      "description": "No weight capacity specified. Bullet 2 says 'reinforced steel tubing' and 'steady without wobble' but gives no lbs capacity. This is a significant information gap for fitness equipment buyers.",
+      "suggestion": "Add weight capacity to bullet 2: 'Supports up to 300 lbs'"
+    }
+  ],
+  "implicitViolations": [
+    {
+      "type": "vague_comfort_claim",
+      "severity": "low",
+      "rule": "Health-related claims should be verifiable or qualified",
+      "detected": true,
+      "description": "Bullet 4: 'less strenuous on your joints' is a health-comfort claim. Plausible but not medically verified.",
+      "suggestion": "Change to 'reduces strain on joints during dips' or keep as-is with low risk"
+    },
+    {
+      "type": "unsubstantiated_quality_claim",
+      "severity": "low",
+      "rule": "Quality claims should have supporting detail",
+      "detected": true,
+      "description": "Bullet 5: 'personal fitness haven' and 'no compromise on functionality' are marketing statements without specific measurements.",
+      "suggestion": "Remove 'personal fitness haven' as it's vague marketing language"
+    }
+  ],
+  "riskScore": 25,
+  "riskLevel": "medium",
+  "summary": "One high-priority gap: missing weight capacity. No critical promotional violations. Main risk is potential buyer confusion about equipment's load limits.",
+  "suggestions": [
+    "Add weight capacity (e.g., 'supports 300 lbs') to Bullet 2 immediately",
+    "Remove vague marketing language ('fitness haven', 'no compromise')",
+    "Consider adding warranty for $135.99 price point"
+  ]
+}

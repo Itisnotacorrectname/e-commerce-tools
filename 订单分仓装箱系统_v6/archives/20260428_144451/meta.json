@@ -1,0 +1,105 @@
+{
+  "batch_ts": "20260428_144451",
+  "input_file": "输入数据_20260428_144451.xlsx",
+  "output_file": "输出报告_20260428_144451.xlsx",
+  "sku_count": 434,
+  "order_sku_count": 32,
+  "total_allocated": 4280,
+  "container_count": 7,
+  "avg_utilization": 96.1,
+  "low_util_count": 1,
+  "warning_count": 26,
+  "warehouses": [
+    "CHI",
+    "LA",
+    "NJ",
+    "SAV",
+    "TX"
+  ],
+  "container_summary": [
+    {
+      "id": "C001",
+      "warehouse": "CHI",
+      "utilization": 100.0,
+      "used_vol": 65.997,
+      "sku_count": 17,
+      "is_low": false
+    },
+    {
+      "id": "C002",
+      "warehouse": "LA",
+      "utilization": 99.9,
+      "used_vol": 65.941,
+      "sku_count": 18,
+      "is_low": false
+    },
+    {
+      "id": "C003",
+      "warehouse": "SAV",
+      "utilization": 100.0,
+      "used_vol": 65.998,
+      "sku_count": 14,
+      "is_low": false
+    },
+    {
+      "id": "C004",
+      "warehouse": "SAV",
+      "utilization": 100.0,
+      "used_vol": 65.981,
+      "sku_count": 8,
+      "is_low": false
+    },
+    {
+      "id": "C005",
+      "warehouse": "TX",
+      "utilization": 100.0,
+      "used_vol": 65.983,
+      "sku_count": 11,
+      "is_low": false
+    },
+    {
+      "id": "C006",
+      "warehouse": "TX",
+      "utilization": 99.9,
+      "used_vol": 65.952,
+      "sku_count": 16,
+      "is_low": false
+    },
+    {
+      "id": "C007",
+      "warehouse": "TX",
+      "utilization": 72.9,
+      "used_vol": 48.096,
+      "sku_count": 7,
+      "is_low": true
+    }
+  ],
+  "warnings": [
+    "SKU 20DGTW-H10A10K 仓库 LA: 已有量(27)超过目标量(26)，本次分配设为0",
+    "SKU 20DGTW-H10A10K 仓库 NJ: 已有量(45)超过目标量(10)，本次分配设为0",
+    "SKU 20DGTW-H10A12K 仓库 NJ: 已有量(89)超过目标量(18)，本次分配设为0",
+    "SKU 20DGTW-H11A10F 仓库 NJ: 已有量(41)超过目标量(13)，本次分配设为0",
+    "SKU 20DGTW-H11A10K 仓库 LA: 已有量(24)超过目标量(18)，本次分配设为0",
+    "SKU 20DGTW-H11A10K 仓库 NJ: 已有量(16)超过目标量(8)，本次分配设为0",
+    "SKU 20DGTW-H11A10Q 仓库 NJ: 已有量(27)超过目标量(17)，本次分配设为0",
+    "SKU 20DGTW-H11A12F 仓库 NJ: 已有量(16)超过目标量(4)，本次分配设为0",
+    "SKU 20DGTW-H11A12K 仓库 NJ: 已有量(46)超过目标量(13)，本次分配设为0",
+    "SKU 20DGTW-H11A12Q 仓库 TX: 已有量(23)超过目标量(18)，本次分配设为0",
+    "SKU 20DGTW-U3A5F 仓库 NJ: 已有量(98)超过目标量(12)，本次分配设为0",
+    "SKU 20DGTW-U3A5K 仓库 NJ: 已有量(49)超过目标量(7)，本次分配设为0",
+    "SKU 20DGTW-U3A5Q 仓库 NJ: 已有量(50)超过目标量(13)，本次分配设为0",
+    "SKU 20DGTW-U3A5T 仓库 NJ: 已有量(96)超过目标量(14)，本次分配设为0",
+    "SKU 20DGTW-U3A6F 仓库 NJ: 已有量(96)超过目标量(11)，本次分配设为0",
+    "SKU 20DGTW-U3A6K 仓库 NJ: 已有量(49)超过目标量(7)，本次分配设为0",
+    "SKU 20DGTW-U3A6Q 仓库 NJ: 已有量(65)超过目标量(14)，本次分配设为0",
+    "SKU 20DGTW-U3A6T 仓库 NJ: 已有量(93)超过目标量(14)，本次分配设为0",
+    "SKU 20DGTW-U5A10T-N 仓库 NJ: 已有量(75)超过目标量(43)，本次分配设为0",
+    "SKU 20DGTW-U5A6F 仓库 LA: 已有量(230)超过目标量(70)，本次分配设为0",
+    "散货重新装箱后仍有 7 个低利用率箱 (涉及仓库: CHI, LA, NJ, SAV, TX)，散货总体积=311.95m³",
+    "跨仓转移（迭代1）：NJ尾货(32.36m³)→TX，合并体积(126.95m³)>66.0m³，将产生1个新满箱+1个新尾箱，全局低利用率箱数减少1个。注意：这会影响 NJ 的实际入库比例。",
+    "跨仓转移（迭代2）：CHI尾货(35.26m³)→LA，合并体积(122.51m³)>66.0m³，将产生1个新满箱+1个新尾箱，全局低利用率箱数减少1个。注意：这会影响 CHI 的实际入库比例。",
+    "跨仓转移（迭代3）：LA尾货(56.57m³)→SAV，合并体积(119.06m³)>66.0m³，将产生1个新满箱+1个新尾箱，全局低利用率箱数减少1个。注意：这会影响 LA 的实际入库比例。",
+    "跨仓转移（迭代4）：SAV尾货(53.08m³)→TX，合并体积(114.08m³)>66.0m³，将产生1个新满箱+1个新尾箱，全局低利用率箱数减少1个。注意：这会影响 SAV 的实际入库比例。",
+    "✅ 全局低利用率集装箱：1个（C007，仓库=TX，利用率=72.9%）—— 满足约束"
+  ]
+}

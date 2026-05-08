@@ -1,1 +1,0 @@
-node test_llm_direct.js

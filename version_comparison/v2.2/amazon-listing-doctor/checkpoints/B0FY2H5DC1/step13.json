@@ -1,0 +1,23 @@
+{
+  "issues": [
+    {
+      "factor": "Reviews",
+      "current": 43,
+      "action": "加入Vine项目+催评策略",
+      "impact": "medium"
+    },
+    {
+      "factor": "Rating",
+      "current": "4.5 out of 5 stars",
+      "action": "检查差评原因针对性优化",
+      "impact": "medium"
+    },
+    {
+      "factor": "Price",
+      "current": 499.99,
+      "action": "vs 竞品均价$31.96",
+      "impact": "info"
+    }
+  ],
+  "summary": "评论43条，评分4.5 out of 5 stars"
+}

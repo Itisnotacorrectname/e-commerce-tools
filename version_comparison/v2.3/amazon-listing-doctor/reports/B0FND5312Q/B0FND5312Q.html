@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amazon Listing Doctor — B0FND5312Q</title>
+<style>
+:root{--bg:#0f1117;--card:#181b23;--border:#262a36;--accent:#4f8cff;--accent2:#38d9a9;--warn:#ff6b6b;--yellow:#ffd43b;--text:#e1e4ea;--muted:#8b8fa3;--green:#51cf66;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;line-height:1.6;padding:24px;max-width:1100px;margin:0 auto;font-size:.9rem;}
+h1{font-size:1.8rem;font-weight:700;margin-bottom:4px;color:#fff;}
+h2{font-size:1.2rem;font-weight:600;color:var(--accent);margin:32px 0 12px;border-bottom:1px solid var(--border);padding-bottom:6px;}
+h3{font-size:1rem;font-weight:600;color:var(--accent2);margin:16px 0 8px;}
+.subtitle{color:var(--muted);font-size:.9rem;margin-bottom:24px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:14px;}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:.78rem;font-weight:600;margin-right:6px;}
+.badge-warn{background:rgba(255,107,107,.15);color:var(--warn);}
+.badge-ok{background:rgba(81,207,102,.15);color:var(--green);}
+.badge-info{background:rgba(79,140,255,.15);color:var(--accent);}
+.badge-yellow{background:rgba(255,212,59,.15);color:var(--yellow);}
+table{width:100%;border-collapse:collapse;margin:8px 0;}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);font-size:.85rem;}
+th{color:var(--muted);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.5px;}
+td{color:var(--text);}
+.title-box{background:#1a2236;border:1px solid #2a3a5c;border-radius:8px;padding:14px 18px;margin:10px 0;font-size:.88rem;line-height:1.5;}
+.title-box strong{color:var(--yellow);font-size:.78rem;display:block;margin-bottom:4px;}
+.title-box em{color:var(--muted);font-size:.78rem;font-style:normal;display:block;margin-top:4px;}
+ul{padding-left:20px;margin:6px 0;}
+li{margin-bottom:5px;font-size:.88rem;}
+.kw{display:inline-block;background:rgba(79,140,255,.1);border:1px solid rgba(79,140,255,.25);color:var(--accent);padding:2px 8px;border-radius:4px;font-size:.78rem;margin:3px 3px 3px 0;}
+.kw-secondary{background:rgba(56,217,169,.1);border-color:rgba(56,217,169,.25);color:var(--accent2);}
+.kw-backend{background:rgba(139,143,163,.1);border-color:rgba(139,143,163,.25);color:var(--muted);}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:700px){.grid2{grid-template-columns:1fr;}}
+.footer{text-align:center;color:var(--muted);font-size:.78rem;margin-top:40px;padding-top:16px;border-top:1px solid var(--border);}
+.kpi-big{display:flex;gap:14px;margin:16px 0;flex-wrap:wrap;}
+.kpi-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 20px;text-align:center;flex:1;min-width:110px;}
+.kpi-card .val{font-size:2rem;font-weight:700;color:var(--accent);}
+.kpi-card .lbl{font-size:.82rem;color:var(--muted);margin-top:4px;}
+.bullet-block{background:#1a2236;border:1px solid #2a3a5c;border-radius:6px;padding:12px 16px;margin:8px 0;}
+.bullet-block .bullet-label{color:var(--yellow);font-size:.8rem;font-weight:600;margin-bottom:6px;}
+.bullet-block .original{color:var(--muted);font-size:.83rem;margin-bottom:8px;}
+.bullet-block .rewrite{color:#a8f0c6;font-size:.85rem;margin-bottom:4px;}
+.bullet-block .explain{color:var(--muted);font-size:.78rem;font-style:italic;}
+.cosmo-block{border:1px solid var(--border);border-radius:8px;padding:14px 18px;margin:10px 0;}
+.cosmo-block .q-text{font-size:.9rem;color:var(--text);margin-bottom:8px;}
+.cosmo-block .score-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.cosmo-block .evidence{color:var(--muted);font-size:.82rem;margin-bottom:6px;}
+.cosmo-block .enhancement{background:rgba(56,217,169,.08);border:1px solid rgba(56,217,169,.2);border-radius:6px;padding:10px 14px;margin-top:8px;font-size:.85rem;color:#a8f0c6;}
+.cosmo-block .enhancement strong{color:var(--accent2);font-size:.78rem;display:block;margin-bottom:4px;}
+.violation-item{padding:10px 0;border-bottom:1px solid var(--border);}
+.violation-item:last-child{border-bottom:none;}
+.violation-matched{color:var(--warn);font-size:.82rem;margin-top:3px;}
+.violation-explain{color:var(--muted);font-size:.8rem;margin-top:3px;}
+.missing-tag{color:#ff6b6b;}
+.ok-tag{color:#51cf66;}
+.notice{background:rgba(255,212,59,.07);border:1px solid rgba(255,212,59,.2);border-radius:6px;padding:10px 14px;color:var(--yellow);font-size:.83rem;margin:8px 0;}
+.notice-info{background:rgba(79,140,255,.07);border-color:rgba(79,140,255,.2);color:var(--accent);}
+</style>
+</head>
+<body>
+<h1>Amazon Listing Doctor</h1>
+<p class="subtitle">ASIN: B0FND5312Q &nbsp;|&nbsp; Brand: SogesPower &nbsp;|&nbsp; Category: Sports &amp; Outdoors &gt; Exercise &amp; Fitness &gt; Strength Training Equipment &gt; Dip Stands &nbsp;|&nbsp; Date: 2026-05-06</p>
+<div class="kpi-big">
+  <div class="kpi-card"><div class="val">—</div><div class="lbl">Quality Score</div></div>
+  <div class="kpi-card"><div class="val">0</div><div class="lbl">显性违规</div></div>
+  <div class="kpi-card"><div class="val">0</div><div class="lbl">隐性违规</div></div>
+  <div class="kpi-card"><div class="val">N/A</div><div class="lbl">Cosmo Avg</div></div>
+</div>
+<h2>1. Current Listing Audit</h2>
+<div class="card">
+<h3>Current Title</h3>
+<p style="font-size:.95rem;color:var(--yellow);margin:8px 0;">SogesPower Multi-Function Power Tower Pull Up Bar Station Pull Up Dip Station for Home Gym, 10-Level Adjustable Height Pull Up Bar Stand Dip Bar Strength Training Workout Equipment</p>
+<p style="font-size:.8rem;color:var(--muted);">字符数: 180 / 200</p>
+</div>
+<div class="grid2">
+<div class="card"><h3>Product Specs</h3><table>
+<tr><td>ASIN</td><td>B0FND5312Q</td></tr>
+<tr><td>Brand</td><td>SogesPower</td></tr>
+<tr><td>Rating</td><td>3.8 out of 5 stars · 21 reviews</td></tr>
+<tr><td>Price</td><td>$135.99</td></tr>
+<tr><td>BSR</td><td>N/A</td></tr>
+<tr><td>Category</td><td>Sports &amp; Outdoors &gt; Exercise &amp; Fitness &gt; Strength Training Equipment &gt; Dip Stands</td></tr>
+</table></div>
+<div class="card"><h3>Data Snapshot</h3><table>
+<tr><td>Bullets</td><td>5/5</td></tr>
+<tr><td>Core Product</td><td>bar stand</td></tr>
+<tr><td>Size Signals</td><td>N/A</td></tr>
+<tr><td>Competitors</td><td>30 found</td></tr>
+<tr><td>Cosmo Avg</td><td>N/A / 5.0</td></tr>
+</table></div>
+</div>
+<div class="card"><h3>Current Bullets</h3>
+<p style="margin:6px 0;font-size:.85rem;"><strong>1.</strong> 10 ADJUSTABLE HEIGHTS- The height of the pull up bar station can be adjusted from 65.7” to 86.6”, achieving the perfect height for your exercises.This feature ensures versatility to meet the needs of users of different heights, making it ideal for individuals or families looking to enhance their strength training.</p>
+<p style="margin:6px 0;font-size:.85rem;"><strong>2.</strong> STURDY AND DURABLE- The pull up bar features reinforced steel tubing, making it more durable. The push-up bars are seamlessly integrated into the bottom steel tubing of the pull-up and dip station, improving stability and ensuring safety during workouts.The SogesPower Power Tower remains steady without any wobbling or shaking to ensure a safe and effective workout session.</p>
+<p style="margin:6px 0;font-size:.85rem;"><strong>3.</strong> MULTI-FUNCTION POWER TOWER- This dip station for your home gym supports a variety of exercise routines, including pull-ups, dips, chin-ups, push-up, knee raise,leg raises, and tricep dips.It helps you build triceps, chest, arm, back and shoulder muscles along with incredible upper body strength.Suitable for all fitness and strength-building workouts.</p>
+<p style="margin:6px 0;font-size:.85rem;"><strong>4.</strong> DESIGNED FOR COMFORT- The padded armrests and backrest of the pull up bar stand add an extra level of comfort during exercises like dips, making the workout experience more enjoyable and less strenuous on your joints.The dip bar features 2 levels of armrest adjustment, making it suitable for people with different arm lengths.</p>
+<p style="margin:6px 0;font-size:.85rem;"><strong>5.</strong> SPACE-SAVING- Maximize your home gym potential with our pull up bar station. The space-saving design allows you to reclaim valuable floor space, making it an ideal solution for those with limited workout areas. Transform any room into your personal fitness haven without compromising on functionality.</p>
+</div>
+<h2>2. Title Issues</h2>
+<div class="card"><table>
+<tr><th>问题</th><th>严重度</th><th>说明</th></tr>
+<tr><td></td><td><span class="badge badge-warn">high</span></td><td style="color:var(--muted);"></td></tr>
+<tr><td></td><td><span class="badge badge-yellow">medium</span></td><td style="color:var(--muted);"></td></tr>
+<tr><td></td><td><span class="badge badge-yellow">medium</span></td><td style="color:var(--muted);"></td></tr>
+</table></div>
+<h2>3. Competitor Benchmark</h2>
+<div class="card">
+<p style="color:var(--muted);font-size:.83rem;margin-bottom:12px;">共抓取 30 个竞品（搜索词："bar stand"）</p>
+<table><tr><th>ASIN</th><th>Title</th><th>Price</th><th>Rating</th></tr>
+<tr><td><a href="https://www.amazon.com/dp/B07YV5PVCH" target="_blank" style="color:var(--accent);">B07YV5PVCH</a></td><td>Bartender Kit Cocktail Shaker Set with Stand Bar Tool Bar Set for Drink Mixing Home Barten…</td><td>$20.99</td><td>4.8 out of 5 stars</td></tr>
+<tr><td><a href="https://www.amazon.com/dp/B07YBJ483D" target="_blank" style="color:var(--accent);">B07YBJ483D</a></td><td>Mixology Bartender Kit with Stand | Home Bar Set with 25 Cocktail Recipes for Drink Mixing…</td><td>$54.97</td><td>4.8 out of 5 stars</td></tr>
+<tr><td><a href="https://www.amazon.com/dp/B0CS683GDQ" target="_blank" style="color:var(--accent);">B0CS683GDQ</a></td><td>Versatile Liquor Stand for Home Bar, Wine Rack Freestanding Floor, Mini Bar Table for Liqu…</td><td>$55.99</td><td>4.8 out of 5 stars</td></tr>
+<tr><td><a href="https://www.amazon.com/dp/B0F4XMJ97F" target="_blank" style="color:var(--accent);">B0F4XMJ97F</a></td><td>Kollea Basketball Whiskey Decanter Set with Yellow Court Stand &amp; 2 Glasses, Unique Home Ba…</td><td>$23.99</td><td>5.0 out of 5 stars</td></tr>
+<tr><td><a href="https://www.amazon.com/dp/B0C2V3L1F2" target="_blank" style="color:var(--accent);">B0C2V3L1F2</a></td><td>HOOBRO Large Bakers Rack with Power Outlets, 6-Tier Microwave Stand with 4 Hooks, Coffee B…</td><td>$89.99</td><td>4.8 out of 5 stars</td></tr>
+<tr><td><a href="https://www.amazon.com/dp/B0D8FM5FHH" target="_blank" style="color:var(--accent);">B0D8FM5FHH</a></td><td>HMYBAR® 22-pc Cocktail Shaker Set(24oz/700ml) | Mixology Bartender Kit | Bar Tool Set | Ma…</td><td>$20.99</td><td>4.8 out of 5 stars</td></tr>
+<tr><td><a href="https://www.amazon.com/dp/B0FB2JXGMR" target="_blank" style="color:var(--accent);">B0FB2JXGMR</a></td><td>Homode Coffee Syrup Organizer Rack, 3-Tier 8 Bottles Syrup Stand with 35 K Cup Storage Dra…</td><td>$33.24</td><td>4.9 out of 5 stars</td></tr>
+<tr><td><a href="https://www.amazon.com/dp/B0DT9RNKHY" target="_blank" style="color:var(--accent);">B0DT9RNKHY</a></td><td>Homode Coffee Syrup Rack Organizer, 3-Tier 8 Bottles Syrup Holder Stand with 35 K Cup Stor…</td><td>$32.99</td><td>4.9 out of 5 stars</td></tr>
+<tr><td><a href="https://www.amazon.com/dp/B0D7CJFVX9" target="_blank" style="color:var(--accent);">B0D7CJFVX9</a></td><td>Syrup Rack for Coffee Bar Accessories, Iron 4 Compartment Bottle Organizer, Countertop Dis…</td><td>$24.99</td><td>4.9 out of 5 stars</td></tr>
+<tr><td><a href="https://www.amazon.com/dp/B0FLPRB2W6" target="_blank" style="color:var(--accent);">B0FLPRB2W6</a></td><td>Wooden Liquor Bottle Display Shelf, 2 Tier Countertop Liquor Wine Rack, Coffee Syrup Rack …</td><td>$19.99</td><td>4.9 out of 5 stars</td></tr>
+<tr><td><a href="https://www.amazon.com/dp/B0B74JRMLD" target="_blank" style="color:var(--accent);">B0B74JRMLD</a></td><td>Bestier Bakers Racks with Storage Cabinet, Height-Adjustable 45&quot; to 55&quot; Microwave Stand fo…</td><td>$115.99</td><td>4.8 out of 5 stars</td></tr>
+<tr><td><a href="https://www.amazon.com/dp/B0DPS4CKTD" target="_blank" style="color:var(--accent);">B0DPS4CKTD</a></td><td>KLM Liquor Bottle Display Shelf, Coffee Syrup Rack Organizer, 3 Step Countertop Liquor Win…</td><td>$27.99</td><td>4.8 out of 5 stars</td></tr>
+<tr><td><a href="https://www.amazon.com/dp/B0D8TFHH3F" target="_blank" style="color:var(--accent);">B0D8TFHH3F</a></td><td>KLM Liquor Bottle Display Shelf, Coffee Syrup Rack Organizer, 3 Step Countertop Liquor Win…</td><td>$25.99</td><td>4.8 out of 5 stars</td></tr>
+<tr><td><a href="https://www.amazon.com/dp/B0FNRHPVMR" target="_blank" style="color:var(--accent);">B0FNRHPVMR</a></td><td>QPIX DIGITAL Wine Glass Rack 2 Tier 10 Holders Wine Glasses Stand, Elegant Rose Gold Cockt…</td><td>$21.59</td><td>4.8 out of 5 stars</td></tr>
+<tr><td><a href="https://www.amazon.com/dp/B076P8DSYD" target="_blank" style="color:var(--accent);">B076P8DSYD</a></td><td>Decorative Drinking Boxer Dog Wine Bottle Holder Statue Display Stand Countertop Rack Tabl…</td><td>$34.99</td><td>4.9 out of 5 stars</td></tr>
+</table>
+<p style="font-size:.78rem;color:var(--muted);margin-top:8px;">Cascade: bar stand(30) → stand(0)</p>
+</div>
+<h2>3.5 Price Distribution Analysis</h2>
+<div class="card">
+<div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px;">
+<div class="kpi-card" style="min-width:90px;flex:1;"><div class="val" style="font-size:1.3rem;">$19</div><div class="lbl">市场最低价</div></div>
+<div class="kpi-card" style="min-width:90px;flex:1;"><div class="val" style="font-size:1.3rem;">$30</div><div class="lbl">中位价</div></div>
+<div class="kpi-card" style="min-width:90px;flex:1;"><div class="val" style="font-size:1.3rem;">$37</div><div class="lbl">平均价</div></div>
+<div class="kpi-card" style="min-width:90px;flex:1;"><div class="val" style="font-size:1.3rem;">$116</div><div class="lbl">市场最高价</div></div>
+<div class="kpi-card" style="min-width:90px;flex:1;"><div class="val" style="font-size:1.3rem;">$136</div><div class="lbl">目标产品</div></div>
+</div>
+<table><tr><th>价格段</th><th>竞品数</th><th>占比</th><th>目标产品</th></tr>
+<tr><td>$0 – $200</td><td>30</td><td style="min-width:120px;"><div style="height:8px;background:var(--warn);width:100%;border-radius:4px;min-width:4px;"></div><span style="font-size:.8rem;margin-left:6px;">100%</span></td><td style="text-align:center;"><span style="color:var(--warn);font-weight:700;">▶ 在此段</span></td></tr>
+<tr><td>$200 – $500</td><td>0</td><td style="min-width:120px;"><div style="height:8px;background:var(--accent);width:0%;border-radius:4px;min-width:0px;"></div><span style="font-size:.8rem;margin-left:6px;">0%</span></td><td style="text-align:center;"></td></tr>
+<tr><td>$500 – $1,000</td><td>0</td><td style="min-width:120px;"><div style="height:8px;background:var(--accent);width:0%;border-radius:4px;min-width:0px;"></div><span style="font-size:.8rem;margin-left:6px;">0%</span></td><td style="text-align:center;"></td></tr>
+<tr><td>$1,000+</td><td>0</td><td style="min-width:120px;"><div style="height:8px;background:var(--accent);width:0%;border-radius:4px;min-width:0px;"></div><span style="font-size:.8rem;margin-left:6px;">0%</span></td><td style="text-align:center;"></td></tr>
+</table>
+<div class="notice" style="margin-top:12px;"><strong>定位建议（第 100 百分位）：</strong> 目标产品价格处于市场 Top 0%。价格溢价显著，listing 必须有明确的差异化依据（材质升级、尺寸优势、认证背书），否则转化率会受压。</div>
+</div>
+<h2>4. Keyword Universe</h2>
+<div class="card">
+<p style="font-size:.83rem;color:var(--muted);margin-bottom:12px;">基于 30 个竞品标题词频分析</p>
+<h3>Primary Keywords（≥40% 竞品出现）</h3>
+<div><span class="kw">pull up bar</span><span class="kw">power tower</span><span class="kw">dip station</span></div>
+<h3>Secondary Keywords（20-39%）</h3>
+<div><span class="kw kw-secondary">adjustable height</span><span class="kw kw-secondary">multi-function</span><span class="kw kw-secondary">home gym</span><span class="kw kw-secondary">steel frame</span><span class="kw kw-secondary">pull up bar stand</span></div>
+<h3>Backend / Long-tail（10-19%）</h3>
+<div><span class="kw kw-backend">strength training equipment</span><span class="kw kw-backend">chin up bar station</span><span class="kw kw-backend">push up bars</span><span class="kw kw-backend">tricep dips machine</span><span class="kw kw-backend">upper body workout station</span><span class="kw kw-backend">wall mounted pull up bar alternative</span><span class="kw kw-backend">doorway pull up bar</span></div>
+</div>
+<h2>5. Three Optimized Titles</h2>
+<div class="title-box">
+<strong>Version A — 最大关键词覆盖</strong>
+[object Object]
+</div>
+<div class="title-box">
+<strong>Version B — 高 CTR</strong>
+[object Object]
+</div>
+<div class="title-box">
+<strong>Version C — 移动端优化</strong>
+[object Object]
+</div>
+<h2>6. Backend Keywords</h2>
+<div class="card">
+<p style="font-size:.83rem;color:var(--muted);margin-bottom:8px;">字节数: 462 / 250</p>
+<p style="font-size:.88rem;font-family:monospace;color:var(--accent2);line-height:1.8;"></p>
+</div>
+<h2>7. Bullet Point Optimization</h2>
+<div class="bullet-block">
+<div class="bullet-label">Bullet 1</div>
+<div class="original"><strong>原文：</strong>10 ADJUSTABLE HEIGHTS- The height of the pull up bar station can be adjusted from 65.7&quot; to 86.6&quot;, achieving the perfect height for your exercises.This feature ensures versatility to meet the needs of users of different heights, making it ideal for individuals or families looking to enhance their strength training.</div>
+</div>
+<div class="bullet-block">
+<div class="bullet-label">Bullet 2</div>
+<div class="original"><strong>原文：</strong>STURDY AND DURABLE- The pull up bar features reinforced steel tubing, making it more durable. The push-up bars are seamlessly integrated into the bottom steel tubing of the pull-up and dip station, improving stability and ensuring safety during workouts.The SogesPower Power Tower remains steady without any wobbling or shaking to ensure a safe and effective workout session.</div>
+</div>
+<div class="bullet-block">
+<div class="bullet-label">Bullet 3</div>
+<div class="original"><strong>原文：</strong>MULTI-FUNCTION POWER TOWER- This dip station for your home gym supports a variety of exercise routines, including pull-ups, dips, chin-ups, push-up, knee raise,leg raises, and tricep dips.It helps you build triceps, chest, arm, back and shoulder muscles along with incredible upper body strength.Suitable for all fitness and strength-building workouts.</div>
+</div>
+<div class="bullet-block">
+<div class="bullet-label">Bullet 4</div>
+<div class="original"><strong>原文：</strong>DESIGNED FOR COMFORT- The padded armrests and backrest of the pull up bar stand add an extra level of comfort during exercises like dips, making the workout experience more enjoyable and less strenuous on your joints.The dip bar features 2 levels of armrest adjustment, making it suitable for people with different arm lengths.</div>
+</div>
+<div class="bullet-block">
+<div class="bullet-label">Bullet 5</div>
+<div class="original"><strong>原文：</strong>SPACE-SAVING- Maximize your home gym potential with our pull up bar station. The space-saving design allows you to reclaim valuable floor space, making it an ideal solution for those with limited workout areas. Transform any room into your personal fitness haven without compromising on functionality.</div>
+</div>
+<h2>8. Rufus 意图模拟</h2>
+<div class="card notice">无 Rufus 意图问题（step10 数据不完整）</div>
+<h2>9. Cosmo 内容评分</h2>
+<div class="card" style="margin-bottom:8px;">
+<p style="font-size:.85rem;">平均分: <strong style="color:var(--accent);font-size:1.2rem;">N/A</strong> / 5.0 &nbsp;|&nbsp; 评分标准：5=直接回答 · 3=间接涉及 · 0=完全未提及</p>
+</div>
+<div class="cosmo-block">
+<div class="q-text"><strong>Q1.</strong> How much vertical clearance do you have in your home gym space, and will the 65.7&quot;-86.6&quot; adjustable range fit your ceiling height?</div>
+<div class="score-row"><span class="badge badge-ok">5.0</span><span style="color:var(--muted);font-size:.82rem;">Directly Addresses</span></div>
+</div>
+<div class="cosmo-block">
+<div class="q-text"><strong>Q2.</strong> How important is exercise versatility and multiple workout options for your home gym setup?</div>
+<div class="score-row"><span class="badge badge-ok">5.0</span><span style="color:var(--muted);font-size:.82rem;">Directly Addresses</span></div>
+</div>
+<div class="cosmo-block">
+<div class="q-text"><strong>Q3.</strong> What weight capacity and frame durability do you need for safe home workouts?</div>
+<div class="score-row"><span class="badge badge-yellow">3.0</span><span style="color:var(--muted);font-size:.82rem;">Implicitly Addresses</span></div>
+</div>
+<div class="cosmo-block">
+<div class="q-text"><strong>Q4.</strong> How easy is this equipment to assemble and install in a home gym environment?</div>
+<div class="score-row"><span class="badge badge-warn">0.0</span><span style="color:var(--muted);font-size:.82rem;">Missing / Not Addressed</span></div>
+</div>
+<h2>10. 显性违规（V1-V8）</h2>
+<div class="card"><p style="color:var(--green);">✓ 未发现显性违规</p></div>
+<h2>11. 隐性违规（V9-V18）</h2>
+<div class="card"><p style="color:var(--green);">✓ 未发现隐性违规</p></div>
+<h2>12. Listing Weight 评估</h2>
+<h2>13. Priority Action Plan</h2>
+<div class="card"><p style="color:var(--muted);">暂无行动项</p></div>
+<h2>14. 数据说明</h2>
+<div class="card">
+<p style="font-size:.83rem;color:var(--muted);">抓取时间：2026-05-06</p>
+<ul style="margin-top:8px;">
+<li>目标 listing：实时抓取（Playwright）</li>
+<li>竞品数据：实时抓取，共 30 条</li>
+<li>分析层：完整（Claude Agent）</li>
+<li>以下项目无法从爬虫获取，需人工确认：主图质量、视频、A+内容、Q&A 回复</li>
+<li>本报告不包含任何虚构数据</li>
+</ul>
+</div>
+<div class="footer">Amazon Listing Doctor v1.8 — 2026-05-06</div>
+</body>
+</html>

@@ -1,0 +1,49 @@
+{
+  "questions": [
+    {
+      "qNum": 1,
+      "question": "How well does this listing address pet owners protecting their sofa from dogs or cats?",
+      "score": 5,
+      "label": "Directly Addresses",
+      "matchingBullets": [
+        "Bullet 2: 'ideal for both children and pets' → explicitly mentions pet use case",
+        "Bullet 3: 'anti-slip silicone particles... protects your sofa from dirt and scratches' → directly addresses pet damage concerns (claws, dirt)",
+        "Bullet 1: 'high-quality velvet, plush sofa cover... enhancing coziness' → plush material is soft but could show wear from pets"
+      ],
+      "intentEnhancement": null
+    },
+    {
+      "qNum": 2,
+      "question": "How well does this listing address furniture refresh / home decoration on a budget?",
+      "score": 3,
+      "label": "Implicitly Addresses",
+      "matchingBullets": [
+        "Bullet 1: 'Premium Material... cloud-like soft and comfortable feel, enhancing the coziness of your living space' → mentions 'living space' upgrade but doesn't explicitly say 'budget-friendly alternative to buying new furniture'",
+        "Bullet 2: 'Elegant Design... perfect for loveseat, L-shaped sofas, and recliner' → mentions design but doesn't connect to 'makeover' or 'refresh' language that budget decorators search for"
+      ],
+      "intentEnhancement": "Bullet 1 could explicitly position this as a sofa transformation solution: 'Instant sofa upgrade without replacing furniture — premium velvet cover transforms your existing sofa at a fraction of the cost of new furniture.'"
+    },
+    {
+      "qNum": 3,
+      "question": "How well does this listing address parents needing easy-clean furniture protection?",
+      "score": 3,
+      "label": "Implicitly Addresses",
+      "matchingBullets": [
+        "Bullet 4: 'machine washing (do not bleach)... frees your hands from household chores' → mentions washing but doesn't explicitly connect to parent scenarios (spills, accidents, sticky hands)",
+        "Bullet 2: 'ideal for both children and pets' → mentions children but doesn't expand on WHY (spill protection, easy cleanup after messy activities)"
+      ],
+      "intentEnhancement": "Bullet 4 should lead with the parent use case: 'Perfect for families — spilled drinks, sticky fingers, and daily mess wipe clean easily. Just toss in the washing machine (no bleach) for a fresh start.'"
+    }
+  ],
+  "overallCosmoScore": "3.67/5",
+  "gaps": [
+    "Budget decoration angle not fully leveraged — no 'sofa transformation' positioning",
+    "Parent use case (spills, accidents) mentioned but not expanded with specific scenarios",
+    "All-season claim (Bullet 3 'year-round') has no thermal data to support — remove or qualify"
+  ],
+  "recommendations": [
+    "Rewrite Bullet 1 to include 'sofa makeover / transformation' framing for budget decorators",
+    "Expand Bullet 4 to explicitly name parent scenarios (spills, sticky hands, potty training) while keeping washing instructions",
+    "Remove or soften 'year-round' claim in Bullet 3 — no thermal rating provided"
+  ]
+}

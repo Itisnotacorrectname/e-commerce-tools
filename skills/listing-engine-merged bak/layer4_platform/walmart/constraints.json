@@ -1,0 +1,30 @@
+{
+  "_comment": "Walmart platform hard constraints",
+  "_version": "1.0.0",
+  "title": {
+    "maxChars": 75,
+    "idealRange": [50, 75],
+    "format": "Title Case"
+  },
+  "keyFeatures": {
+    "min": 3,
+    "max": 10,
+    "maxCharsPerItem": 80,
+    "noEmoji": true,
+    "noUrls": true,
+    "noCompetitorMentions": true
+  },
+  "description": {
+    "minWords": 150,
+    "idealWords": [400, 600],
+    "requiresHtml": true
+  },
+  "forbiddenWords": [
+    "Amazon", "FBA", "Prime", "eBay", "Target", "Marketplace",
+    "Shipped by Amazon", "Fulfilled by Amazon",
+    "Free", "Cheap", "Affordable", "Discount", "Money-back guarantee",
+    "Best Seller", "Best", "Highest quality", "Number 1", "#1",
+    "Free Shipping", "Top Rated", "Price Match",
+    "Limited time", "Sale", "Today only"
+  ]
+}

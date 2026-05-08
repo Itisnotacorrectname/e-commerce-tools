@@ -1,0 +1,13 @@
+{
+  "title": [
+    { "type": "max_length", "value": 200 },
+    { "type": "forbidden_words", "words": ["best", "cheap", "free shipping"] },
+    { "type": "no_repeated_words" }
+  ],
+  "bullets": [
+    { "type": "max_length", "value": 500 }
+  ],
+  "backend_keywords": [
+    { "type": "max_length", "value": 250 }
+  ]
+}

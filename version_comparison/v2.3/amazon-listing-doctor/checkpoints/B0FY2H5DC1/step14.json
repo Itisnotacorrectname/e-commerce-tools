@@ -1,0 +1,161 @@
+{
+  "qualityScore": 78,
+  "qualityGrade": "B",
+  "plan": [
+    {
+      "priority": "P1",
+      "action": "标题加入品牌名MIXPATIO",
+      "location": "Title",
+      "impact": "品牌识别度",
+      "execType": "operator"
+    },
+    {
+      "priority": "P1",
+      "action": "验证竞品集准确性",
+      "location": "Phase 1",
+      "impact": "修正关键词偏差",
+      "execType": "operator"
+    },
+    {
+      "priority": "P2",
+      "action": "Bullet 5增加通过30寸doorway描述（Cosmo Q1→5分）",
+      "location": "Bullet 5",
+      "impact": "模块化意图覆盖",
+      "execType": "operator"
+    },
+    {
+      "priority": "P2",
+      "action": "Bullet 2增加UV抗褪色描述（Cosmo Q2→5分）",
+      "location": "Bullet 2",
+      "impact": "面料耐用性",
+      "execType": "operator"
+    },
+    {
+      "priority": "P2",
+      "action": "Bullet 1增加宠物弹性恢复描述（Cosmo Q3→5分）",
+      "location": "Bullet 1",
+      "impact": "宠物场景覆盖",
+      "execType": "operator"
+    },
+    {
+      "priority": "P2",
+      "action": "加入Vine计划",
+      "location": "运营",
+      "impact": "社交证明",
+      "execType": "operator"
+    },
+    {
+      "priority": "P2",
+      "action": "确认海绵密度/CertiPUR-US认证",
+      "location": "Bullet 1",
+      "impact": "权威性V14",
+      "execType": "supplier"
+    },
+    {
+      "priority": "P3",
+      "action": "补充Backend keywords至150+字符",
+      "location": "Backend",
+      "impact": "长尾流量",
+      "execType": "operator"
+    },
+    {
+      "priority": "P3",
+      "action": "加入A+内容",
+      "location": "A+",
+      "impact": "转化率",
+      "execType": "operator"
+    }
+  ],
+  "pendingData": [
+    {
+      "dataType": "海绵密度/CertiPUR-US",
+      "usedFor": "Bullet 1",
+      "purpose": "认证声明"
+    },
+    {
+      "dataType": "Chenille面料支数/耐磨等级",
+      "usedFor": "Bullet 2",
+      "purpose": "面料质量声明"
+    },
+    {
+      "dataType": "木框架承重能力(lbs)",
+      "usedFor": "Bullet 4",
+      "purpose": "支撑性声明"
+    },
+    {
+      "dataType": "模块最小尺寸(宽度)",
+      "usedFor": "Bullet 5",
+      "purpose": "doorway通过性"
+    },
+    {
+      "dataType": "BSR排名",
+      "usedFor": "Listing Weight",
+      "purpose": "竞争位置"
+    }
+  ],
+  "actions": [
+    {
+      "priority": "P1",
+      "action": "标题加入品牌名MIXPATIO",
+      "location": "Title",
+      "impact": "品牌识别度",
+      "execType": "operator"
+    },
+    {
+      "priority": "P1",
+      "action": "验证竞品集准确性",
+      "location": "Phase 1",
+      "impact": "修正关键词偏差",
+      "execType": "operator"
+    },
+    {
+      "priority": "P2",
+      "action": "Bullet 5增加通过30寸doorway描述（Cosmo Q1→5分）",
+      "location": "Bullet 5",
+      "impact": "模块化意图覆盖",
+      "execType": "operator"
+    },
+    {
+      "priority": "P2",
+      "action": "Bullet 2增加UV抗褪色描述（Cosmo Q2→5分）",
+      "location": "Bullet 2",
+      "impact": "面料耐用性",
+      "execType": "operator"
+    },
+    {
+      "priority": "P2",
+      "action": "Bullet 1增加宠物弹性恢复描述（Cosmo Q3→5分）",
+      "location": "Bullet 1",
+      "impact": "宠物场景覆盖",
+      "execType": "operator"
+    },
+    {
+      "priority": "P2",
+      "action": "加入Vine计划",
+      "location": "运营",
+      "impact": "社交证明",
+      "execType": "operator"
+    },
+    {
+      "priority": "P2",
+      "action": "确认海绵密度/CertiPUR-US认证",
+      "location": "Bullet 1",
+      "impact": "权威性V14",
+      "execType": "supplier"
+    },
+    {
+      "priority": "P3",
+      "action": "补充Backend keywords至150+字符",
+      "location": "Backend",
+      "impact": "长尾流量",
+      "execType": "operator"
+    },
+    {
+      "priority": "P3",
+      "action": "加入A+内容",
+      "location": "A+",
+      "impact": "转化率",
+      "execType": "operator"
+    }
+  ]
+}

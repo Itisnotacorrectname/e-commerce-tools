@@ -1,0 +1,101 @@
+{
+  "batch_ts": "20260430_183239",
+  "input_file": "输入数据_20260430_183239.xlsx",
+  "output_file": "输出报告_20260430_183239.xlsx",
+  "sku_count": 7,
+  "order_sku_count": 7,
+  "total_allocated": 4010,
+  "container_count": 9,
+  "avg_utilization": 90.8,
+  "low_util_count": 1,
+  "warning_count": 6,
+  "warehouses": [
+    "CHI",
+    "HOU",
+    "LA",
+    "NJ",
+    "SAV"
+  ],
+  "container_summary": [
+    {
+      "id": "C001",
+      "warehouse": "CHI",
+      "utilization": 99.9,
+      "used_vol": 65.949,
+      "sku_count": 6,
+      "is_low": false
+    },
+    {
+      "id": "C002",
+      "warehouse": "CHI",
+      "utilization": 99.9,
+      "used_vol": 65.934,
+      "sku_count": 2,
+      "is_low": false
+    },
+    {
+      "id": "C003",
+      "warehouse": "HOU",
+      "utilization": 99.9,
+      "used_vol": 65.902,
+      "sku_count": 3,
+      "is_low": false
+    },
+    {
+      "id": "C004",
+      "warehouse": "LA",
+      "utilization": 99.9,
+      "used_vol": 65.965,
+      "sku_count": 3,
+      "is_low": false
+    },
+    {
+      "id": "C005",
+      "warehouse": "LA",
+      "utilization": 99.9,
+      "used_vol": 65.955,
+      "sku_count": 5,
+      "is_low": false
+    },
+    {
+      "id": "C006",
+      "warehouse": "NJ",
+      "utilization": 99.9,
+      "used_vol": 65.919,
+      "sku_count": 6,
+      "is_low": false
+    },
+    {
+      "id": "C007",
+      "warehouse": "SAV",
+      "utilization": 99.9,
+      "used_vol": 65.934,
+      "sku_count": 2,
+      "is_low": false
+    },
+    {
+      "id": "C008",
+      "warehouse": "SAV",
+      "utilization": 99.9,
+      "used_vol": 65.928,
+      "sku_count": 6,
+      "is_low": false
+    },
+    {
+      "id": "C009",
+      "warehouse": "SAV",
+      "utilization": 18.0,
+      "used_vol": 11.876,
+      "sku_count": 1,
+      "is_low": true
+    }
+  ],
+  "warnings": [
+    "散货重新装箱后仍有 5 个低利用率箱 (涉及仓库: CHI, HOU, LA, NJ, SAV)，散货总体积=209.71m³",
+    "跨仓转移（迭代1）：将 NJ 尾箱(9.53m³)并入 LA 尾箱(52.81m³)，合并后=62.34m³。注意：这会影响 NJ 的实际入库比例。",
+    "跨仓转移（迭代2）：HOU尾货(31.07m³)→LA，合并体积(93.41m³)>66.0m³，将产生1个新满箱+1个新尾箱，全局低利用率箱数减少1个。注意：这会影响 HOU 的实际入库比例。",
+    "跨仓转移（迭代3）：LA尾货(27.46m³)→CHI，合并体积(85.67m³)>66.0m³，将产生1个新满箱+1个新尾箱，全局低利用率箱数减少1个。注意：这会影响 LA 的实际入库比例。",
+    "跨仓转移（迭代4）：CHI尾货(19.72m³)→SAV，合并体积(77.80m³)>66.0m³，将产生1个新满箱+1个新尾箱，全局低利用率箱数减少1个。注意：这会影响 CHI 的实际入库比例。",
+    "✅ 全局低利用率集装箱：1个（C009，仓库=SAV，利用率=18.0%）—— 满足约束"
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "explicitViolations": [
+    {
+      "type": "title_promotion_word",
+      "severity": "high",
+      "rule": "Title must not contain promotional words: 'Best', '#1', 'Top Rated', 'Free Shipping', etc.",
+      "detected": false,
+      "description": "No promotional words found in title. Compliant."
+    },
+    {
+      "type": "title_all_caps",
+      "severity": "medium",
+      "rule": "Title must not use ALL CAPS (excluding brand)",
+      "detected": false,
+      "description": "No ALL CAPS violations in title (brand MDSASFD is fine). Compliant."
+    },
+    {
+      "type": "title_special_chars",
+      "severity": "medium",
+      "rule": "Title must not contain '!', '$', '*', or other special characters used to manipulate attention",
+      "detected": false,
+      "description": "No forbidden special characters. Title uses ',' and '(' which are allowed."
+    },
+    {
+      "type": "bullet_factual_claim",
+      "severity": "medium",
+      "rule": "Bullet points must not contain unverified superlatives or medical claims",
+      "detected": false,
+      "description": "No medical claims or unverified health claims found. 'Anti-slip silicone particles' is a verifiable product attribute."
+    },
+    {
+      "type": "backend_competitor_brand",
+      "severity": "high",
+      "rule": "Backend keywords must not contain competitor brand names",
+      "detected": false,
+      "description": "No competitor brand names detected in backend keywords set."
+    }
+  ],
+  "implicitViolations": [
+    {
+      "type": "all_season_claim_overstatement",
+      "severity": "low",
+      "rule": "Seasonal/all-season claims should be verifiable or qualified",
+      "detected": true,
+      "description": "Bullet 3 states 'warm yet breathable, suitable for year-round use' with no thermal rating or test data to support. Soft overstatement.",
+      "suggestion": "Change to 'suitable for all seasons' or remove qualification entirely."
+    },
+    {
+      "type": "size_clarity",
+      "severity": "low",
+      "rule": "Size claims should match the exact dimensions prominently displayed",
+      "detected": true,
+      "description": "'Only 1 PCS' in title parenthetical is unclear — does it mean 1 cover fits all or 1 piece per package? Buyer confusion risk. Competitors more clearly state dimensions (e.g., '71\"x118\"').",
+      "suggestion": "Replace 'Only 1 PCS' with explicit dimension fit: 'Fits 71\"x118\" 3-Cushion Sofa'"
+    }
+  ],
+  "riskScore": 15,
+  "riskLevel": "low",
+  "summary": "Listing has minimal compliance risk. Main concern is soft overstatement in Bullet 3 ('year-round') and ambiguous size description in title. No critical violations detected.",
+  "suggestions": [
+    "Remove or qualify 'year-round' claim in Bullet 3",
+    "Replace 'Only 1 PCS' in title with clear dimension fit statement",
+    "No competitor brand names in backend — compliant"
+  ]
+}

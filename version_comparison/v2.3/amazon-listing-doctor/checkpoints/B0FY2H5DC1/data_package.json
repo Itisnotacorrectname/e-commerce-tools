@@ -1,0 +1,290 @@
+{
+  "meta": {
+    "asin": "B0FY2H5DC1",
+    "marketplace": "US",
+    "domain": "amazon.com",
+    "url": "https://amazon.com/dp/B0FY2H5DC1",
+    "scrapedAt": "2026-05-06T08:52:45.805Z"
+  },
+  "product": {
+    "title": "87-Inch L Shaped Sectional Sofa with Cloud Cushions, Deep Seat Modular Couch Set w/ 3 Seats & 1 Ottomans, Removable Arms, Plush Chenille Upholstery for Living Room, Apartment - Taupe",
+    "brand": "MIXPATIO",
+    "bullets": [
+      "High-resilience soft foam with a reinforced support frame forms a deep, contoured seat that follows the natural curves of your back. Even with daily use, it maintains its shape, reducing muscle pressure. The extra-wide seat width and 24.4\" depth, combined with double-layer thickened seat cushions, ensure ample space for relaxed seating. Each seat comes with a lumbar pillow for added lower-back support",
+      "The fabric features a smooth texture that’s gentle on the skin for year-round comfort. Its fade-resistant, scratch-proof surface is easy to wipe clean, keeping the sofa looking fresh with minimal effort",
+      "Sleek, minimalist lines and muted tones make it easy to fit into living rooms, offices, or lounges, enhancing the aesthetic of any space. Hidden functional elements keep the design clean and uncluttered, balancing style and practicality",
+      "The solid wood frame offers robust support while remaining lightweight for easy moving. The 4.33-inch-tall legs are equipped with scratch-proof, silent feet to protect your floors, and their elevated design allows robot vacuums to clean underneath effortlessly. Wide armrest pillows on both sides provide a comfortable spot to rest your arms, blending support with relaxation",
+      "No need for troublesome installation with tools, and the compact independent modules allow flexible placement. If you are not satisfied with the sofa you received, please feel free to contact our customer service team at any time. We will provide you with satisfactory customer service."
+    ],
+    "price": 499.99,
+    "rating": "4.5 out of 5 stars",
+    "reviewCount": 43,
+    "BSR": null,
+    "category": "Home & Kitchen > Furniture > Living Room Furniture > Sofas & Couches",
+    "scrapeError": null
+  },
+  "keywords": {
+    "coreProduct": "sectional sofa",
+    "sizeSignals": [],
+    "titleBigrams": [
+      {
+        "phrase": "sectional sofa",
+        "score": 2
+      },
+      {
+        "phrase": "shaped sectional",
+        "score": 1
+      },
+      {
+        "phrase": "modular couch",
+        "score": 1
+      },
+      {
+        "phrase": "seat modular",
+        "score": 1
+      },
+      {
+        "phrase": "sofa cloud",
+        "score": 1
+      },
+      {
+        "phrase": "deep seat",
+        "score": 1
+      },
+      {
+        "phrase": "couch set",
+        "score": 1
+      }
+    ]
+  },
+  "competitors": {
+    "items": [
+      {
+        "asin": "B0GMQ1R6VD",
+        "title": "80\" Cloud 3 Seater Sectional Modular Couch with Storage, Upholstered Storage Sofa Modern Couch Deep Seat, Chenille Convertible Sofa Comfy Couches with Armrests for Living Room, Small Space, Brown",
+        "price": "",
+        "rating": "4.3 out of 5 stars",
+        "reviews": "(52)"
+      },
+      {
+        "asin": "B0GK5RKCR6",
+        "title": "Convertible Sofa Bed, 4-in-1 Boneless Loveseat with Removable Armrests Backrest, Corduroy Futon Couch Bed with Pillow, Foldable Mattress Sleeper Sofa for Living Room Bedroom Small Place (Grey)",
+        "price": "$229.99",
+        "rating": "5.0 out of 5 stars",
+        "reviews": "(5)"
+      },
+      {
+        "asin": "B0GTLMGZMP",
+        "title": "Novilla Modular Sectional Sofa, No Assembly Cloud Sectional Couch with Smarts Coil® Support, Chenille Fabric Sectional Sofa, Boneless Couch for Living Room Apartment, Dark Gray (Corner Chair)",
+        "price": "$159.99",
+        "rating": "5.0 out of 5 stars",
+        "reviews": "(20)"
+      },
+      {
+        "asin": "B0GFN6DZF7",
+        "title": "119\" Oversized Cloud Boneless Couches for Living Room, Modern Tufted Modular Sectional Sofa with Deep Seat & Movable Ottoman, L Shaped Memory Foam Chenille Couch, No Assembly Required, Brown",
+        "price": "",
+        "rating": "5.0 out of 5 stars",
+        "reviews": "(6)"
+      },
+      {
+        "asin": "B0DPH6JTN8",
+        "title": "ANONER Memory Foam Folding Sofa Bed, Sectional Couches with Pillow, Futon Floor Couch, Versatile Convertible Sleeper Chair, Boneless Chaise Lounge, Fold Out Chair Bed for Living Room, Beige",
+        "price": "$129.95",
+        "rating": "4.3 out of 5 stars",
+        "reviews": "(1.1K)"
+      },
+      {
+        "asin": "B0F385VCBT",
+        "title": "MAXYOYO Convertible Sofa Bed, Fold Out Loveseat Sleeper Sofa with Pillow, 4 in 1 Tufted Folding Couch Bed Foam Floor Couch, Lazy Chair for Living Room Bedroom Guest Room, Dark Grey",
+        "price": "$116.99",
+        "rating": "4.4 out of 5 stars",
+        "reviews": "(216)"
+      },
+      {
+        "asin": "B083QL5RH3",
+        "title": "Lilola Home Convertible Sleeper Sofa Bed 84 Inch, L Shaped Sectional Couch with Pull Out Bed, USB Charging Ports, Storage Chaise for Living Room, Office, Linen Fabric, Light Gray",
+        "price": "",
+        "rating": "4.1 out of 5 stars",
+        "reviews": "(734)"
+      },
+      {
+        "asin": "B0FKN741QM",
+        "title": "110''Modular Sectional Couches for Living Room, Cloud Boneless Compressed Sectional Sofa, Oversized L Shaped 5 Seater Upholstered Memory Foam Sofa, No Assembly, Chenille Black",
+        "price": "",
+        "rating": "4.3 out of 5 stars",
+        "reviews": "(35)"
+      },
+      {
+        "asin": "B0DM91DJ2W",
+        "title": "Wakefit Sectional Sofa Couch, Modern 4-Seaters Living Room Furniture Sets with Chaise Lounge, Ottoman & 2 Pillows | L Shape Couch | Cup Holder | Faux PU Leather, Black",
+        "price": "",
+        "rating": "4.2 out of 5 stars",
+        "reviews": "(224)"
+      },
+      {
+        "asin": "B0F992Y8XQ",
+        "title": "Modular Sectional Sofa, 3 Seater L Shaped Couch, Convertible Cloud Couch with Storage Ottoman, 95.67'' Comfy Sectional Couches for Living Room, Corduroy, Green",
+        "price": "",
+        "rating": "5.0 out of 5 stars",
+        "reviews": "(5)"
+      },
+      {
+        "asin": "B09NVNWRS6",
+        "title": "Nigoone Queen Size Folding Sofa Couch Memory Foam with 2 Pillows Sleeper Chair Lazy Couch Triple Futon Convertible Guest Beds, Washable Cover, Dark Gray",
+        "price": "$227.99",
+        "rating": "4.2 out of 5 stars",
+        "reviews": "(465)"
+      },
+      {
+        "asin": "B0C1C81ZK5",
+        "title": "Belffin Terry Fabric Modular Sectional Sleeper Sofa Bed with Storage Convertible Sectional Couches for Living Room 6 Seaters Light Grey Modular Sofa",
+        "price": "",
+        "rating": "4.5 out of 5 stars",
+        "reviews": "(271)"
+      },
+      {
+        "asin": "B0DT11619N",
+        "title": "Aoowow Modular Sectional Sofa,146.5 Inch Deep 4-Seater Sofas Comfy Chenille Cloud Sofas and Couches with Pillows for Living Room Apartment（Orange）",
+        "price": "",
+        "rating": "4.6 out of 5 stars",
+        "reviews": "(64)"
+      },
+      {
+        "asin": "B0DQWHZYPB",
+        "title": "166\" Oversized U-Shape Sofa, Modular Sectional Cloud Couch with 2 Ottoman, Comfy Velvet Fluffy Sofa, Deep Seat Sectional Couches for Living Room",
+        "price": "",
+        "rating": "4.4 out of 5 stars",
+        "reviews": "(17)"
+      },
+      {
+        "asin": "B0FSKZDVH7",
+        "title": "KIGOTY Modular Sectional Sofa, Comfy Cloud Sectional Couch, Armless Boneless Couch for Living Room, No Assembly Required,Black",
+        "price": "$66.49",
+        "rating": "4.6 out of 5 stars",
+        "reviews": "(11)"
+      },
+      {
+        "asin": "B0D5MLWNPJ",
+        "title": "Flash Furniture Bridgetown Fabric Ottoman Module for Sectional Sofa, Customizable Modular Couch Ottoman, Dark Gray",
+        "price": "$155.56",
+        "rating": "4.5 out of 5 stars",
+        "reviews": "(15)"
+      },
+      {
+        "asin": "B0D2HV9Y62",
+        "title": "SOPAT Modular Sofa Armrest Module for Modular Sectional Sofa Couch Side Armrest with Comfy Chenille Fabric (Blue)",
+        "price": "",
+        "rating": "5.0 out of 5 stars",
+        "reviews": "(14)"
+      },
+      {
+        "asin": "B07F37J5RQ",
+        "title": "Modway EEI-2798-AZU Empress Mid-Century Modern Upholstered Fabric Left-Facing Sectional Sofa in Azure",
+        "price": "",
+        "rating": "4.2 out of 5 stars",
+        "reviews": "(199)"
+      },
+      {
+        "asin": "B09XKYNDPY",
+        "title": "arabicsofa Handmade Arabic Majlis Sofa with Cushions – Modular Floor Seating Set for Living Room",
+        "price": "$459.00",
+        "rating": "",
+        "reviews": ""
+      },
+      {
+        "asin": "B0B5BX9SPQ",
+        "title": "arabicsofa Green Handmade Oriental Floor Seating Set – Traditional Floor Sofa with Backrest",
+        "price": "$1,049.00",
+        "rating": "4.9 out of 5 stars",
+        "reviews": "(9)"
+      },
+      {
+        "asin": "B09SF9J2JL",
+        "title": "arabicsofa Ethnic Yellow Loveseat Floor Seating Sofas – Bohemian Style Floor Cushions Set",
+        "price": "$549.00",
+        "rating": "",
+        "reviews": ""
+      },
+      {
+        "asin": "B09R2JRHJR",
+        "title": "arabicsofa U Shaped Arabic Sofa Set – Royal Blue Modular Floor Seating for Guest Room",
+        "price": "$1,449.00",
+        "rating": "4.3 out of 5 stars",
+        "reviews": "(23)"
+      },
+      {
+        "asin": "B09WKJ82T7",
+        "title": "Lilola Home Kipling Green Velvet Fabric Reversible Sleeper Sectional Sofa Chaise",
+        "price": "",
+        "rating": "4.2 out of 5 stars",
+        "reviews": "(220)"
+      },
+      {
+        "asin": "B07Q5N96RM",
+        "title": "Modway Sofa Entertain Vertical Channel Tufted Performance Velvet Couch in Gray",
+        "price": "",
+        "rating": "4.4 out of 5 stars",
+        "reviews": "(15)"
+      },
+      {
+        "asin": "B07SLBP5QB",
+        "title": "Modway Loft Tufted Button Faux Leather Upholstered Sofa in Silver White",
+        "price": "",
+        "rating": "4.4 out of 5 stars",
+        "reviews": "(177)"
+      },
+      {
+        "asin": "B07PG3SMPJ",
+        "title": "Modway EEI-3408-BLK Resolute Curved Performance Velvet Sofa, Black",
+        "price": "",
+        "rating": "4.3 out of 5 stars",
+        "reviews": "(24)"
+      },
+      {
+        "asin": "B08WRJQ5GQ",
+        "title": "Modway Mingle Vegan Leather Sectional Sofa Corner Chair in Tan",
+        "price": "",
+        "rating": "4.4 out of 5 stars",
+        "reviews": "(21)"
+      },
+      {
+        "asin": "B08WRVYQVS",
+        "title": "Modway Mingle Vegan Leather 3-Piece Sectional Sofa in White",
+        "price": "",
+        "rating": "4.4 out of 5 stars",
+        "reviews": "(16)"
+      },
+      {
+        "asin": "B083QP8MXN",
+        "title": "Modway EEI-3764-WHI Valour Performance Velvet Sofa, White",
+        "price": "",
+        "rating": "4.2 out of 5 stars",
+        "reviews": "(117)"
+      },
+      {
+        "asin": "B078KDXKT5",
+        "title": "Modway Empress Upholstered Fabric Corner Sofa Beige",
+        "price": "",
+        "rating": "4.4 out of 5 stars",
+        "reviews": "(63)"
+      }
+    ],
+    "totalFound": 30,
+    "cascadeRounds": [
+      {
+        "round": 1,
+        "keyword": "sectional sofa",
+        "found": 30
+      },
+      {
+        "round": 3,
+        "keyword": "sofa",
+        "found": 0,
+        "skipped": true,
+        "reason": "single-word-generic"
+      }
+    ],
+    "scrapeError": null
+  }
+}

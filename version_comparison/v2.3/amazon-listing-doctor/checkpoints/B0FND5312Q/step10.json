@@ -1,0 +1,33 @@
+{
+  "intents": [
+    {
+      "intent": "home gym enthusiasts with limited vertical space",
+      "searchPhrases": ["power tower for small space", "pull up bar for low ceiling", "adjustable height dip station apartment", "compact home gym equipment pull up bar"],
+      "priority": "high",
+      "alignment": "Listing has 'space-saving' bullet + '65.7\"-86.6\"' adjustable height — good match for limited space concern. Title could emphasize 'space-saving' more prominently."
+    },
+    {
+      "intent": "beginners looking for versatile home workout equipment",
+      "searchPhrases": ["pull up bar for beginners home gym", "multi-function power tower all fitness levels", "dip station for beginners vs pull up bar", "home gym equipment for strength training starter"],
+      "priority": "high",
+      "alignment": "'Suitable for all fitness levels' and multi-exercise capability (pull-ups, dips, chin-ups) directly address beginners looking for one-stop solution. Good match."
+    },
+    {
+      "intent": "intermediate to advanced fitness users seeking equipment durability",
+      "searchPhrases": ["heavy duty power tower pull up bar", "steel frame dip station commercial quality", "pull up bar 300 lbs capacity", "sturdy power tower for heavy users"],
+      "priority": "medium",
+      "alignment": "'Reinforced steel tubing' and 'no wobble' claims appeal to durability-conscious users. However, no specific weight capacity mentioned — this is a MISSED OPPORTUNITY. Competitors often highlight 'supports up to X lbs'."
+    },
+    {
+      "intent": "fitness enthusiasts with specific height requirements",
+      "searchPhrases": ["pull up bar for tall person", "adjustable height power tower 6 foot", "dip station height range review", "pull up bar for 6'5\" user"],
+      "priority": "medium",
+      "alignment": "Height range (65.7\"-86.6\") directly addresses this intent. '10-level adjustment' signals fine-grained customization. Bullet 1 explicitly mentions suitability for different heights."
+    }
+  ],
+  "missedOpportunities": [
+    "Weight capacity not mentioned — competitors highlight 'supports 300+ lbs' — this is a critical omission for durability-conscious buyers",
+    "Assembly/installation info missing — buyers want to know if wall-mount or freestanding, assembly difficulty",
+    "Floor protection / anti-scratch feet not mentioned — important for users with wood floors"
+  ]
+}

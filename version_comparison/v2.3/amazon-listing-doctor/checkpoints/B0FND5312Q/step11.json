@@ -1,0 +1,54 @@
+{
+  "scores": [
+    {
+      "question": "How much vertical clearance do you have in your home gym space, and will the 65.7\"-86.6\" adjustable range fit your ceiling height?",
+      "score": 5,
+      "label": "Directly Addresses",
+      "matchingBullets": [
+        "Bullet 1: 'height of the pull up bar station can be adjusted from 65.7\" to 86.6\"' — explicitly states the height range buyers need to assess ceiling clearance",
+        "Bullet 5: 'space-saving design... reclaim valuable floor space' — indirectly addresses space constraints"
+      ],
+      "intentEnhancement": null
+    },
+    {
+      "question": "How important is exercise versatility and multiple workout options for your home gym setup?",
+      "score": 5,
+      "label": "Directly Addresses",
+      "matchingBullets": [
+        "Bullet 3: 'supports a variety of exercise routines, including pull-ups, dips, chin-ups, push-up, knee raise, leg raises, and tricep dips' — explicitly lists 7 exercise types",
+        "Bullet 3: 'helps you build triceps, chest, arm, back and shoulder muscles' — directly maps exercises to muscle groups"
+      ],
+      "intentEnhancement": null
+    },
+    {
+      "question": "What weight capacity and frame durability do you need for safe home workouts?",
+      "score": 3,
+      "label": "Implicitly Addresses",
+      "matchingBullets": [
+        "Bullet 2: 'reinforced steel tubing... remains steady without any wobbling or shaking' — mentions steel frame and stability but NOT specific weight capacity",
+        "Bullet 2: 'improving stability and ensuring safety during workouts' — vague safety claim without specifics"
+      ],
+      "intentEnhancement": "Bullet 2 should add: 'Supports up to [X] lbs — reinforced steel frame engineered for safety at maximum load. Non-slip feet protect your floors while keeping the tower stable during high-intensity workouts.'"
+    },
+    {
+      "question": "How easy is this equipment to assemble and install in a home gym environment?",
+      "score": 0,
+      "label": "Missing / Not Addressed",
+      "matchingBullets": [],
+      "intentEnhancement": "Add a bullet: '[Easy Assembly — No Wall Mount Required] Freestanding power tower sets up in minutes. Anti-scratch feet protect floors while providing rock-solid stability. No drilling or mounting hardware needed.'"
+    }
+  ],
+  "overallCosmoScore": "3.25/5",
+  "gaps": [
+    "No weight capacity mentioned — critical for durability-conscious buyers",
+    "No assembly/installation information — buyers need to know if wall-mount or freestanding, difficulty level",
+    "Floor protection (anti-scratch feet) not mentioned",
+    "Warranty information absent"
+  ],
+  "recommendations": [
+    "Add weight capacity to Bullet 2 (e.g., 'supports 300+ lbs')",
+    "Add assembly/ease-of-setup bullet to address installation concern",
+    "Include floor protection claim (anti-scratch feet) in Bullet 5",
+    "Consider adding warranty claim for premium price point ($135.99)"
+  ]
+}

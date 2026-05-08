@@ -1,0 +1,45 @@
+{
+  "issues": [
+    {
+      "severity": "high",
+      "type": "primary-keyword-not-first",
+      "description": "Primary keyword 'couch cover' not at title start — brand MDSASFD precedes it",
+      "current": "MDSASFD Velvet Couch Cover...",
+      "suggestion": "Consider restructuring: MDSASFD Couch Cover for 3 Cushion Sofa, Velvet Washable Sectional Slipcover..."
+    },
+    {
+      "severity": "medium",
+      "type": "missing-size-spec",
+      "description": "No clear sofa dimension (e.g., 71\"x118\" for 3-cushion) in main title — competitors show this prominently",
+      "current": "for 3 Cushion Couch Sofa L Shaped...",
+      "suggestion": "Add exact fit dimensions after the main product phrase, before the material description"
+    },
+    {
+      "severity": "medium",
+      "type": "price-implied-promotion",
+      "description": "'Only 1 PCS' in title conveys low price positioning — consider removing or repositioning",
+      "current": "...(White, Only 1 PCS)",
+      "suggestion": "Move sizing info here instead: '(White, Fits 71\"x118\" 3-Cushion)' or remove parenthetical"
+    },
+    {
+      "severity": "medium",
+      "type": "redundant-keywords",
+      "description": "'Couch' repeated 3 times, 'Cover' repeated 3 times — compressable",
+      "current": "...Sectional Sofa Cover, Anti Slip Sofa Slipcover for 3 Cushion Couch Sofa...",
+      "suggestion": "Streamline: 'Anti Slip Sectional Sofa Slipcover for 3-Cushion L Shaped...'"
+    },
+    {
+      "severity": "low",
+      "type": "brand-positioning",
+      "description": "Brand word 'MDSASFD' is at title start — correct but product type should follow immediately",
+      "current": "MDSASFD Velvet Couch Cover...",
+      "suggestion": "Keep brand at start but ensure first noun phrase is product type: MDSASFD Velvet Couch Cover..."
+    }
+  ],
+  "spellErrors": [],
+  "charCount": 187,
+  "charLimit": 200,
+  "brandAtStart": true,
+  "primaryKeywordsInTitle": ["couch cover", "sofa cover", "slipcover"],
+  "missingPrimaryInFirst60Chars": false
+}
