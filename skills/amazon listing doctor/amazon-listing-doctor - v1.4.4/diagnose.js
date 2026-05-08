@@ -1,0 +1,1008 @@
+#!/usr/bin/env node
+// ─────────────────────────────────────────────────────────────
+//  Amazon Listing Doctor — diagnose.js v6.0 (Route B)
+//
+//  职责：数据层（step1-4），只爬虫，不分析。
+//  分析由 Claude Agent 执行（参见 SKILL.md）。
+//
+//  Usage:
+//    node diagnose.js B0GVRS65WW
+//    node diagnose.js https://www.amazon.com/dp/B0GVRS65WW
+//    node diagnose.js B0GVRS65WW --force   (强制重新抓取，忽略缓存)
+// ─────────────────────────────────────────────────────────────
+
+'use strict';
+
+const path    = require('path');
+const os      = require('os');
+const fs      = require('fs');
+
+// ── Paths ────────────────────────────────────────────────────
+const WORKSPACE      = process.env.OPENCLAW_WORKSPACE || path.join(os.homedir(), '.openclaw', 'workspace');
+const CHECKPOINT_DIR = path.join(WORKSPACE, 'amazon-listing-doctor', 'checkpoints');
+const REPORT_DIR     = path.join(WORKSPACE, 'amazon-listing-doctor', 'reports');
+const SKILL_DIR      = __dirname;
+
+// ── Marketplace map ─────────────────────────────────────────
+const DOMAIN_TO_CC = {
+  'amazon.com':    'US', 'amazon.co.uk': 'GB', 'amazon.de':    'DE',
+  'amazon.fr':     'FR', 'amazon.it':    'IT', 'amazon.es':    'ES',
+  'amazon.co.jp':  'JP', 'amazon.ca':    'CA', 'amazon.com.au':'AU',
+  'amazon.com.mx': 'MX', 'amazon.in':    'IN'
+};
+
+// ── Utilities ────────────────────────────────────────────────
+function log(msg) { console.log(String(msg || '')); }
+
+function ensureDir(p) {
+  if (!fs.existsSync(p)) fs.mkdirSync(p, { recursive: true });
+}
+
+function cpPath(asin, n) {
+  var dir = path.join(CHECKPOINT_DIR, asin);
+  ensureDir(dir);
+  return path.join(dir, 'step' + n + '.json');
+}
+
+function loadCp(asin, n) {
+  var p = cpPath(asin, n);
+  if (!fs.existsSync(p)) return null;
+  try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch(e) { return null; }
+}
+
+function saveCp(asin, n, data) {
+  fs.writeFileSync(cpPath(asin, n), JSON.stringify(data, null, 2), 'utf8');
+}
+
+// ── Step 1: ASIN + Marketplace 解析 ─────────────────────────
+async function step1() {
+  var arg = process.argv[2] || '';
+  var force = process.argv.includes('--force');
+
+  // 直接是 ASIN
+  var asinMatch = arg.match(/^(B[A-Z0-9]{9})$/);
+  if (asinMatch) {
+    return { asin: asinMatch[1], marketplace: 'US', domain: 'amazon.com',
+             inputUrl: 'https://amazon.com/dp/' + asinMatch[1], force };
+  }
+
+  // 是 URL
+  var urlMatch = arg.match(/amazon\.([a-z.]+)\/(?:[^/]+\/)?(?:dp|gp\/product)\/([A-Z0-9]{10})/i);
+  if (urlMatch) {
+    var rawDomain = 'amazon.' + urlMatch[1].replace(/\/$/, '');
+    var asin = urlMatch[2].toUpperCase();
+    var cc = DOMAIN_TO_CC[rawDomain] || 'US';
+    return { asin, marketplace: cc, domain: rawDomain,
+             inputUrl: 'https://www.' + rawDomain + '/dp/' + asin, force };
+  }
+
+  throw new Error('Invalid input. Usage: node diagnose.js [ASIN|URL] [--force]');
+}
+
+// ── Step 2: 产品页爬取（Playwright子进程） ───────────────────
+async function step2(s1) {
+  return new Promise(function(resolve) {
+    var workerPath = path.join(SKILL_DIR, 'step2_worker.js');
+    var child = require('child_process').spawn(
+      process.execPath, [workerPath, s1.asin, s1.marketplace],
+      { stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true }
+    );
+    var stdout = '', stderr = '';
+    child.stdout.on('data', function(d) { stdout += d; });
+    child.stderr.on('data', function(d) {
+      var line = d.toString().trim();
+      if (line) log('  [step2] ' + line);
+    });
+    child.on('close', function(code) {
+      // step2_worker 把数据包在 __STEP2_OUTPUT__...__STEP2_OUTPUT__ 之间输出
+      var MARKER = '__STEP2_OUTPUT__';
+      var start = stdout.indexOf(MARKER);
+      var end   = stdout.lastIndexOf(MARKER);
+      if (start !== -1 && end !== -1 && start !== end) {
+        try {
+          var parsed = JSON.parse(stdout.substring(start + MARKER.length, end));
+          resolve(parsed);
+          return;
+        } catch(e) { /* fall through */ }
+      }
+      // 降级：返回空结构，让后续步骤能继续但知道数据缺失
+      log('  [step2] ⚠ Worker failed (exit ' + code + ') — empty product data');
+      resolve({
+        asin: s1.asin, marketplace: s1.marketplace, domain: s1.domain,
+        title: '', bullets: [], price: null, rating: null,
+        reviewCount: 0, BSR: null, category: null, brand: null,
+        scrapeError: stderr.split('\n')[0] || 'Unknown error'
+      });
+    });
+    child.on('error', function(e) {
+      log('  [step2] ⚠ Spawn error: ' + e.message);
+      resolve({
+        asin: s1.asin, marketplace: s1.marketplace, domain: s1.domain,
+        title: '', bullets: [], price: null, rating: null,
+        reviewCount: 0, BSR: null, category: null, brand: null,
+        scrapeError: e.message
+      });
+    });
+  });
+}
+
+// ── Step 3: coreProduct 推断（轻量，无网络请求） ─────────────
+// 从 step2 的 title + category 推断核心产品词，作为 step4 竞品搜索词。
+// 注意：真正的关键词分析由 Claude 在 SKILL.md 分析层执行。
+// 这里只做"搜什么词去找竞品"这一件事。
+async function step3(s2) {
+  var title    = s2.title || '';
+  var category = s2.category || '';
+  var brand    = (s2.brand || '').toLowerCase();
+
+  // 从 category 路径的倒数两段组合提取产品类型
+  // 策略：最后一段作为核心品类词，倒数第二段提供修饰词
+  // 例：...> Patio Furniture Sets > Dining Sets → "patio dining set"
+  var catParts = category.split('>').map(function(p) { return p.trim(); });
+  var CAT_IGNORE = new Set(['products','items','sale','deals','collections','accessories','supplies','furniture']);
+  
+  var catLast = (catParts[catParts.length - 1] || '').toLowerCase().replace(/\s+/g, ' ').replace(/s$/, '').trim();
+  var catPrev = catParts.length >= 2
+    ? (catParts[catParts.length - 2] || '').toLowerCase().replace(/\s+/g, ' ').replace(/s$/, '').trim()
+    : '';
+  
+  // 从倒数第二段提取修饰词（去掉通用词和与最后一段重复的词）
+  var lastWords = new Set(catLast.split(' ').filter(function(w) { return w.length > 2; }));
+  var prevModifiers = catPrev.split(' ').filter(function(w) {
+    return w.length > 2 && !CAT_IGNORE.has(w) && !lastWords.has(w);
+  });
+  
+  // 组合：修饰词 + 核心品类词（限制最多3词）
+  var catCombined = prevModifiers.concat([catLast]).join(' ').replace(/\s+/g, ' ').trim();
+  if (catCombined.split(' ').length > 3) {
+    // 太长了，只取最后一个修饰词 + 核心品类词
+    catCombined = (prevModifiers[prevModifiers.length - 1] || '') + ' ' + catLast;
+  }
+
+  // 从 title 提取2词短语，排除品牌词和 stopwords
+  var STOPWORDS = new Set([
+    'the','and','for','with','from','this','that','is','are',
+    'to','in','on','of','a','an','by','or','as','at',
+    'new','use','best','top','more','most','only','easy','free','fast','safe',
+    'large','small','mini','max','plus','pro','prime','extra','ultra','super'
+  ]);
+  // 品牌词集合（含多词品牌）
+  var brandWords = new Set(brand.split(/\s+/).filter(function(w) { return w.length > 1; }));
+  var words = title.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(function(w) {
+    return w.length > 1 && !/^\d+$/.test(w) && !STOPWORDS.has(w) && !brandWords.has(w);
+  });
+  var bigrams = [];
+  for (var i = 0; i < words.length - 1; i++) {
+    if (!STOPWORDS.has(words[i]) && !STOPWORDS.has(words[i+1]) &&
+        !brandWords.has(words[i]) && !brandWords.has(words[i+1])) {
+      bigrams.push(words[i] + ' ' + words[i + 1]);
+    }
+  }
+
+  // 优先级：category 组合 > 2词短语 > title word
+  // category 组合（如 "patio dining set"）比 bigram（如 "dining set"）更精确
+  var coreProduct = catCombined || bigrams[0] || words[0] || '';
+  
+  // 如果组合词太长（>3词），降级用 bigram
+  if (coreProduct.split(' ').length > 3) {
+    coreProduct = bigrams[0] || catLast || words[0] || '';
+  }
+
+  // 提取规格信号（容量、尺寸等）
+  var sizeSignals = (title.match(/\d+\s*(oz|qt|quart|gal|gallon|lb|lbs|kg|inch|inches|cm|mm|ft|l|liter|ml|w|v|pack|piece|pcs)/gi) || []).slice(0, 3);
+
+  log('  [step3] coreProduct: "' + coreProduct + '" (from: ' +
+      (bigrams[0] ? 'title bigram' : catLast ? 'category' : 'title word') + ')');
+  if (sizeSignals.length) log('  [step3] sizeSignals: ' + sizeSignals.join(', '));
+
+  return {
+    coreProduct,
+    brand: s2.brand || '',
+    sizeSignals,
+    titleBigrams: bigrams.slice(0, 15)   // 存下来供 Claude 分析参考
+  };
+}
+
+// ── Step 4: 竞品抓取（Playwright子进程） ────────────────────
+async function step4(s1, s2, s3) {
+  var coreProduct = s3.coreProduct;
+  if (!coreProduct) {
+    log('  [step4] ⚠ No coreProduct — skipping competitor search');
+    return { competitors: [], cascadeRounds: [], totalFound: 0, coreProduct: '' };
+  }
+
+  log('  [step4] Searching competitors for: "' + coreProduct + '" [' + s1.marketplace + ']');
+
+  return new Promise(function(resolve) {
+    var workerPath = path.join(SKILL_DIR, 'step4_worker.js');
+    var child = require('child_process').spawn(
+      process.execPath,
+      [workerPath, s1.asin, coreProduct, s1.marketplace, JSON.stringify(s3.titleBigrams || [])],
+      { stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true }
+    );
+    var stdout = '', stderr = '';
+    child.stdout.on('data', function(d) { stdout += d; });
+    child.stderr.on('data', function(d) {
+      var line = d.toString().trim();
+      if (line) log('  [step4] ' + line);
+    });
+    child.on('close', function(code) {
+      // step4_worker 把结果直接 JSON.stringify 到 stdout
+      try {
+        var parsed = JSON.parse(stdout.trim());
+        if (parsed.ok !== false) {
+          // step4_worker 写了 checkpoint，直接读
+          var cpFile = path.join(CHECKPOINT_DIR, s1.asin, 'step4.json');
+          if (fs.existsSync(cpFile)) {
+            var result = JSON.parse(fs.readFileSync(cpFile, 'utf8'));
+            log('  [step4] ✓ ' + result.totalFound + ' competitors found');
+            resolve(result);
+            return;
+          }
+        }
+      } catch(e) { /* fall through */ }
+
+      log('  [step4] ⚠ Worker failed (exit ' + code + ') — empty competitor list');
+      resolve({ competitors: [], cascadeRounds: [], totalFound: 0, coreProduct, scrapeError: code });
+    });
+    child.on('error', function(e) {
+      log('  [step4] ⚠ Spawn error: ' + e.message);
+      resolve({ competitors: [], cascadeRounds: [], totalFound: 0, coreProduct, scrapeError: e.message });
+    });
+  });
+}
+
+// ══════════════════════════════════════════════════════════════
+//  分析层（step5-14）— 调用 OpenClaw Gateway LLM
+//  Gateway: 127.0.0.1:18789，标准 Anthropic Messages API
+// ══════════════════════════════════════════════════════════════
+
+const http = require('http');
+
+// ── Gateway 配置 ─────────────────────────────────────────────
+const GATEWAY_HOST  = '127.0.0.1';
+const GATEWAY_PORT  = 18789;
+const GATEWAY_TOKEN = '22d8696422d2e5bd4cd688452dd363c6dd7900cb974ca4b3';
+const LLM_MODEL     = 'openclaw/minimax';  // maps to configured default LLM
+const LLM_TIMEOUT   = 240000;   // 240s per step
+const LLM_RETRIES   = 2;
+
+// ── 调用 Gateway ─────────────────────────────────────────────
+function callGateway(systemPrompt, userPrompt) {
+  return new Promise(function(resolve, reject) {
+    var body = JSON.stringify({
+      model: LLM_MODEL,
+      max_tokens: 4096,
+      messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userPrompt }]
+    });
+
+    var req = http.request({
+      hostname: GATEWAY_HOST,
+      port:     GATEWAY_PORT,
+      path:     '/v1/chat/completions',
+      method:   'POST',
+      headers: {
+        'Content-Type':  'application/json',
+        'Authorization': 'Bearer ' + GATEWAY_TOKEN,
+        'x-api-key':     GATEWAY_TOKEN,
+        'anthropic-version': '2023-06-01',
+        'Content-Length': Buffer.byteLength(body)
+      }
+    }, function(res) {
+      var data = '';
+      res.on('data', function(c) { data += c; });
+      res.on('end', function() {
+        try {
+          var parsed = JSON.parse(data);
+          if (parsed.error) { reject(new Error(parsed.error.message || JSON.stringify(parsed.error))); return; }
+          // OpenAI chat completions: { choices: [{ message: { content: '...' } }] }
+          var text = (parsed.choices || [])
+            .filter(function(b) { return b.message && b.message.content; })
+            .map(function(b) { return b.message.content; })
+            .join('');
+          resolve(text);
+        } catch(e) { reject(new Error('Gateway parse error: ' + e.message)); }
+      });
+    });
+
+    req.setTimeout(LLM_TIMEOUT, function() {
+      req.destroy();
+      reject(new Error('Gateway timeout (' + LLM_TIMEOUT + 'ms)'));
+    });
+    req.on('error', reject);
+    req.write(body);
+    req.end();
+  });
+}
+
+// ── 带重试的 Gateway 调用 ────────────────────────────────────
+async function callWithRetry(stepName, systemPrompt, userPrompt) {
+  for (var i = 0; i <= LLM_RETRIES; i++) {
+    try {
+      var result = await callGateway(systemPrompt, userPrompt);
+      return result;
+    } catch(e) {
+      if (i < LLM_RETRIES) {
+        log('  [' + stepName + '] ⚠ attempt ' + (i+1) + ' failed: ' + e.message + ' — retrying...');
+        await new Promise(function(r) { setTimeout(r, 3000); });
+      } else {
+        throw e;
+      }
+    }
+  }
+}
+
+// ── JSON 提取：从 LLM 输出中解析第一个合法 JSON 对象/数组 ────
+function extractJson(text) {
+  // 先试整体 parse
+  try { return JSON.parse(text.trim()); } catch(e) {}
+  // 去掉 ```json ... ``` 围栏
+  var fenced = text.match(/```(?:json)?\s*([\s\S]+?)```/);
+  if (fenced) { try { return JSON.parse(fenced[1].trim()); } catch(e) {} }
+  // 找第一个 { 或 [ 到匹配的结尾
+  var start = text.search(/[{\[]/);
+  if (start === -1) throw new Error('No JSON found in LLM output');
+  var bracket = text[start] === '{' ? ['{', '}'] : ['[', ']'];
+  var depth = 0, end = -1;
+  for (var i = start; i < text.length; i++) {
+    if (text[i] === bracket[0]) depth++;
+    else if (text[i] === bracket[1]) { depth--; if (depth === 0) { end = i; break; } }
+  }
+  if (end === -1) throw new Error('Unmatched brackets in LLM output');
+  return JSON.parse(text.substring(start, end + 1));
+}
+
+// ── 系统提示（所有步骤共用） ─────────────────────────────────
+var SYSTEM_BASE = 'You are a precise Amazon listing analyst. Output ONLY valid JSON, no markdown, no explanation. The JSON must strictly match the schema provided.';
+
+// ── Step 5: 关键词分级 ───────────────────────────────────────
+async function step5(s2, s4) {
+  var competitors = (s4.filteredCompetitors || s4.competitors || []).slice(0, 40);
+  var titles = competitors.map(function(c) { return c.title; }).filter(Boolean).join('\n');
+
+  var user = [
+    'TARGET LISTING TITLE: ' + s2.title,
+    'TARGET BULLETS: ' + (s2.bullets || []).join(' | '),
+    '',
+    'COMPETITOR TITLES (' + competitors.length + '):',
+    titles,
+    '',
+    'TASK: Analyze competitor titles for keyword frequency. Categorize by occurrence rate.',
+    '',
+    'Output JSON matching this schema exactly:',
+    '{',
+    '  "primary": [{"keyword":"...","freq":"N/M (X%)","note":"..."}],',
+    '  "secondary": [{"keyword":"...","freq":"N/M (X%)","note":"..."}],',
+    '  "backend": ["keyword phrase 1","keyword phrase 2"]',
+    '}',
+    'Rules:',
+    '- primary: keywords in ≥40% of competitor titles',
+    '- secondary: keywords in 20-39% of competitor titles',
+    '- backend: keywords in 10-19% of competitor titles (string array, not objects)',
+    '- Exclude brand names, stopwords, single letters',
+    '- backend must be an array of plain strings'
+  ].join('\n');
+
+  var raw = await callWithRetry('step5', SYSTEM_BASE, user);
+  var data = extractJson(raw);
+  // 确保字段存在
+  if (!data.primary)   data.primary = [];
+  if (!data.secondary) data.secondary = [];
+  if (!data.backend)   data.backend = [];
+  return data;
+}
+
+// ── Step 6: 标题审计 ─────────────────────────────────────────
+async function step6(s2, s5data) {
+  var primaryKws = (s5data.primary || []).map(function(k) { return typeof k === 'string' ? k : k.keyword; }).join(', ');
+
+  var user = [
+    'TARGET TITLE (' + (s2.title || '').length + ' chars): ' + s2.title,
+    'PRIMARY KEYWORDS FROM COMPETITORS: ' + primaryKws,
+    '',
+    'TASK: Audit the title for issues. Check:',
+    '1. Char count (>200 = critical)',
+    '2. Obvious spelling errors',
+    '3. Missing primary keywords (not in title)',
+    '4. Promotional words (Best, #1, Sale, Limited)',
+    '5. Redundant word pairs (e.g. "Metal Steel")',
+    '6. Missing numeric specs (size/capacity/weight)',
+    '7. Duplicate words',
+    '',
+    'Output JSON:',
+    '{',
+    '  "issues": [{"severity":"medium","issue":"issue title","detail":"explanation"}],',
+    '  "spellErrors": [{"word":"...","suggestion":"...","context":"where in title"}],',
+    '  "charCount": ' + (s2.title || '').length + ',',
+    '  "charLimit": 200,',
+    '  "brandAtStart": true',
+    '}',
+    'severity values: critical / high / medium / low',
+    'spellErrors can be empty array []'
+  ].join('\n');
+
+  var raw = await callWithRetry('step6', SYSTEM_BASE, user);
+  var data = extractJson(raw);
+  if (!data.issues)      data.issues = [];
+  if (!data.spellErrors) data.spellErrors = [];
+  if (!data.charCount)   data.charCount = (s2.title || '').length;
+  if (!data.charLimit)   data.charLimit = 200;
+  return data;
+}
+
+// ── Step 7: 三版优化标题 ─────────────────────────────────────
+async function step7(s2, s5data, s6data) {
+  var primaryKws = (s5data.primary || []).map(function(k) { return typeof k === 'string' ? k : k.keyword; }).join(', ');
+  var issues = (s6data.issues || []).map(function(i) { return i.issue + ': ' + i.detail; }).join('; ');
+
+  var user = [
+    'ORIGINAL TITLE: ' + s2.title,
+    'BRAND: ' + (s2.brand || ''),
+    'PRIMARY KEYWORDS: ' + primaryKws,
+    'TITLE ISSUES TO FIX: ' + (issues || 'none'),
+    '',
+    'TASK: Write 3 optimized title versions.',
+    'Version A: Maximum keyword coverage (≤200 chars)',
+    'Version B: High CTR, conversational, lead with strongest differentiator (≤200 chars)',
+    'Version C: Mobile-first, ≤80 chars, only core keywords',
+    '',
+    'NPO structure: [Brand] [Core Product] [Size], [Key Feature], [Benefit], [Secondary Feature]',
+    '',
+    'Output JSON:',
+    '{',
+    '  "versionA": "full title text",',
+    '  "versionAChars": 162,',
+    '  "versionANote": "covers all primary kws",',
+    '  "versionB": "full title text",',
+    '  "versionBChars": 148,',
+    '  "versionBNote": "CTR-optimized",',
+    '  "versionC": "short title",',
+    '  "versionCChars": 72,',
+    '  "versionCNote": "mobile-first"',
+    '}'
+  ].join('\n');
+
+  var raw = await callWithRetry('step7', SYSTEM_BASE, user);
+  var data = extractJson(raw);
+  // 补全 chars 字段
+  if (data.versionA && !data.versionAChars) data.versionAChars = data.versionA.length;
+  if (data.versionB && !data.versionBChars) data.versionBChars = data.versionB.length;
+  if (data.versionC && !data.versionCChars) data.versionCChars = data.versionC.length;
+  return data;
+}
+
+// ── Step 8: Backend Keywords ──────────────────────────────────
+async function step8(s2, s5data) {
+  var allKws = []
+    .concat((s5data.primary   || []).map(function(k) { return typeof k === 'string' ? k : k.keyword; }))
+    .concat((s5data.secondary || []).map(function(k) { return typeof k === 'string' ? k : k.keyword; }))
+    .concat(s5data.backend    || []);
+
+  var user = [
+    'TARGET TITLE: ' + s2.title,
+    'TARGET BULLETS: ' + (s2.bullets || []).join(' | '),
+    '',
+    'KEYWORD POOL (from competitor analysis):',
+    allKws.join(', '),
+    '',
+    'TASK: Build a backend keyword string (≤250 bytes).',
+    'Rules:',
+    '- Only include words NOT already in the title or bullets',
+    '- Include: synonyms, use-case words, misspellings, alternate units',
+    '- Exclude: competitor brand names, promotional words',
+    '- Format: single space-separated lowercase string, no commas',
+    '- Fill as close to 250 bytes as possible',
+    '',
+    'Output JSON:',
+    '{"backend":"word1 word2 word3 ...","byteCount":240,"charLimit":250}'
+  ].join('\n');
+
+  var raw = await callWithRetry('step8', SYSTEM_BASE, user);
+  var data = extractJson(raw);
+  if (!data.backend)   data.backend = '';
+  if (!data.byteCount) data.byteCount = Buffer.byteLength(data.backend, 'utf8');
+  return data;
+}
+
+// ── Step 9: Bullet 改写 + Fact-Check ─────────────────────────
+async function step9(s2, s5data, s11data) {
+  var primaryKws = (s5data.primary || []).map(function(k) { return typeof k === 'string' ? k : k.keyword; }).join(', ');
+  var enhancements = (s11data && s11data.scores || [])
+    .filter(function(q) { return q.score <= 3 && q.enhancement; })
+    .map(function(q, i) { return 'Q' + (i+1) + ' enhancement: ' + q.enhancement; })
+    .join('\n');
+
+  var bulletsText = (s2.bullets || []).map(function(b, i) {
+    return 'Bullet ' + (i+1) + ': ' + b;
+  }).join('\n');
+
+  var user = [
+    'TARGET TITLE: ' + s2.title,
+    '',
+    'ORIGINAL BULLETS:',
+    bulletsText,
+    '',
+    'PRIMARY KEYWORDS: ' + primaryKws,
+    '',
+    enhancements ? ('INTENT ENHANCEMENTS TO INCORPORATE:\n' + enhancements) : '',
+    '',
+    'TASK: Rewrite all 5 bullets using Feature + Benefit + Specificity framework.',
+    'Rules:',
+    '- Only include facts verifiable in the original title or bullets (Fact-Check)',
+    '- If a claim cannot be verified, use vague phrasing or mark [UNVERIFIED]',
+    '- Each rewrite: lead with strongest feature, explain benefit, add specific detail',
+    '',
+    'Output JSON:',
+    '{',
+    '  "bullets": [',
+    '    {',
+    '      "original": "exact original text",',
+    '      "rewrite": "improved text",',
+    '      "explain": "what changed and why (cite source: title/bullet N)",',
+    '      "factCheck": {"passed":true,"claims":[{"claim":"...","verified":true,"source":"bullet 1"}]}',
+    '    }',
+    '  ]',
+    '}'
+  ].filter(Boolean).join('\n');
+
+  var raw = await callWithRetry('step9', SYSTEM_BASE, user);
+  var data = extractJson(raw);
+  if (!data.bullets) data.bullets = [];
+  return data;
+}
+
+// ── Step 10: Rufus 意图模拟 ──────────────────────────────────
+async function step10(s2, s5data) {
+  var primaryKw = (s5data.primary || [])[0];
+  var topKw = (typeof primaryKw === 'string' ? primaryKw : (primaryKw && primaryKw.keyword)) || s2.title.split(' ').slice(1, 4).join(' ');
+  var specs = (s2.bullets || []).slice(0, 3).join(' ');
+
+  var user = [
+    'You are Amazon Rufus, a generative AI shopping assistant.',
+    'A customer is browsing the "' + (s2.category || 'Home & Kitchen') + '" category.',
+    'Primary interest: ' + topKw,
+    '',
+    'Product context:',
+    '- Title: ' + s2.title,
+    '- Category: ' + (s2.category || ''),
+    '- Key specs from bullets: ' + specs,
+    '',
+    'Generate exactly 3 deep consumer intent questions Rufus would ask this customer.',
+    'Requirements:',
+    '- Reflect USE-CASE scenarios, PAIN POINTS, or MATERIAL/FEATURE COMPARISONS',
+    '- Do NOT ask about: price, shipping, warranty, return policy',
+    '- Be specific and scenario-driven, as a knowledgeable sales associate would',
+    '- Each question should be answerable by a well-optimized listing',
+    '',
+    'Output JSON:',
+    '{"questions":["question 1 full text","question 2 full text","question 3 full text"]}'
+  ].join('\n');
+
+  var raw = await callWithRetry('step10', SYSTEM_BASE, user);
+  var data = extractJson(raw);
+  if (!data.questions) data.questions = [];
+  return data;
+}
+
+// ── Step 11: Cosmo 内容评分 ──────────────────────────────────
+async function step11(s2, s10data) {
+  var questions = (s10data.questions || []);
+  var bulletsText = (s2.bullets || []).map(function(b, i) {
+    return 'Bullet ' + (i+1) + ': ' + b;
+  }).join('\n');
+
+  var user = [
+    'PRODUCT BULLETS:',
+    bulletsText,
+    '',
+    'RUFUS INTENT QUESTIONS:',
+    questions.map(function(q, i) { return (i+1) + '. ' + q; }).join('\n'),
+    '',
+    'TASK: Score each question against the 5 bullets using this rubric:',
+    '- 5 (Directly Addresses): bullet explicitly mentions the relevant attribute/benefit',
+    '- 3 (Implicitly Addresses): bullet touches the topic but requires inference',
+    '- 0 (Missing): no bullet addresses this question at all',
+    '',
+    'For any score ≤ 3, write an Intent Enhancement: a rewritten bullet that would score 5.',
+    'Enhancement must be natural language, no keyword stuffing, lead with benefit.',
+    '',
+    'Output JSON:',
+    '{',
+    '  "scores": [',
+    '    {',
+    '      "question": "full question text",',
+    '      "score": 5,',
+    '      "label": "Directly Addresses",',
+    '      "evidence": "Bullet 2: [quoted text] → explanation",',
+    '      "enhancement": null',
+    '    }',
+    '  ],',
+    '  "averageScore": 4.3',
+    '}',
+    'label values: "Directly Addresses" / "Implicitly Addresses" / "Missing"',
+    'enhancement: null if score=5, otherwise a full rewritten bullet paragraph'
+  ].join('\n');
+
+  var raw = await callWithRetry('step11', SYSTEM_BASE, user);
+  var data = extractJson(raw);
+  if (!data.scores) data.scores = [];
+  if (data.averageScore == null && data.scores.length > 0) {
+    data.averageScore = data.scores.reduce(function(s, q) { return s + (q.score || 0); }, 0) / data.scores.length;
+  }
+  return data;
+}
+
+// ── Step 12: 违规检测 ────────────────────────────────────────
+async function step12(s2, s4, s11data) {
+  var cosmoIssues = (s11data.scores || [])
+    .filter(function(q) { return q.score < 5; })
+    .map(function(q, i) { return 'Q' + (i+1) + ': score ' + q.score + ' — ' + q.question; })
+    .join('\n');
+
+  var user = [
+    'TARGET TITLE: ' + s2.title,
+    'BULLETS:',
+    (s2.bullets || []).map(function(b, i) { return (i+1) + '. ' + b; }).join('\n'),
+    '',
+    'TASK: Detect explicit violations (V1-V8) and implicit violations (V9-V18).',
+    '',
+    'EXPLICIT RULES (V1-V8):',
+    'V1: Unsubstantiated superlatives (#1, Best Ever, Top Rated)',
+    'V2: Directly disparages competitors (vs X, better than X)',
+    'V3: Unverified health claims (clinically proven, FDA approved)',
+    'V4: Promotional pricing language (free shipping, best price, limited time)',
+    'V5: False scarcity (only X left, running out)',
+    'V6: Misleading certifications (claims cert without verifiable details)',
+    'V7: Character limit exceeded (title >200, bullet >500)',
+    'V8: Contradictory warranty info',
+    '',
+    'IMPLICIT ISSUES (V9-V18) — check which are missing:',
+    'V10: User intent not covered (from Cosmo analysis below)',
+    'V13: No compelling narrative / use-case scenario in bullets',
+    'V14: No authority signals (certifications, test data, specific specs)',
+    'V15: Unique selling points absent (sounds like every competitor)',
+    'V16: No urgency signals (gifting, seasonal, occasion)',
+    'V17: Poor scannability (no structure, no numbers)',
+    '',
+    'COSMO COVERAGE GAPS:',
+    cosmoIssues || 'none',
+    '',
+    'Output JSON:',
+    '{',
+    '  "violations": [{"id":"V1","severity":"high","rule":"rule name","matched":"exact text","explanation":"..."}],',
+    '  "implicit": [{"id":"V10","severity":"medium","rule":"rule name","matched":"evidence","explanation":"..."}]',
+    '}',
+    'violations and implicit can be empty arrays. severity: critical/high/medium/low'
+  ].join('\n');
+
+  var raw = await callWithRetry('step12', SYSTEM_BASE, user);
+  var data = extractJson(raw);
+  if (!data.violations) data.violations = [];
+  if (!data.implicit)   data.implicit = [];
+  return data;
+}
+
+// ── Step 13: Listing Weight ───────────────────────────────────
+async function step13(s2, s4) {
+  var competitors = (s4.filteredCompetitors || s4.competitors || []);
+  var avgRating = competitors.length > 0
+    ? (competitors.reduce(function(s, c) {
+        var r = parseFloat(String(c.rating || '').replace(/[^0-9.]/g, ''));
+        return s + (isNaN(r) ? 0 : r);
+      }, 0) / competitors.filter(function(c) { return parseFloat(String(c.rating || '').replace(/[^0-9.]/g, '')); }).length).toFixed(1)
+    : 'N/A';
+
+  var user = [
+    'PRODUCT DATA:',
+    '- Reviews: ' + (s2.reviewCount || 0),
+    '- Rating: ' + (s2.rating || 'N/A'),
+    '- Price: $' + (s2.price || 'N/A'),
+    '- BSR: ' + (s2.BSR || 'N/A'),
+    '',
+    'COMPETITOR BENCHMARK:',
+    '- Avg competitor rating: ' + avgRating,
+    '- Total competitors found: ' + competitors.length,
+    '',
+    'TASK: Evaluate listing weight factors and provide actionable recommendations.',
+    'Always include these factors: Reviews, Rating, Price, Main Image, Video, A+ Content, BSR.',
+    'For items that cannot be scraped (Main Image, Video, A+), use current="N/A" and suggest manual check.',
+    '',
+    'Output JSON:',
+    '{',
+    '  "issues": [',
+    '    {"factor":"Reviews","current":"' + (s2.reviewCount || 0) + '","action":"specific action","impact":"low"}',
+    '  ],',
+    '  "summary": "one-line overall assessment"',
+    '}',
+    'impact values: ok / low / medium / high / info'
+  ].join('\n');
+
+  var raw = await callWithRetry('step13', SYSTEM_BASE, user);
+  var data = extractJson(raw);
+  if (!data.issues)  data.issues = [];
+  if (!data.summary) data.summary = '';
+  return data;
+}
+
+// ── Step 14: 行动计划 + 质量评分 ─────────────────────────────
+async function step14(s6data, s11data, s12data, s13data) {
+  var violations   = (s12data.violations || []);
+  var implicit     = (s12data.implicit   || []);
+  var cosmoScores  = (s11data.scores     || []);
+  var titleIssues  = (s6data.issues      || []);
+  var weightIssues = (s13data.issues     || []);
+
+  // 计算质量分 (按 SKILL.md 公式)
+  var cosmoAvg = cosmoScores.length > 0
+    ? cosmoScores.reduce(function(s, q) { return s + (q.score || 0); }, 0) / cosmoScores.length
+    : 0;
+
+  var titleScore   = Math.max(0, 20 - (violations.filter(function(v) { return v.id === 'V7'; }).length * 10) - (titleIssues.filter(function(i) { return i.severity === 'critical'; }).length * 5) - (titleIssues.filter(function(i) { return i.severity === 'high'; }).length * 3));
+  var cosmoScore   = Math.round(cosmoAvg * 3);
+  var violScore    = Math.max(0, 10 - violations.length * 3);
+  var bulletScore  = 25;  // LLM 来评
+  var backendScore = 8;
+  var weightScore  = 12;
+  var uspScore     = 4;
+
+  var user = [
+    'ANALYSIS SUMMARY:',
+    '- Title issues: ' + titleIssues.map(function(i) { return i.severity + ': ' + i.issue; }).join('; '),
+    '- Explicit violations: ' + violations.map(function(v) { return v.id + ' ' + v.rule; }).join('; '),
+    '- Implicit violations: ' + implicit.map(function(v) { return v.id + ' ' + v.rule; }).join('; '),
+    '- Cosmo scores: ' + cosmoScores.map(function(q, i) { return 'Q' + (i+1) + '=' + q.score; }).join(', '),
+    '- Weight issues: ' + weightIssues.filter(function(w) { return w.impact !== 'ok'; }).map(function(w) { return w.factor + '(' + w.current + ')'; }).join(', '),
+    '',
+    'TASK: Generate a prioritized action plan.',
+    'Priority rules:',
+    'P0: Any explicit violation (V1-V8) → immediate fix risk',
+    'P1: Any Cosmo score=0 OR missing primary keyword',
+    'P2: Cosmo score=3 OR implicit violations',
+    'P3: Backend keywords, listing weight factors (reviews/video/A+)',
+    '',
+    'Also calculate quality score (0-100) and grade (A+/A/B+/B/C/D/F).',
+    'Formula guidance: title(20) + bullets(25) + cosmo(15) + backend(10) + violations(10) + weight(15) + usp(5)',
+    'Current component estimates:',
+    '- title: ' + titleScore + '/20',
+    '- cosmo: ' + cosmoScore + '/15',
+    '- violations: ' + violScore + '/10',
+    '',
+    'Output JSON:',
+    '{',
+    '  "qualityScore": 78,',
+    '  "qualityGrade": "B+",',
+    '  "plan": [',
+    '    {"priority":"P1","action":"specific action","location":"Title/Bullet N/Backend","impact":"expected result"}',
+    '  ]',
+    '}',
+    'Include at least 5 action items. Be specific, not generic.'
+  ].join('\n');
+
+  var raw = await callWithRetry('step14', SYSTEM_BASE, user);
+  var data = extractJson(raw);
+  if (!data.plan)         data.plan = [];
+  if (!data.qualityScore) data.qualityScore = Math.round(titleScore + cosmoScore + violScore + bulletScore + backendScore + weightScore + uspScore);
+  if (!data.qualityGrade) {
+    var s = data.qualityScore;
+    data.qualityGrade = s >= 95 ? 'A+' : s >= 85 ? 'A' : s >= 75 ? 'B+' : s >= 65 ? 'B' : s >= 55 ? 'C' : s >= 45 ? 'D' : 'F';
+  }
+  return data;
+}
+
+// ── 分析层主流程 ─────────────────────────────────────────────
+async function runAnalysis(asin, s2, s4, force) {
+  log('');
+  log('════════════════════════════════════════');
+  log('  Amazon Listing Doctor — Analysis Layer');
+  log('  Gateway: ' + GATEWAY_HOST + ':' + GATEWAY_PORT);
+  log('════════════════════════════════════════');
+
+  // 检查 gateway 是否可达
+  try {
+    await new Promise(function(resolve, reject) {
+      var req = http.request({ hostname: GATEWAY_HOST, port: GATEWAY_PORT, path: '/v1/models', method: 'GET',
+        headers: { 'Authorization': 'Bearer ' + GATEWAY_TOKEN } }, function(res) { resolve(); });
+      req.setTimeout(5000, function() { req.destroy(); reject(new Error('timeout')); });
+      req.on('error', reject);
+      req.end();
+    });
+    log('  ✓ Gateway reachable');
+  } catch(e) {
+    log('  ⚠ Gateway not reachable (' + e.message + ') — skipping analysis layer');
+    log('  → Run manually after gateway starts: node diagnose.js ' + asin + ' --analyze-only');
+    return;
+  }
+
+  var steps = [
+    { n: 5,  name: 'Keyword Universe',       fn: function() { return step5(s2, s4); } },
+    { n: 6,  name: 'Title Audit',            fn: null },  // depends on step5
+    { n: 7,  name: 'Optimized Titles',       fn: null },  // depends on step5,6
+    { n: 8,  name: 'Backend Keywords',       fn: null },  // depends on step5
+    { n: 10, name: 'Rufus Intent',           fn: null },  // depends on step5
+    { n: 11, name: 'Cosmo Scoring',          fn: null },  // depends on step10
+    { n: 9,  name: 'Bullet Rewrites',        fn: null },  // depends on step5,11
+    { n: 12, name: 'Violation Detection',    fn: null },  // depends on step11
+    { n: 13, name: 'Listing Weight',         fn: function() { return step13(s2, s4); } },
+    { n: 14, name: 'Action Plan',            fn: null },  // depends on all
+  ];
+
+  var s5d, s6d, s10d, s11d;
+
+  // 按依赖顺序执行
+  var orderedSteps = [
+    { n: 5,  name: 'Keyword Universe',    fn: async function() { s5d = await step5(s2, s4); return s5d; } },
+    { n: 6,  name: 'Title Audit',         fn: async function() { s6d = await step6(s2, s5d); return s6d; } },
+    { n: 7,  name: 'Optimized Titles',    fn: async function() { return step7(s2, s5d, s6d); } },
+    { n: 8,  name: 'Backend Keywords',    fn: async function() { return step8(s2, s5d); } },
+    { n: 10, name: 'Rufus Intent',        fn: async function() { s10d = await step10(s2, s5d); return s10d; } },
+    { n: 11, name: 'Cosmo Scoring',       fn: async function() { s11d = await step11(s2, s10d); return s11d; } },
+    { n: 9,  name: 'Bullet Rewrites',     fn: async function() { return step9(s2, s5d, s11d); } },
+    { n: 12, name: 'Violation Detection', fn: async function() { return step12(s2, s4, s11d); } },
+    { n: 13, name: 'Listing Weight',      fn: async function() { return step13(s2, s4); } },
+    { n: 14, name: 'Action Plan',         fn: async function() {
+        var s6r  = loadCp(asin, 6)  || {};
+        var s11r = loadCp(asin, 11) || {};
+        var s12r = loadCp(asin, 12) || {};
+        var s13r = loadCp(asin, 13) || {};
+        return step14(s6r, s11r, s12r, s13r);
+    }}
+  ];
+
+  for (var i = 0; i < orderedSteps.length; i++) {
+    var step = orderedSteps[i];
+    var t = Date.now();
+
+    // 如果已有 checkpoint 且非 --force，跳过
+    if (!force && loadCp(asin, step.n)) {
+      log('▶ Step ' + step.n + ' ' + step.name + ': (cached)');
+      // 仍需加载到变量
+      if (step.n === 5)  s5d  = loadCp(asin, 5);
+      if (step.n === 6)  s6d  = loadCp(asin, 6);
+      if (step.n === 10) s10d = loadCp(asin, 10);
+      if (step.n === 11) s11d = loadCp(asin, 11);
+      continue;
+    }
+
+    log('▶ Step ' + step.n + ': ' + step.name + ' ...');
+    try {
+      var result = await step.fn();
+      saveCp(asin, step.n, result);
+      var elapsed = ((Date.now() - t) / 1000).toFixed(1);
+      log('  ✓ ' + elapsed + 's — step' + step.n + '.json written');
+    } catch(e) {
+      log('  ⚠ FAILED: ' + e.message + ' — step' + step.n + ' skipped, report will show placeholder');
+    }
+  }
+
+  log('');
+  log('════════════════════════════════════════');
+  log('  ✅ Analysis layer complete');
+  log('════════════════════════════════════════');
+}
+
+// ── Main ────────────────────────────────────────────────────
+async function main() {
+  // ── 初始化目录 ────────────────────────────────────────────
+  ensureDir(CHECKPOINT_DIR);
+  ensureDir(REPORT_DIR);
+
+  // --analyze-only 模式：跳过爬虫，直接跑分析层
+  var analyzeOnly = process.argv.includes('--analyze-only');
+
+  console.log('════════════════════════════════════════');
+  console.log('  Amazon Listing Doctor — Data Layer');
+  console.log('════════════════════════════════════════');
+
+  // ── Step 1 ───────────────────────────────────────────────
+  var s1;
+  try {
+    s1 = await step1();
+  } catch(e) {
+    console.error('❌ ' + e.message);
+    process.exit(1);
+  }
+
+  var asin  = s1.asin;
+  var force = s1.force;
+  log('▶ ASIN: ' + asin + ' [' + s1.marketplace + '] ' + (force ? '(--force)' : '') + (analyzeOnly ? '(--analyze-only)' : ''));
+  saveCp(asin, 1, s1);
+
+  function shouldSkip(n) {
+    if (force) return false;
+    var cp = loadCp(asin, n);
+    return cp !== null;
+  }
+
+  var s2, s4;
+
+  if (analyzeOnly) {
+    // 直接读现有 checkpoint
+    s2 = loadCp(asin, 2);
+    s4 = loadCp(asin, 4);
+    if (!s2 || !s4) {
+      console.error('❌ --analyze-only requires step2.json and step4.json to exist. Run without flag first.');
+      process.exit(1);
+    }
+    log('  ✓ Loaded step2 + step4 from cache for analysis-only mode');
+  } else {
+    // ── Step 2: 产品页 ──────────────────────────────────────
+    var t = Date.now();
+    if (shouldSkip(2)) {
+      s2 = loadCp(asin, 2);
+      log('▶ Step 2: Live Scrape (cached)');
+    } else {
+      log('▶ Step 2: Live Scrape');
+      s2 = await step2(s1);
+      saveCp(asin, 2, s2);
+    }
+    log('  ✓ ' + ((Date.now()-t)/1000).toFixed(1) + 's' +
+        (s2.title ? ' | "' + s2.title.substring(0, 60) + (s2.title.length > 60 ? '…' : '') + '"' : ' | ⚠ no title'));
+    if (s2.scrapeError) log('  ⚠ Scrape warning: ' + s2.scrapeError);
+
+    // ── Step 3: coreProduct 推断 ──────────────────────────
+    t = Date.now();
+    log('▶ Step 3: Core Product Detection');
+    var s3 = await step3(s2);
+    saveCp(asin, 3, s3);
+    log('  ✓ ' + ((Date.now()-t)/1000).toFixed(1) + 's');
+
+    // ── Step 4: 竞品抓取 ──────────────────────────────────
+    t = Date.now();
+    if (shouldSkip(4)) {
+      s4 = loadCp(asin, 4);
+      log('▶ Step 4: Competitor Benchmark (cached — ' + s4.totalFound + ' competitors)');
+    } else {
+      log('▶ Step 4: Competitor Benchmark');
+      s4 = await step4(s1, s2, s3);
+      saveCp(asin, 4, s4);
+    }
+    log('  ✓ ' + ((Date.now()-t)/1000).toFixed(1) + 's | found: ' + s4.totalFound);
+
+    // ── 汇总 data_package.json ──────────────────────────
+    var dataPackage = {
+      meta: { asin, marketplace: s1.marketplace, domain: s1.domain, url: s1.inputUrl, scrapedAt: new Date().toISOString() },
+      product: { title: s2.title, brand: s2.brand, bullets: s2.bullets, price: s2.price, rating: s2.rating, reviewCount: s2.reviewCount, BSR: s2.BSR, category: s2.category, scrapeError: s2.scrapeError || null },
+      keywords: { coreProduct: s3.coreProduct, sizeSignals: s3.sizeSignals, titleBigrams: s3.titleBigrams },
+      competitors: { items: s4.competitors, totalFound: s4.totalFound, cascadeRounds: s4.cascadeRounds, scrapeError: s4.scrapeError || null }
+    };
+    var pkgPath = path.join(CHECKPOINT_DIR, asin, 'data_package.json');
+    fs.writeFileSync(pkgPath, JSON.stringify(dataPackage, null, 2), 'utf8');
+
+    log('');
+    log('  data_package: ' + pkgPath);
+  }
+
+  // ── 分析层（step5-14）─────────────────────────────────────
+  await runAnalysis(asin, s2, s4, force);
+
+  // ── 生成 HTML 报告 ────────────────────────────────────────
+  log('');
+  log('▶ Generating HTML report...');
+  try {
+    var reportGen = require(path.join(SKILL_DIR, 'report_gen.js'));
+    var html = reportGen.generate(asin);
+    var reportDir = path.join(REPORT_DIR, asin);
+    ensureDir(reportDir);
+    var reportPath = path.join(reportDir, asin + '.html');
+    fs.writeFileSync(reportPath, html, 'utf8');
+    log('  ✅ Report: ' + reportPath + ' (' + html.length + ' bytes)');
+  } catch(e) {
+    log('  ⚠ report_gen failed: ' + e.message);
+    log('  → Run manually: node report_gen.js ' + asin);
+  }
+
+  log('');
+  log('════════════════════════════════════════');
+  log('  ✅ Done — ' + asin);
+  log('════════════════════════════════════════');
+}
+
+if (require.main === module) {
+  main().catch(function(e) {
+    console.error('Fatal: ' + e.message);
+    console.error(e.stack);
+    process.exit(1);
+  });
+} else {
+  module.exports = { step1, step2, step3, step4 };
+}

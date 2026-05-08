@@ -1,0 +1,100 @@
+三层职责边界
+┌─────────────────────────────────────────────────────────┐
+│  层1：数据层（脚本，纯爬虫）                              │
+│  diagnose.js step1-4                                     │
+│  职责：抓数据，存 checkpoint，不做任何分析判断            │
+│  输出：data_package.json（干净的原始数据）                │
+└─────────────────────────────────────────────────────────┘
+              ↓ Claude 读取 data_package
+┌─────────────────────────────────────────────────────────┐
+│  层2：分析层（Claude Agent）                             │
+│  职责：所有需要"理解"的工作全部在这里做                  │
+│  - 关键词分级（竞品词频 → primary/secondary/backend）    │
+│  - 标题审计（对比竞品结构）                              │
+│  - 生成3个 Rufus 意图问题（rufus_test.md 模板）          │
+│  - Cosmo 0/3/5 评分 + Intent Enhancement 改写           │
+│  - Bullet 完整改写文案                                   │
+│  - 违规检测 V1-V16                                       │
+│  - 行动计划排优先级                                      │
+│  输出：analysis.json                                     │
+└─────────────────────────────────────────────────────────┘
+              ↓ 脚本读取 data + analysis
+┌─────────────────────────────────────────────────────────┐
+│  层3：渲染层（脚本，纯渲染）                             │
+│  report_gen.js                                           │
+│  职责：把数据层 + 分析层的结果渲染成 HTML/PDF            │
+│  不做任何计算、不做任何判断                              │
+└─────────────────────────────────────────────────────────┘
+这意味着什么
+要大幅删减的：
+
+step5-15 里所有的"分析逻辑"代码——关键词过滤、标题生成、违规 regex、E-GEO 打分、行动计划汇总——这些全部是 Claude 该做的事，脚本里不应该有
+stepLLM.js、step10_external.js——外部 LLM 调用整个可以删，Claude 自己就是 LLM
+kb_rules.js、bullet_analyzer.js——这两个模块的逻辑应该内化到 SKILL.md 的 prompt 里，不需要作为 JS 代码存在
+
+要保留并强化的：
+
+step1-4 的爬虫逻辑——这是脚本唯一的职责
+step2_worker.js、step4_worker.js、amazon_scraper.js——核心爬虫，保留
+report_gen.js——渲染层保留，但要简化（删掉里面残留的计算逻辑）
+checkpoint 机制——保留，这个设计很好
+
+要新建的：
+
+analysis_schema.json——定义 Claude 输出的 analysis.json 结构，report_gen.js 按这个 schema 渲染
+SKILL.md 要重写——这才是路线 B 的核心，告诉 Claude 拿到数据后怎么分析
+
+
+改造后的文件结构
+amazon-listing-doctor/
+│
+├── 【数据层】
+│   ├── diagnose.js          ← 只保留 step1-4，输出 data_package.json
+│   ├── step2_worker.js      ← 不变
+│   ├── step4_worker.js      ← 恢复竞品抓取（现在是空的）
+│   └── lib/
+│       └── amazon_scraper.js ← 不变
+│
+├── 【分析层 — Claude 执行的 prompt 框架】
+│   ├── SKILL.md             ← 重写，这是路线 B 的核心
+│   └── references/
+│       ├── rufus_test.md    ← 保留，Claude 用这个生成 Rufus 问题
+│       └── cosmo_evaluation.md ← 保留，Claude 用这个做 Cosmo 评分
+│
+├── 【渲染层】
+│   └── report_gen.js        ← 简化，只做渲染，删掉计算逻辑
+│
+└── 【删除的文件】
+    ├── stepLLM.js           ← 删除
+    ├── step10_external.js   ← 删除
+    ├── kb_rules.js          ← 删除（逻辑进 SKILL.md）
+    ├── bullet_analyzer.js   ← 删除（逻辑进 SKILL.md）
+    └── generate_pdf.js      ← 可选保留
+
+执行流程（路线 B 下）
+用户：粘贴 Amazon 链接
+  ↓
+Claude：识别链接，调用脚本
+  ↓
+脚本（diagnose.js）：
+  step1: 提取 ASIN
+  step2: 抓产品页（title/bullets/price/rating/reviews/category）
+  step3: 抓搜索建议（Amazon autocomplete + filter labels）
+  step4: 抓竞品（20-30条，含标题/价格/评分）
+  → 输出 data_package.json，存 checkpoint
+  ↓
+Claude 读取 data_package.json，按 SKILL.md 的分析框架执行：
+  1. 关键词分级（基于竞品词频）
+  2. 标题审计（对比竞品）
+  3. 3个 Rufus 意图问题（rufus_test.md）
+  4. Cosmo 0/3/5 评分 + Intent Enhancement（cosmo_evaluation.md）
+  5. 5条 Bullet 完整改写
+  6. 违规检测 V1-V16
+  7. 行动计划
+  → 输出 analysis.json，存 checkpoint
+  ↓
+脚本（report_gen.js）：
+  读 data_package.json + analysis.json
+  → 生成 HTML 报告
+  ↓
+Claude：把报告链接发给用户
